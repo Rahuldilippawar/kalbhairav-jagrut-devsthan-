@@ -111,3 +111,10 @@ class TempleLogo extends StatelessWidget {
   Widget build(BuildContext context) =>
       Image(image: asset, width: size, height: size, fit: BoxFit.contain, semanticLabel: 'श्री काळभैरव जागृत देवस्थान');
 }
+
+/// Flutter font family for a [BannerTemplate.fonts] key (bundled in this package).
+String bannerFontFamily(String key) => switch (key) {
+      'yatraOne' => 'packages/kjd_core/YatraOne',
+      'tiroMarathi' => 'packages/kjd_core/TiroDevanagariMarathi',
+      _ => 'packages/kjd_core/Mukta',
+    };

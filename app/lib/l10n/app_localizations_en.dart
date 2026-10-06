@@ -614,4 +614,56 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get photoUploadUnavailable =>
       'Photo upload is available once the app is connected to the temple server.';
+
+  @override
+  String get mantras => 'Mantras';
+
+  @override
+  String get mantraJapa => 'Mantra Japa';
+
+  @override
+  String get mantraJapaCta => 'Chant with a japa counter';
+
+  @override
+  String get meaning => 'Meaning';
+
+  @override
+  String get tapToCount => 'Tap to count';
+
+  @override
+  String malasDone(int n) {
+    return 'Malas: $n';
+  }
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get japaComplete => 'Mala complete 🙏';
+
+  @override
+  String get todaysWishes => 'Today\'s Birthdays & Anniversaries';
+
+  @override
+  String get sendWishes => 'Send wishes';
+
+  @override
+  String get privacyPublicHelp =>
+      'Public: your name and village appear in “Today\'s Birthdays” in the app.';
+
+  @override
+  String get trustRegNo => 'Trust Reg. No.';
+
+  @override
+  String get trustPan => 'Trust PAN';
+
+  @override
+  String get eightyGNo => '80G No.';
+
+  @override
+  String get eightyGNote =>
+      'Donation eligible for deduction under section 80G of the Income Tax Act.';
+
+  @override
+  String get listen => 'Listen';
 }

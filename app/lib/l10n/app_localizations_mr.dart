@@ -613,4 +613,56 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get photoUploadUnavailable =>
       'सर्व्हर जोडल्यानंतर फोटो अपलोड करता येईल.';
+
+  @override
+  String get mantras => 'मंत्र';
+
+  @override
+  String get mantraJapa => 'मंत्र जप';
+
+  @override
+  String get mantraJapaCta => 'जप मोजणीसह मंत्र म्हणा';
+
+  @override
+  String get meaning => 'अर्थ';
+
+  @override
+  String get tapToCount => 'मोजण्यासाठी टॅप करा';
+
+  @override
+  String malasDone(int n) {
+    return 'माळा: $n';
+  }
+
+  @override
+  String get reset => 'पुन्हा सुरू';
+
+  @override
+  String get japaComplete => 'माळ पूर्ण 🙏';
+
+  @override
+  String get todaysWishes => 'आजचे वाढदिवस व वर्धापन दिन';
+
+  @override
+  String get sendWishes => 'शुभेच्छा द्या';
+
+  @override
+  String get privacyPublicHelp =>
+      'सार्वजनिक: तुमचे नाव व गाव ॲपमधील “आजचे वाढदिवस” मध्ये दिसेल.';
+
+  @override
+  String get trustRegNo => 'ट्रस्ट नोंदणी क्र.';
+
+  @override
+  String get trustPan => 'ट्रस्ट PAN';
+
+  @override
+  String get eightyGNo => '80G क्र.';
+
+  @override
+  String get eightyGNote =>
+      'ही देणगी आयकर कायद्याच्या कलम 80G अंतर्गत वजावटीस पात्र आहे.';
+
+  @override
+  String get listen => 'ऐका';
 }

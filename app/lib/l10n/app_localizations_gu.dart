@@ -612,4 +612,56 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get photoUploadUnavailable =>
       'સર્વર સાથે જોડાયા પછી ફોટો અપલોડ કરી શકાશે.';
+
+  @override
+  String get mantras => 'મંત્ર';
+
+  @override
+  String get mantraJapa => 'મંત્ર જાપ';
+
+  @override
+  String get mantraJapaCta => 'જાપ ગણતરી સાથે મંત્ર જપો';
+
+  @override
+  String get meaning => 'અર્થ';
+
+  @override
+  String get tapToCount => 'ગણવા માટે ટેપ કરો';
+
+  @override
+  String malasDone(int n) {
+    return 'માળા: $n';
+  }
+
+  @override
+  String get reset => 'રીસેટ';
+
+  @override
+  String get japaComplete => 'માળા પૂર્ણ 🙏';
+
+  @override
+  String get todaysWishes => 'આજના જન્મદિવસ અને વર્ષગાંઠ';
+
+  @override
+  String get sendWishes => 'શુભેચ્છા મોકલો';
+
+  @override
+  String get privacyPublicHelp =>
+      'જાહેર: તમારું નામ અને ગામ એપમાં “આજના જન્મદિવસ” માં દેખાશે.';
+
+  @override
+  String get trustRegNo => 'ટ્રસ્ટ નોંધણી ક્ર.';
+
+  @override
+  String get trustPan => 'ટ્રસ્ટ PAN';
+
+  @override
+  String get eightyGNo => '80G ક્ર.';
+
+  @override
+  String get eightyGNote =>
+      'આ દાન આવકવેરા કાયદાની કલમ 80G હેઠળ કપાતને પાત્ર છે.';
+
+  @override
+  String get listen => 'સાંભળો';
 }

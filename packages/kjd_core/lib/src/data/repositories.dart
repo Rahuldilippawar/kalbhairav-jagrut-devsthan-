@@ -48,6 +48,15 @@ class ContentRepository {
             .indexOf(a.category)
             .compareTo(DailyGreeting.categories.indexOf(b.category))));
 
+  Stream<List<Mantra>> watchMantras() => store
+      .watch(Col.mantras, const Query(where: [Where.eq('active', true)]))
+      .map((d) => _map(d, Mantra.fromMap)..sort((a, b) => a.order.compareTo(b.order)));
+
+  /// Today's public birthday/anniversary wishes (see [PublicGreetings]).
+  Stream<PublicGreetings> watchPublicGreetings(DateTime day) => store
+      .watchDoc(Col.publicGreetings, dateKey(day))
+      .map((d) => d == null ? PublicGreetings(date: dateKey(day)) : PublicGreetings.fromMap(d.id, d.data));
+
   Stream<List<DailyQuote>> watchQuotes() => store
       .watch(Col.dailyQuotes, const Query(where: [Where.eq('status', 'published')]))
       .map((d) => _map(d, DailyQuote.fromMap));

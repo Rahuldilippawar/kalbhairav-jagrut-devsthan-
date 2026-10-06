@@ -23,3 +23,18 @@ dev_dependencies:
 flutter:
   assets:
     - assets/logo.png
+  # Devanagari fonts for the Banner Studio (SIL Open Font License,
+  # see assets/fonts/OFL-*.txt). Bundled so banners render identically
+  # offline and in exported images.
+  fonts:
+    - family: Mukta
+      fonts:
+        - asset: assets/fonts/Mukta-Regular.ttf
+        - asset: assets/fonts/Mukta-Bold.ttf
+          weight: 700
+    - family: YatraOne
+      fonts:
+        - asset: assets/fonts/YatraOne-Regular.ttf
+    - family: TiroDevanagariMarathi
+      fonts:
+        - asset: assets/fonts/TiroDevanagariMarathi-Regular.ttf

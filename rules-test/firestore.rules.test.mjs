@@ -108,6 +108,16 @@ test("notifications visibility and creation", async () => {
   await assertFails(updateDoc(doc(admin("super_admin"), "notifications/all1"), { title: "rewrite history" }));
 });
 
+test("mantras and public greetings", async () => {
+  await assertSucceeds(getDoc(doc(guest(), "mantras/m1")));
+  await assertSucceeds(setDoc(doc(admin("content_manager"), "mantras/m1"), { text: "ॐ" }));
+  await assertFails(setDoc(doc(admin("event_manager"), "mantras/m1"), { text: "ॐ" }));
+  await assertSucceeds(getDoc(doc(guest(), "public_greetings/2026-10-06")));
+  // Only the dailyJobs function may publish names.
+  await assertFails(setDoc(doc(devotee(), "public_greetings/2026-10-06"), { entries: [] }));
+  await assertFails(setDoc(doc(admin("super_admin"), "public_greetings/2026-10-06"), { entries: [] }));
+});
+
 test("audit logs are append-only and attributed", async () => {
   const db = admin("content_manager");
   await assertSucceeds(addDoc(collection(db, "audit_logs"), { actorId: "admin-content_manager", action: "update" }));

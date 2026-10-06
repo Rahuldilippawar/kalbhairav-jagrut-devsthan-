@@ -237,5 +237,28 @@
   "skip": "Skip",
   "computedData": "Calculated for Rundhati (approximate); the temple may update it",
   "changePhoto": "Change photo",
-  "photoUploadUnavailable": "Photo upload is available once the app is connected to the temple server."
+  "photoUploadUnavailable": "Photo upload is available once the app is connected to the temple server.",
+  "mantras": "Mantras",
+  "mantraJapa": "Mantra Japa",
+  "mantraJapaCta": "Chant with a japa counter",
+  "meaning": "Meaning",
+  "tapToCount": "Tap to count",
+  "malasDone": "Malas: {n}",
+  "reset": "Reset",
+  "japaComplete": "Mala complete 🙏",
+  "todaysWishes": "Today's Birthdays & Anniversaries",
+  "sendWishes": "Send wishes",
+  "privacyPublicHelp": "Public: your name and village appear in “Today's Birthdays” in the app.",
+  "trustRegNo": "Trust Reg. No.",
+  "trustPan": "Trust PAN",
+  "eightyGNo": "80G No.",
+  "eightyGNote": "Donation eligible for deduction under section 80G of the Income Tax Act.",
+  "@malasDone": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "listen": "Listen"
 }

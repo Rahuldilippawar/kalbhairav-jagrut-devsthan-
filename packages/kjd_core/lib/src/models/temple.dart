@@ -22,6 +22,11 @@ class TempleInfo {
     this.mapUrl,
     this.closureNotice,
     this.coverImageUrl,
+    this.trustName,
+    this.trustRegNo,
+    this.trustPan,
+    this.eightyGNo,
+    this.receiptNote,
   });
 
   final String name;
@@ -45,6 +50,17 @@ class TempleInfo {
   /// Temporary closure notice shown prominently on Darshan screens.
   final String? closureNotice;
   final String? coverImageUrl;
+
+  /// Shown on donation receipts when the temple is a registered trust.
+  final String? trustName;
+  final String? trustRegNo;
+  final String? trustPan;
+
+  /// 80G registration / approval number (Income Tax Act).
+  final String? eightyGNo;
+
+  /// Free text printed at the bottom of receipts.
+  final String? receiptNote;
 
   String get fullNameMr => '$nameMr, $location';
 
@@ -77,6 +93,11 @@ class TempleInfo {
         mapUrl: asStringOrNull(m['mapUrl']),
         closureNotice: asStringOrNull(m['closureNotice']),
         coverImageUrl: asStringOrNull(m['coverImageUrl']),
+        trustName: asStringOrNull(m['trustName']),
+        trustRegNo: asStringOrNull(m['trustRegNo']),
+        trustPan: asStringOrNull(m['trustPan']),
+        eightyGNo: asStringOrNull(m['eightyGNo']),
+        receiptNote: asStringOrNull(m['receiptNote']),
       );
 
   Map<String, dynamic> toMap() => {
@@ -99,6 +120,11 @@ class TempleInfo {
         'mapUrl': mapUrl,
         'closureNotice': closureNotice,
         'coverImageUrl': coverImageUrl,
+        'trustName': trustName,
+        'trustRegNo': trustRegNo,
+        'trustPan': trustPan,
+        'eightyGNo': eightyGNo,
+        'receiptNote': receiptNote,
       };
 }
 

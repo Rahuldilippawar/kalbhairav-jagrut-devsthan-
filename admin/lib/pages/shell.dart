@@ -38,6 +38,7 @@ final List<NavItem> navItems = [
   NavItem('reports', 'Reports', Icons.bar_chart, AdminModule.reports, () => const ReportsPage(), group: 'Finance'),
   NavItem('greetings', 'Daily Subhechha', Icons.wb_sunny_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.greetings), group: 'Content'),
   NavItem('quotes', 'Quotes', Icons.format_quote, AdminModule.content, () => CollectionListPage(spec: Specs.quotes), group: 'Content'),
+  NavItem('mantras', 'Mantras', Icons.self_improvement, AdminModule.content, () => CollectionListPage(spec: Specs.mantras), group: 'Content'),
   NavItem('tithi', 'Tithi / Panchang', Icons.calendar_month, AdminModule.content, () => const TithiPage(), group: 'Content'),
   NavItem('announcements', 'Announcements', Icons.campaign_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.announcements), group: 'Content'),
   NavItem('home_banners', 'Home Banners', Icons.view_carousel_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.homeBanners), group: 'Content'),

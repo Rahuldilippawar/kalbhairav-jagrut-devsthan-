@@ -1277,6 +1277,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Photo upload is available once the app is connected to the temple server.'**
   String get photoUploadUnavailable;
+
+  /// No description provided for @mantras.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantras'**
+  String get mantras;
+
+  /// No description provided for @mantraJapa.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra Japa'**
+  String get mantraJapa;
+
+  /// No description provided for @mantraJapaCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Chant with a japa counter'**
+  String get mantraJapaCta;
+
+  /// No description provided for @meaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Meaning'**
+  String get meaning;
+
+  /// No description provided for @tapToCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to count'**
+  String get tapToCount;
+
+  /// No description provided for @malasDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Malas: {n}'**
+  String malasDone(int n);
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @japaComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mala complete 🙏'**
+  String get japaComplete;
+
+  /// No description provided for @todaysWishes.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Birthdays & Anniversaries'**
+  String get todaysWishes;
+
+  /// No description provided for @sendWishes.
+  ///
+  /// In en, this message translates to:
+  /// **'Send wishes'**
+  String get sendWishes;
+
+  /// No description provided for @privacyPublicHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Public: your name and village appear in “Today\'s Birthdays” in the app.'**
+  String get privacyPublicHelp;
+
+  /// No description provided for @trustRegNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust Reg. No.'**
+  String get trustRegNo;
+
+  /// No description provided for @trustPan.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust PAN'**
+  String get trustPan;
+
+  /// No description provided for @eightyGNo.
+  ///
+  /// In en, this message translates to:
+  /// **'80G No.'**
+  String get eightyGNo;
+
+  /// No description provided for @eightyGNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation eligible for deduction under section 80G of the Income Tax Act.'**
+  String get eightyGNote;
+
+  /// No description provided for @listen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get listen;
 }
 
 class _AppLocalizationsDelegate

@@ -101,7 +101,7 @@ class _StarterContentCard extends ConsumerWidget {
 
   static const _collections = [
     Col.templeInfo, Col.appSettings, Col.liveDarshan, Col.eventCategories, Col.darshanSchedule,
-    Col.sevas, Col.bannerTemplates, Col.dailyQuotes,
+    Col.sevas, Col.bannerTemplates, Col.dailyQuotes, Col.mantras,
   ];
 
   @override
@@ -127,7 +127,7 @@ class _StarterContentCard extends ConsumerWidget {
               for (final e in seed[col]!.entries) {
                 final data = {...e.value, 'createdAt': store.serverTimestamp};
                 // Never copy demo placeholder contact numbers into a live project.
-                if (col == Col.templeInfo) data..remove('phone')..remove('whatsapp');
+                if (col == Col.templeInfo) data..remove('phone')..remove('whatsapp')..remove('trustName')..remove('receiptNote');
                 await store.set(col, e.key, data, merge: true);
               }
             }

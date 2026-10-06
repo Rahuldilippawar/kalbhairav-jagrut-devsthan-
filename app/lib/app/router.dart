@@ -18,6 +18,7 @@ import '../features/events/event_detail_screen.dart';
 import '../features/events/events_screen.dart';
 import '../features/gallery/gallery_screen.dart';
 import '../features/home/home_screen.dart';
+import '../features/mantra/mantra_screens.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/profile/edit_profile_screen.dart';
 import '../features/profile/family_screen.dart';
@@ -100,6 +101,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/gallery', builder: (_, _) => const GalleryScreen()),
       GoRoute(path: '/tithi', builder: (_, _) => const TithiScreen()),
       GoRoute(path: '/greetings', builder: (_, _) => const GreetingsScreen()),
+      GoRoute(path: '/mantras', builder: (_, _) => const MantrasScreen()),
+      GoRoute(path: '/mantra/:id', builder: (_, s) => MantraScreen(mantraId: s.pathParameters['id']!)),
       GoRoute(path: '/search', builder: (_, _) => const SearchScreen()),
       GoRoute(path: '/notifications', builder: (_, _) => const NotificationsScreen()),
       GoRoute(

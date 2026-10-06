@@ -49,6 +49,7 @@ class HomeScreen extends ConsumerWidget {
             );
           }),
           const SliverToBoxAdapter(child: _Notices()),
+          const SliverToBoxAdapter(child: _PublicWishes()),
           SliverToBoxAdapter(
             child: SectionHeader(l.upcomingEvents, icon: '🎉', action: l.viewAll, onAction: () => context.go('/events')),
           ),
@@ -62,6 +63,7 @@ class HomeScreen extends ConsumerWidget {
           const SliverToBoxAdapter(child: _DonateCta()),
           SliverToBoxAdapter(child: SectionHeader(l.todaysQuote, icon: '💬')),
           const SliverToBoxAdapter(child: _QuoteCard()),
+          const SliverToBoxAdapter(child: _MantraCard()),
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ]),
       ),
@@ -451,6 +453,63 @@ class _QuoteCard extends ConsumerWidget {
                 Align(alignment: Alignment.centerRight, child: Text('— ${q.author}', style: const TextStyle(color: KjdColors.inkMuted))),
             ]),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Birthdays/anniversaries of devotees who chose "Public" (published daily
+/// by the server – no private profile data is read here).
+class _PublicWishes extends ConsumerWidget {
+  const _PublicWishes();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final entries = ref.watch(publicGreetingsProvider).value?.entries ?? const [];
+    if (entries.isEmpty) return const SizedBox.shrink();
+    final l = context.l10n;
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      SectionHeader(l.todaysWishes, icon: '🎉'),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Card(
+          child: Column(children: [
+            for (final e in entries.take(10))
+              ListTile(
+                leading: Text(e.kind == GreetingKind.birthday ? '🎂' : '💍', style: const TextStyle(fontSize: 24)),
+                title: Text(e.name, style: const TextStyle(fontWeight: FontWeight.w700)),
+                subtitle: e.village == null ? null : Text(e.village!),
+                trailing: IconButton(
+                  tooltip: l.sendWishes,
+                  icon: const Icon(Icons.share, color: KjdColors.kumkum),
+                  onPressed: () => context.push(Uri(path: '/banner', queryParameters: {
+                    'category': e.kind == GreetingKind.birthday ? BannerCategory.birthday.name : BannerCategory.anniversary.name,
+                    'name': e.name,
+                  }).toString()),
+                ),
+              ),
+          ]),
+        ),
+      ),
+    ]);
+  }
+}
+
+class _MantraCard extends StatelessWidget {
+  const _MantraCard();
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Card(
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          leading: const Text('🕉️', style: TextStyle(fontSize: 30)),
+          title: Text(l.mantraJapa, style: const TextStyle(fontWeight: FontWeight.w800)),
+          subtitle: Text(l.mantraJapaCta),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/mantras'),
         ),
       ),
     );

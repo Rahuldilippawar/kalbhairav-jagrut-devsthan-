@@ -64,6 +64,9 @@ final greetingsTodayProvider =
     StreamProvider((ref) => ref.watch(contentRepoProvider).watchGreetings(_today(ref)));
 final quoteTodayProvider =
     StreamProvider((ref) => ref.watch(contentRepoProvider).watchQuoteOfDay(_today(ref)));
+final mantrasProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchMantras());
+final publicGreetingsProvider =
+    StreamProvider((ref) => ref.watch(contentRepoProvider).watchPublicGreetings(_today(ref)));
 final quotesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchQuotes());
 final tithiProvider = StreamProvider.family<TithiInfo?, DateTime>(
     (ref, day) => ref.watch(contentRepoProvider).watchTithi(day));

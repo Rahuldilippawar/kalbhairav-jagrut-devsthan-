@@ -155,6 +155,7 @@ export const dailyJobs = onSchedule({ schedule: "30 6 * * *", timeZone: TZ, regi
 
   // Birthdays & anniversaries.
   const md = istMonthDay();
+  const publicEntries: { name: string; village: string | null; kind: string }[] = [];
   for (const [field, title, body] of [
     ["dobMonthDay", "🎂 वाढदिवसाच्या हार्दिक शुभेच्छा", "श्री काळभैरव महाराजांची कृपा सदैव राहो. आपला शुभेच्छा बॅनर तयार आहे."],
     ["anniversaryMonthDay", "💍 विवाह वर्धापन दिनाच्या हार्दिक शुभेच्छा", "आपले सहजीवन सुखाचे व आनंदाचे जावो."],
@@ -164,6 +165,10 @@ export const dailyJobs = onSchedule({ schedule: "30 6 * * *", timeZone: TZ, regi
       const p = u.data();
       if (p.birthdayPrivacy === "private") continue;
       const category = field === "dobMonthDay" ? "birthday" : "anniversary";
+      if (p.birthdayPrivacy === "public" && p.name) {
+        const name = category === "anniversary" && p.spouseName ? `${p.name} व ${p.spouseName}` : p.name;
+        publicEntries.push({ name, village: p.village ?? null, kind: category });
+      }
       await notifications.doc(`${category}-${u.id}-${today}`).create({
         title: p.name ? `${title}, ${p.name}` : title,
         body,
@@ -173,6 +178,9 @@ export const dailyJobs = onSchedule({ schedule: "30 6 * * *", timeZone: TZ, regi
       }).catch(() => undefined);
     }
   }
+
+  // Only names/villages of devotees who opted into "Public" are published.
+  await db().doc(`public_greetings/${today}`).set({ entries: publicEntries, updatedAt: now });
 
   // Archive finished events.
   const finished = await db().collection("events").where("status", "==", "published").get();

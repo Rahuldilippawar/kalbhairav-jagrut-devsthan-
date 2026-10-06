@@ -428,13 +428,32 @@ class BannerTemplate {
     this.headline,
     this.defaultMessage,
     this.footer = 'श्री काळभैरव जागृत देवस्थान, रुंधाटी',
+    this.headlineFont = 'yatraOne',
+    this.bodyFont = 'mukta',
+    this.logoUrl,
+    this.showLogo = true,
     this.active = true,
     this.order = 0,
   });
 
+  /// Bundled banner fonts: key → display name.
+  static const fonts = {
+    'mukta': 'Mukta (आधुनिक)',
+    'yatraOne': 'Yatra One (उत्सवी)',
+    'tiroMarathi': 'Tiro Devanagari Marathi (पारंपरिक)',
+  };
+
   final String id;
   final String name;
   final BannerCategory category;
+
+  /// Keys of [fonts].
+  final String headlineFont;
+  final String bodyFont;
+
+  /// Replaces the bundled temple logo when set.
+  final String? logoUrl;
+  final bool showLogo;
   final String? backgroundUrl;
   final List<int> gradient;
   final int textColor;
@@ -462,6 +481,10 @@ class BannerTemplate {
       headline: asStringOrNull(m['headline']),
       defaultMessage: asStringOrNull(m['defaultMessage']),
       footer: asString(m['footer'], 'श्री काळभैरव जागृत देवस्थान, रुंधाटी'),
+      headlineFont: fonts.containsKey(m['headlineFont']) ? m['headlineFont'] as String : 'yatraOne',
+      bodyFont: fonts.containsKey(m['bodyFont']) ? m['bodyFont'] as String : 'mukta',
+      logoUrl: asStringOrNull(m['logoUrl']),
+      showLogo: asBool(m['showLogo'], true),
       active: asBool(m['active'], true),
       order: asInt(m['order']),
     );
@@ -477,6 +500,10 @@ class BannerTemplate {
         'headline': headline,
         'defaultMessage': defaultMessage,
         'footer': footer,
+        'headlineFont': headlineFont,
+        'bodyFont': bodyFont,
+        'logoUrl': logoUrl,
+        'showLogo': showLogo,
         'active': active,
         'order': order,
       };
@@ -531,4 +558,91 @@ class GeneratedBanner {
         'imageUrl': imageUrl,
         'createdAt': createdAt,
       };
+}
+
+/// `mantras` – mantras with meaning and a suggested japa count.
+class Mantra {
+  const Mantra({
+    required this.id,
+    required this.title,
+    required this.text,
+    this.meaning,
+    this.deity = 'श्री काळभैरव',
+    this.japaCount = 108,
+    this.audioUrl,
+    this.order = 0,
+    this.active = true,
+  });
+
+  final String id;
+  final String title;
+
+  /// The mantra itself (Devanagari).
+  final String text;
+  final String? meaning;
+  final String deity;
+
+  /// Suggested repetitions per sitting (one mala = 108).
+  final int japaCount;
+  final String? audioUrl;
+  final int order;
+  final bool active;
+
+  factory Mantra.fromMap(String id, Map<String, dynamic> m) => Mantra(
+        id: id,
+        title: asString(m['title']),
+        text: asString(m['text']),
+        meaning: asStringOrNull(m['meaning']),
+        deity: asString(m['deity'], 'श्री काळभैरव'),
+        japaCount: asInt(m['japaCount'], 108),
+        audioUrl: asStringOrNull(m['audioUrl']),
+        order: asInt(m['order']),
+        active: asBool(m['active'], true),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'title': title,
+        'text': text,
+        'meaning': meaning,
+        'deity': deity,
+        'japaCount': japaCount,
+        'audioUrl': audioUrl,
+        'order': order,
+        'active': active,
+      };
+}
+
+enum GreetingKind { birthday, anniversary }
+
+class PublicGreeting {
+  const PublicGreeting({required this.name, required this.kind, this.village});
+  final String name;
+  final GreetingKind kind;
+  final String? village;
+
+  factory PublicGreeting.fromMap(Map<String, dynamic> m) => PublicGreeting(
+        name: asString(m['name']),
+        kind: GreetingKind.values.asNameMap()[m['kind']] ?? GreetingKind.birthday,
+        village: asStringOrNull(m['village']),
+      );
+
+  Map<String, dynamic> toMap() => {'name': name, 'kind': kind.name, 'village': village};
+}
+
+/// `public_greetings/{yyyy-MM-dd}` – today's birthdays/anniversaries of
+/// devotees who chose "Public". Written by the dailyJobs Cloud Function so
+/// that no private profile data is ever readable by other devotees.
+class PublicGreetings {
+  const PublicGreetings({required this.date, this.entries = const []});
+  final String date;
+  final List<PublicGreeting> entries;
+
+  factory PublicGreetings.fromMap(String id, Map<String, dynamic> m) => PublicGreetings(
+        date: id,
+        entries: [
+          for (final e in (m['entries'] as List? ?? const [])) PublicGreeting.fromMap(asMap(e)),
+        ],
+      );
+
+  Map<String, dynamic> toMap() => {'entries': [for (final e in entries) e.toMap()]};
 }

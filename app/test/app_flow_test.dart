@@ -139,6 +139,43 @@ void main() {
     expect(find.text('આજની શુભેચ્છા'), findsOneWidget);
   });
 
+  testWidgets('mantra japa counter completes a mala and persists', (tester) async {
+    await _start(tester, to: '/mantra/m-naam');
+    expect(find.text('ॐ कालभैरवाय नमः'), findsOneWidget);
+    final counter = find.text('/ 108');
+    await tester.scrollUntilVisible(counter, 200, scrollable: find.byType(Scrollable).first);
+    for (var i = 0; i < 108; i++) {
+      await tester.tap(counter, warnIfMissed: false);
+    }
+    await tester.pump();
+    expect(find.text('माळा: 1'), findsOneWidget);
+    expect(find.text('0'), findsOneWidget);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getStringList('japa_m-naam'), ['0', '1']);
+  });
+
+  testWidgets('home lists public birthday wishes', (tester) async {
+    await _start(tester);
+    final wishes = find.text('श्री. रमेश पाटील');
+    await tester.scrollUntilVisible(wishes, 300, scrollable: find.byType(Scrollable).first);
+    expect(find.text('आजचे वाढदिवस व वर्धापन दिन'), findsOneWidget);
+    expect(find.text('सौ. सुनीता व श्री. अनिल देशमुख'), findsOneWidget);
+  });
+
+  testWidgets('donation receipt shows trust details and 80G line', (tester) async {
+    final c = await _start(tester, user: _devotee, to: '/home');
+    final store = c.read(dataStoreProvider);
+    await store.update(Col.templeInfo, Col.mainDoc, {'trustRegNo': 'E-1234 (जळगाव)', 'eightyGNo': 'AAATK1234X/80G'});
+    final r = await c.read(checkoutServiceProvider).donate(
+        const DonationRequest(category: 'अन्नदान', amountPaise: 50100, name: 'राम', mobile: '9876543210'));
+    c.read(routerProvider).go('/receipt/${r.receiptId}');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('E-1234 (जळगाव)'), findsOneWidget);
+    expect(find.textContaining('AAATK1234X/80G'), findsOneWidget);
+    expect(find.textContaining('80G अंतर्गत'), findsOneWidget);
+    expect(find.textContaining('नमुना'), findsWidgets); // demo trust name / note
+  });
+
   test('protected paths', () {
     expect(needsLogin('/donate'), isTrue);
     expect(needsLogin('/book/x'), isTrue);

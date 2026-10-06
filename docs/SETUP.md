@@ -58,7 +58,7 @@ The admin panel is then served at `https://<project-id>.web.app`.
 
 1. In Firebase console → Authentication, add an Email/Password user for the temple owner. The email must be listed in `BOOTSTRAP_SUPER_ADMIN_EMAILS`.
 2. Sign in to the admin panel. The panel says the account has no role; click **Claim Super Admin**. This works only while no super admin exists.
-3. On the Dashboard, click **Load starter content**. This adds event categories, settings, darshan timings, sample sevas, banner templates, quotes and temple info. Then edit Temple Info (phone, WhatsApp, coordinates, history) and the seva prices.
+3. On the Dashboard, click **Load starter content**. This adds event categories, settings, darshan timings, sample sevas, banner templates, quotes, mantras and temple info. Then edit Temple Info (phone, WhatsApp, coordinates, history, and the **trust registration no., PAN and 80G no.** printed on receipts), check the mantra texts, and set the seva prices.
 4. Add other staff under **Admin Users & Roles**. If a staff member has no account yet, the panel gives you a password-setup link to send them.
 
 ## 6. Android release

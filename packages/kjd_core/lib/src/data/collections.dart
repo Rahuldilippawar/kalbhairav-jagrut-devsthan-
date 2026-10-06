@@ -20,6 +20,8 @@ abstract final class Col {
   static const dailyQuotes = 'daily_quotes';
   static const dailyGreetings = 'daily_greetings';
   static const tithiContent = 'tithi_content';
+  static const mantras = 'mantras';
+  static const publicGreetings = 'public_greetings';
 
   static const bannerTemplates = 'banner_templates';
   static const generatedBanners = 'generated_banners';

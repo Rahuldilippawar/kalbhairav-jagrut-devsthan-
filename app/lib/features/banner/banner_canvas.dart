@@ -32,6 +32,11 @@ class BannerCanvas extends StatelessWidget {
       child: LayoutBuilder(builder: (context, c) {
         // Scale typography with the canvas so the preview and export match.
         final u = c.maxWidth / 360;
+        final headFont = bannerFontFamily(template.headlineFont);
+        final bodyFont = bannerFontFamily(template.bodyFont);
+        final Widget logo = template.logoUrl != null
+            ? ClipOval(child: NetImage(template.logoUrl, width: 56 * u, height: 56 * u))
+            : TempleLogo(size: 56 * u);
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -57,13 +62,12 @@ class BannerCanvas extends StatelessWidget {
               padding: EdgeInsets.all(16 * u),
               child: Column(children: [
                 Row(children: [
-                  TempleLogo(size: 56 * u),
-                  SizedBox(width: 8 * u),
+                  if (template.showLogo) ...[logo, SizedBox(width: 8 * u)],
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text('श्री काळभैरव जागृत देवस्थान',
-                          style: TextStyle(color: text, fontWeight: FontWeight.w900, fontSize: 15 * u)),
-                      Text('रुंधाटी', style: TextStyle(color: accent, fontWeight: FontWeight.w700, fontSize: 12 * u)),
+                          style: TextStyle(fontFamily: bodyFont, color: text, fontWeight: FontWeight.w700, fontSize: 15 * u)),
+                      Text('रुंधाटी', style: TextStyle(fontFamily: bodyFont, color: accent, fontWeight: FontWeight.w700, fontSize: 12 * u)),
                     ]),
                   ),
                 ]),
@@ -71,7 +75,7 @@ class BannerCanvas extends StatelessWidget {
                 if (headline.isNotEmpty)
                   Text(headline,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: accent, fontWeight: FontWeight.w900, fontSize: 22 * u, height: 1.25)),
+                      style: TextStyle(fontFamily: headFont, color: accent, fontSize: 24 * u, height: 1.3)),
                 SizedBox(height: 10 * u),
                 if (photo != null) ...[
                   Container(
@@ -89,7 +93,7 @@ class BannerCanvas extends StatelessWidget {
                     textAlign: TextAlign.center,
                     maxLines: photo != null ? 4 : 7,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: text, fontSize: (photo != null ? 14 : 16) * u, height: 1.45, fontWeight: FontWeight.w600)),
+                    style: TextStyle(fontFamily: bodyFont, color: text, fontSize: (photo != null ? 15 : 17) * u, height: 1.45, fontWeight: FontWeight.w700)),
                 const Spacer(),
                 if (date != null)
                   Text(date!, style: TextStyle(color: text.withValues(alpha: .85), fontSize: 11 * u)),
@@ -100,7 +104,7 @@ class BannerCanvas extends StatelessWidget {
                   decoration: BoxDecoration(color: Colors.black26, borderRadius: BorderRadius.circular(20 * u)),
                   child: Text(template.footer,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: text, fontSize: 11.5 * u, fontWeight: FontWeight.w700)),
+                      style: TextStyle(fontFamily: bodyFont, color: text, fontSize: 11.5 * u, fontWeight: FontWeight.w700)),
                 ),
               ]),
             ),

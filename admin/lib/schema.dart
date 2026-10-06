@@ -98,6 +98,11 @@ abstract final class Specs {
       FieldSpec('mapUrl', 'Google Maps link', type: FieldType.url),
       FieldSpec('coverImageUrl', 'Cover image', type: FieldType.image),
       FieldSpec('closureNotice', 'Temporary closure notice', type: FieldType.multiline, help: 'Leave empty when the temple is open'),
+      FieldSpec('trustName', 'Receipt: registered trust name'),
+      FieldSpec('trustRegNo', 'Receipt: trust registration no.', help: 'e.g. Public Trust Reg. No. under the Maharashtra Public Trusts Act'),
+      FieldSpec('trustPan', 'Receipt: trust PAN'),
+      FieldSpec('eightyGNo', 'Receipt: 80G approval no.', help: 'When set, donation receipts show the 80G line'),
+      FieldSpec('receiptNote', 'Receipt: footer note', type: FieldType.multiline),
     ],
   );
 
@@ -312,6 +317,25 @@ abstract final class Specs {
     ],
   );
 
+  static final mantras = CollectionSpec(
+    collection: Col.mantras,
+    title: 'Mantras',
+    module: AdminModule.content,
+    orderBy: 'order',
+    columns: const ['title', 'deity', 'text', 'japaCount', 'active'],
+    searchFields: const ['title', 'text', 'deity'],
+    fields: const [
+      FieldSpec('title', 'Title', required: true),
+      FieldSpec('text', 'Mantra (Devanagari)', type: FieldType.multiline, required: true),
+      FieldSpec('meaning', 'Meaning', type: FieldType.multiline),
+      FieldSpec('deity', 'Deity', defaultValue: 'श्री काळभैरव'),
+      FieldSpec('japaCount', 'Japa count (one mala = 108)', type: FieldType.integer, defaultValue: 108),
+      FieldSpec('audioUrl', 'Audio link (optional)', type: FieldType.url),
+      FieldSpec('order', 'Order', type: FieldType.integer, defaultValue: 0),
+      FieldSpec('active', 'Active', type: FieldType.boolean, defaultValue: true),
+    ],
+  );
+
   static final tithi = CollectionSpec(
     collection: Col.tithiContent,
     title: "Today's Tithi (Panchang)",
@@ -374,6 +398,10 @@ abstract final class Specs {
       const FieldSpec('accentColor', 'Accent colour (hex)', type: FieldType.colors, defaultValue: 0xFFFFD54F),
       const FieldSpec('backgroundUrl', 'Background image', type: FieldType.image),
       const FieldSpec('footer', 'Footer', defaultValue: 'श्री काळभैरव जागृत देवस्थान, रुंधाटी'),
+      FieldSpec('headlineFont', 'Headline font', type: FieldType.select, options: [for (final e in BannerTemplate.fonts.entries) (e.key, e.value)], defaultValue: 'yatraOne'),
+      FieldSpec('bodyFont', 'Message font', type: FieldType.select, options: [for (final e in BannerTemplate.fonts.entries) (e.key, e.value)], defaultValue: 'mukta'),
+      const FieldSpec('showLogo', 'Show logo', type: FieldType.boolean, defaultValue: true),
+      const FieldSpec('logoUrl', 'Custom logo (optional)', type: FieldType.image, help: 'Leave empty to use the temple logo'),
       const FieldSpec('order', 'Order', type: FieldType.integer, defaultValue: 0),
       const FieldSpec('active', 'Active', type: FieldType.boolean, defaultValue: true),
     ],

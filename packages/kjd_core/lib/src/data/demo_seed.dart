@@ -210,6 +210,29 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
     ),
   ];
 
+  // Mantras – staff should review wording/meaning before going live.
+  final mantras = <Mantra>[
+    const Mantra(id: 'm-naam', title: 'कालभैरव नाम मंत्र', text: 'ॐ कालभैरवाय नमः', meaning: 'भगवान श्री कालभैरवांना नमस्कार असो.', japaCount: 108, order: 0),
+    const Mantra(
+      id: 'm-batuk',
+      title: 'बटुक भैरव मंत्र',
+      text: 'ॐ ह्रीं बटुकाय आपदुद्धारणाय कुरु कुरु बटुकाय ह्रीं',
+      meaning: 'संकटातून रक्षण करणाऱ्या बटुक भैरवांची प्रार्थना.',
+      deity: 'श्री बटुक भैरव',
+      japaCount: 108,
+      order: 1,
+    ),
+    const Mantra(id: 'm-panchakshari', title: 'पंचाक्षरी मंत्र', text: 'ॐ नमः शिवाय', meaning: 'भगवान शिवांना नमस्कार.', deity: 'भगवान शिव', japaCount: 108, order: 2),
+    const Mantra(
+      id: 'm-ashtakam-1',
+      title: 'श्री कालभैरवाष्टकम् (श्लोक १)',
+      text: 'देवराजसेव्यमानपावनाङ्घ्रिपङ्कजं\nव्यालयज्ञसूत्रमिन्दुशेखरं कृपाकरम् ।\nनारदादियोगिवृन्दवन्दितं दिगम्बरं\nकाशिकापुराधिनाथकालभैरवं भजे ॥',
+      meaning: 'आदि शंकराचार्यरचित कालभैरवाष्टकाचा पहिला श्लोक – काशीचे अधिपती श्री कालभैरवांना मी भजतो.',
+      japaCount: 11,
+      order: 3,
+    ),
+  ];
+
   Map<String, Map<String, dynamic>> byId<T>(List<T> items, String Function(T) id, Map<String, dynamic> Function(T) m) =>
       {for (final i in items) id(i): m(i)};
 
@@ -222,6 +245,8 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
         tradition: 'नवरात्र उत्सव, गुरुपौर्णिमा, कालभैरव जयंती आणि पवित्र पायी दिंडी सोहळा या मंदिराच्या प्रमुख परंपरा आहेत.',
         parampara: 'साती राणा मढी परंपरा.',
         about: 'दर्शन • सेवा • उत्सव • भक्ती • संस्कृती',
+        trustName: 'श्री काळभैरव जागृत देवस्थान ट्रस्ट (नमुना)',
+        receiptNote: 'ही नमुना पावती आहे.',
         phone: '+919999999999',
         whatsapp: '+919999999999',
       ).toMap(),
@@ -244,6 +269,13 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
     Col.sevas: byId(sevas, (s) => s.id, (s) => s.toMap()),
     Col.darshanSchedule: byId(darshan, (s) => s.id, (s) => s.toMap()),
     Col.dailyQuotes: byId(quotes, (q) => q.id, (q) => q.toMap()),
+    Col.mantras: byId(mantras, (m) => m.id, (m) => m.toMap()),
+    Col.publicGreetings: {
+      dateKey(today): const PublicGreetings(date: '', entries: [
+        PublicGreeting(name: 'श्री. रमेश पाटील', village: 'रुंधाटी', kind: GreetingKind.birthday),
+        PublicGreeting(name: 'सौ. सुनीता व श्री. अनिल देशमुख', village: 'अमळनेर', kind: GreetingKind.anniversary),
+      ]).toMap(),
+    },
     Col.dailyGreetings: byId(greetings, (g) => g.id, (g) => g.toMap()),
     Col.announcements: {
       'a1': Announcement(

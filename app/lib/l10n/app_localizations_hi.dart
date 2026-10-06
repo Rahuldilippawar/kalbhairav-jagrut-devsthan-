@@ -613,4 +613,56 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get photoUploadUnavailable =>
       'सर्वर से जुड़ने के बाद फ़ोटो अपलोड कर सकेंगे।';
+
+  @override
+  String get mantras => 'मंत्र';
+
+  @override
+  String get mantraJapa => 'मंत्र जाप';
+
+  @override
+  String get mantraJapaCta => 'जाप गिनती के साथ मंत्र जपें';
+
+  @override
+  String get meaning => 'अर्थ';
+
+  @override
+  String get tapToCount => 'गिनने के लिए टैप करें';
+
+  @override
+  String malasDone(int n) {
+    return 'माला: $n';
+  }
+
+  @override
+  String get reset => 'रीसेट';
+
+  @override
+  String get japaComplete => 'माला पूर्ण 🙏';
+
+  @override
+  String get todaysWishes => 'आज के जन्मदिन व वर्षगांठ';
+
+  @override
+  String get sendWishes => 'शुभकामनाएँ भेजें';
+
+  @override
+  String get privacyPublicHelp =>
+      'सार्वजनिक: आपका नाम और गाँव ऐप के “आज के जन्मदिन” में दिखेगा।';
+
+  @override
+  String get trustRegNo => 'ट्रस्ट पंजीकरण क्र.';
+
+  @override
+  String get trustPan => 'ट्रस्ट PAN';
+
+  @override
+  String get eightyGNo => '80G क्र.';
+
+  @override
+  String get eightyGNote =>
+      'यह दान आयकर अधिनियम की धारा 80G के तहत कटौती योग्य है।';
+
+  @override
+  String get listen => 'सुनें';
 }

@@ -61,6 +61,7 @@ class ReceiptCard extends ConsumerWidget {
     final info = ref.watch(templeInfoProvider).value ?? const TempleInfo();
     final r = receipt;
     final ok = r.status == PaymentStatus.success;
+    final isDonation = r.purpose == PaymentPurpose.donation;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -74,7 +75,21 @@ class ReceiptCard extends ConsumerWidget {
         const Text('KALBHAIRAV JAGRUT DEVSTHAN',
             style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.1, color: KjdColors.kumkumDark)),
         Text(info.fullNameMr, style: const TextStyle(fontWeight: FontWeight.w700)),
+        if (info.trustName != null) Text(info.trustName!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13)),
         Text(info.address, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: KjdColors.inkMuted)),
+        if (info.trustRegNo != null || info.trustPan != null || (isDonation && info.eightyGNo != null))
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              [
+                if (info.trustRegNo != null) '${l.trustRegNo}: ${info.trustRegNo}',
+                if (info.trustPan != null) '${l.trustPan}: ${info.trustPan}',
+                if (isDonation && info.eightyGNo != null) '${l.eightyGNo}: ${info.eightyGNo}',
+              ].join('  •  '),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 11, color: KjdColors.inkMuted),
+            ),
+          ),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -94,6 +109,14 @@ class ReceiptCard extends ConsumerWidget {
         Text(ok ? '🙏 ${l.paymentSuccess}' : l.paymentFailed,
             textAlign: TextAlign.center,
             style: TextStyle(color: ok ? KjdColors.success : KjdColors.live, fontWeight: FontWeight.w700)),
+        if (isDonation && ok && info.eightyGNo != null) ...[
+          const SizedBox(height: 6),
+          Text(l.eightyGNote, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+        ],
+        if (info.receiptNote != null) ...[
+          const SizedBox(height: 4),
+          Text(info.receiptNote!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, color: KjdColors.inkMuted)),
+        ],
         const SizedBox(height: 4),
         const Text('This is a computer-generated receipt.', style: TextStyle(fontSize: 10, color: KjdColors.inkMuted)),
       ]),

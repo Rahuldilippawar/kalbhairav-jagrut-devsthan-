@@ -173,6 +173,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             selected: {_privacy},
             onSelectionChanged: (s) => setState(() => _privacy = s.first),
           ),
+          if (_privacy == GreetingPrivacy.public)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(l.privacyPublicHelp, style: const TextStyle(color: KjdColors.inkMuted, fontSize: 13)),
+            ),
           const SizedBox(height: 24),
           FilledButton(onPressed: _save, child: Text(l.save)),
         ]),
