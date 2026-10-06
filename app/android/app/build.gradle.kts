@@ -42,6 +42,14 @@ android {
     }
 
     signingConfigs {
+        // Shared test key (see .gitignore note) so every machine and CI run
+        // signs debug/test APKs with the same fingerprint.
+        getByName("debug") {
+            storeFile = rootProject.file("kjd-debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
         if (keystoreProperties.containsKey("storeFile")) {
             create("release") {
                 storeFile = file(keystoreProperties.getProperty("storeFile"))

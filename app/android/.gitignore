@@ -12,3 +12,8 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Shared *debug/test* signing key (not secret – same role as the default
+# ~/.android/debug.keystore). Committed so CI-built test APKs keep a stable
+# SHA-1/SHA-256 for Firebase phone auth. Never use it for Play Store builds.
+!kjd-debug.keystore
