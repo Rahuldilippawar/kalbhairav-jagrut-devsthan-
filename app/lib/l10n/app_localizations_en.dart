@@ -607,4 +607,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get computedData =>
       'Calculated for Rundhati (approximate); the temple may update it';
+
+  @override
+  String get changePhoto => 'Change photo';
+
+  @override
+  String get photoUploadUnavailable =>
+      'Photo upload is available once the app is connected to the temple server.';
 }

@@ -235,5 +235,7 @@
   "next": "Next",
   "getStarted": "Get started",
   "skip": "Skip",
-  "computedData": "Calculated for Rundhati (approximate); the temple may update it"
+  "computedData": "Calculated for Rundhati (approximate); the temple may update it",
+  "changePhoto": "Change photo",
+  "photoUploadUnavailable": "Photo upload is available once the app is connected to the temple server."
 }

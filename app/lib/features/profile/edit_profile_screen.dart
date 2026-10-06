@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
@@ -22,6 +23,25 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   DateTime? _anniversary;
   GreetingPrivacy _privacy = GreetingPrivacy.temple;
   DevoteeProfile? _loaded;
+  String? _photoUrl;
+  bool _uploading = false;
+
+  Future<void> _changePhoto() async {
+    final l = context.l10n;
+    final uploader = ref.read(photoUploaderProvider);
+    if (!uploader.enabled) return context.toast(l.photoUploadUnavailable);
+    final file = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 600, maxHeight: 600, imageQuality: 80);
+    if (file == null) return;
+    setState(() => _uploading = true);
+    try {
+      final url = await uploader.uploadProfilePhoto(ref.read(uidProvider)!, await file.readAsBytes());
+      setState(() => _photoUrl = url);
+    } catch (e) {
+      if (mounted) context.toast('$e');
+    } finally {
+      if (mounted) setState(() => _uploading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -40,6 +60,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _dob = p.dob;
     _anniversary = p.anniversary;
     _privacy = p.birthdayPrivacy;
+    _photoUrl = p.photoUrl;
   }
 
   Future<DateTime?> _pick(DateTime? current) => showDatePicker(
@@ -60,7 +81,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       mobile: base.mobile,
       email: opt(_email),
       village: opt(_village),
-      photoUrl: base.photoUrl,
+      photoUrl: _photoUrl,
       dob: _dob,
       anniversary: _anniversary,
       spouseName: opt(_spouse),
@@ -86,6 +107,28 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       body: Form(
         key: _form,
         child: ListView(padding: const EdgeInsets.all(16), children: [
+          Center(
+            child: Stack(children: [
+              CircleAvatar(
+                radius: 48,
+                backgroundColor: KjdColors.goldLight,
+                backgroundImage: _photoUrl == null ? null : NetworkImage(_photoUrl!),
+                child: _uploading
+                    ? const CircularProgressIndicator()
+                    : (_photoUrl == null ? const Icon(Icons.person, size: 48, color: KjdColors.saffron) : null),
+              ),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: IconButton.filled(
+                  tooltip: l.changePhoto,
+                  onPressed: _uploading ? null : _changePhoto,
+                  icon: const Icon(Icons.photo_camera, size: 18),
+                ),
+              ),
+            ]),
+          ),
+          const SizedBox(height: 16),
           TextFormField(
             controller: _name,
             decoration: InputDecoration(labelText: l.name),

@@ -35,6 +35,8 @@ void main() {
   setUpAll(() async {
     await initializeDateFormatting('mr');
     await initializeDateFormatting('en');
+    await initializeDateFormatting('hi');
+    await initializeDateFormatting('gu');
   });
 
   testWidgets('home shows admin-driven sections', (tester) async {
@@ -119,11 +121,25 @@ void main() {
     expect(find.text('BOOKED'), findsOneWidget);
   });
 
+  testWidgets('switching to Hindi and Gujarati translates the UI', (tester) async {
+    final c = await _start(tester, to: '/profile/settings');
+    await tester.tap(find.text('हिंदी'));
+    await tester.pumpAndSettle();
+    expect(find.text('सेटिंग्स'), findsOneWidget);
+    await tester.tap(find.text('ગુજરાતી'));
+    await tester.pumpAndSettle();
+    expect(find.text('સેટિંગ્સ'), findsOneWidget);
+    c.read(routerProvider).go('/home');
+    await tester.pumpAndSettle();
+    expect(find.text('આજની શુભેચ્છા'), findsOneWidget);
+  });
+
   test('protected paths', () {
     expect(needsLogin('/donate'), isTrue);
     expect(needsLogin('/book/x'), isTrue);
     expect(needsLogin('/profile'), isFalse);
     expect(needsLogin('/profile/seva'), isTrue);
+    expect(needsLogin('/profile/settings'), isFalse);
     expect(needsLogin('/events'), isFalse);
     expect(GoRouter, isNotNull);
   });

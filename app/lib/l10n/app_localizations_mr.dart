@@ -606,4 +606,11 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get computedData =>
       'रुंधाटीसाठी गणनेवर आधारित माहिती (अंदाजे) – मंदिर प्रशासन बदल करू शकते';
+
+  @override
+  String get changePhoto => 'फोटो बदला';
+
+  @override
+  String get photoUploadUnavailable =>
+      'सर्व्हर जोडल्यानंतर फोटो अपलोड करता येईल.';
 }

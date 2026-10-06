@@ -28,6 +28,8 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (v) => setLang(v!),
             child: const Column(children: [
               RadioListTile(value: 'mr', title: Text('मराठी')),
+              RadioListTile(value: 'hi', title: Text('हिंदी')),
+              RadioListTile(value: 'gu', title: Text('ગુજરાતી')),
               RadioListTile(value: 'en', title: Text('English')),
             ]),
           ),

@@ -63,11 +63,27 @@ The admin panel is then served at `https://<project-id>.web.app`.
 
 ## 6. Android release
 
-1. Create an upload keystore and `app/android/key.properties` (both are git-ignored), then add a `release` signing config in `app/android/app/build.gradle.kts`.
-2. `cd app && flutter build appbundle --release`
-3. Play Console checklist:
+1. Create an upload keystore (keep it and its passwords safe – losing it blocks future updates):
+
+   ```bash
+   keytool -genkey -v -keystore ~/kjd-upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+   ```
+
+2. Create `app/android/key.properties` (git-ignored):
+
+   ```properties
+   storeFile=/home/you/kjd-upload-keystore.jks
+   storePassword=…
+   keyAlias=upload
+   keyPassword=…
+   ```
+
+   The Gradle config picks it up automatically and enables R8 shrinking with Razorpay's keep rules (`app/android/app/proguard-rules.pro`).
+3. Add the upload key's SHA-1/SHA-256 (and, after the first upload, Play App Signing's) to the Firebase Android app – phone OTP needs them.
+4. Bump `version:` in `app/pubspec.yaml`, then `cd app && flutter build appbundle --release`.
+5. Play Console checklist:
    - Privacy policy URL.
-   - Data safety form: phone number, name and payment info are processed by Razorpay.
+   - Data safety form: phone number, name, photos (optional) and payment info (processed by Razorpay).
    - Content rating.
    - Target API level as required by Play.
 

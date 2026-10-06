@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kjd_core/kjd_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/photo_uploader.dart';
 
 /// Overridden in `main.dart` once we know whether Firebase is available.
 final demoModeProvider = Provider<bool>((_) => true);
 final dataStoreProvider = Provider<DataStore>((_) => throw UnimplementedError());
 final authServiceProvider = Provider<AuthService>((_) => throw UnimplementedError());
 final checkoutServiceProvider = Provider<CheckoutService>((_) => throw UnimplementedError());
+final photoUploaderProvider = Provider<PhotoUploader>((_) => DisabledPhotoUploader());
 
 /// Injectable clock so tests can pin "today".
 final clockProvider = Provider<DateTime Function()>((_) => DateTime.now);
@@ -118,10 +122,24 @@ final myBannersProvider = StreamProvider((ref) {
 });
 
 // ---- Locale ----
+/// UI language. Remembered on the device (also for guests) and, when
+/// signed in, synced to the devotee profile by the settings screen.
 class LocaleController extends Notifier<Locale> {
+  static const _key = 'locale_v1';
+
   @override
-  Locale build() => const Locale('mr');
-  void set(Locale l) => state = l;
+  Locale build() {
+    SharedPreferences.getInstance().then((p) {
+      final saved = p.getString(_key);
+      if (saved != null && saved != state.languageCode) state = Locale(saved);
+    }).catchError((_) {});
+    return const Locale('mr');
+  }
+
+  void set(Locale l) {
+    state = l;
+    SharedPreferences.getInstance().then((p) => p.setString(_key, l.languageCode)).catchError((_) => false);
+  }
 }
 
 final localeProvider = NotifierProvider<LocaleController, Locale>(LocaleController.new);

@@ -8,6 +8,7 @@ import 'package:kjd_core/kjd_core.dart';
 import 'app/app.dart';
 import 'app/providers.dart';
 import 'firebase_options.dart';
+import 'services/photo_uploader.dart';
 import 'services/push_service.dart';
 import 'services/razorpay_checkout.dart';
 
@@ -19,6 +20,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('mr');
   await initializeDateFormatting('en');
+  await initializeDateFormatting('hi');
+  await initializeDateFormatting('gu');
 
   final overrides = await _bootstrap();
   runApp(ProviderScope(overrides: overrides, child: const KjdApp()));
@@ -36,6 +39,7 @@ Future<List<Override>> _bootstrap() async {
         dataStoreProvider.overrideWithValue(store),
         authServiceProvider.overrideWithValue(auth),
         checkoutServiceProvider.overrideWithValue(RazorpayCheckoutService()),
+        photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
       ];
     } catch (e) {
       debugPrint('Firebase unavailable, starting in demo mode: $e');

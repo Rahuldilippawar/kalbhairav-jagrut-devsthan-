@@ -36,7 +36,11 @@ import 'shell.dart';
 /// Paths that need a signed-in devotee.
 const _protected = ['/donate', '/book', '/pass', '/receipt', '/profile/'];
 
-bool needsLogin(String location) => _protected.any(location.startsWith);
+/// Guests may still change the app language.
+const _public = ['/profile/settings'];
+
+bool needsLogin(String location) =>
+    !_public.any(location.startsWith) && _protected.any(location.startsWith);
 
 class _AuthRefresh extends ChangeNotifier {
   _AuthRefresh(Stream<AuthUser?> s) {
