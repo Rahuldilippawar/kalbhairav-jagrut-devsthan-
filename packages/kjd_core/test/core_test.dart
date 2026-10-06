@@ -98,6 +98,18 @@ void main() {
       expect(s.isOpenAt(DateTime(2026, 10, 6, 13)), isFalse);
     });
 
+    test('route directions url', () {
+      const a = EventScheduleItem(id: 'a', eventId: 'e', title: 'A', latitude: 21.0, longitude: 75.0);
+      const b = EventScheduleItem(id: 'b', eventId: 'e', title: 'B');
+      const c = EventScheduleItem(id: 'c', eventId: 'e', title: 'C', latitude: 21.1, longitude: 75.1);
+      expect(routeDirectionsUrl([a, b]), isNull);
+      final url = Uri.parse(routeDirectionsUrl([a, b, c], endLat: 21.2, endLng: 75.2)!);
+      expect(url.queryParameters['origin'], '21.0,75.0');
+      expect(url.queryParameters['waypoints'], '21.1,75.1');
+      expect(url.queryParameters['destination'], '21.2,75.2');
+      expect(url.queryParameters['travelmode'], 'walking');
+    });
+
     test('banner placeholder fill', () {
       expect(BannerTemplate.fill('{name} यांना शुभेच्छा', {'name': 'श्री. राम'}), 'श्री. राम यांना शुभेच्छा');
     });

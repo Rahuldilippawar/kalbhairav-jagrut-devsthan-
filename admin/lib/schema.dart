@@ -215,6 +215,8 @@ abstract final class Specs {
           const FieldSpec('dindi.contactName', 'Dindi: contact name'),
           const FieldSpec('dindi.contactPhone', 'Dindi: contact phone'),
           const FieldSpec('dindi.routeMapUrl', 'Dindi: route map link', type: FieldType.url),
+          const FieldSpec('dindi.destinationLat', 'Dindi: destination latitude', type: FieldType.decimal),
+          const FieldSpec('dindi.destinationLng', 'Dindi: destination longitude', type: FieldType.decimal),
         ],
       );
 
@@ -234,6 +236,8 @@ abstract final class Specs {
       FieldSpec('guest', 'Guest / Speaker'),
       FieldSpec('departureTime', 'Dindi: departure time', type: FieldType.time),
       FieldSpec('mukkaam', 'Dindi: mukkaam (night halt)'),
+      FieldSpec('latitude', 'Route map: latitude of location', type: FieldType.decimal, help: 'Long-press the place in Google Maps to copy its coordinates'),
+      FieldSpec('longitude', 'Route map: longitude of location', type: FieldType.decimal),
       FieldSpec('imageUrl', 'Image', type: FieldType.image),
       FieldSpec('order', 'Order within day', type: FieldType.integer, defaultValue: 0),
     ],

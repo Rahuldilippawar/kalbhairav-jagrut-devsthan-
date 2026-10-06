@@ -59,6 +59,8 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
       dindi: const DindiDetails(
         startPoint: 'श्री काळभैरव मंदिर, रुंधाटी',
         destination: 'अमळनेर',
+        destinationLat: 21.0417,
+        destinationLng: 75.0581,
         instructions: 'पाणी बाटली, आवश्यक औषधे व ओळखपत्र सोबत ठेवा. स्वयंसेवकांच्या सूचनांचे पालन करा. रस्त्याच्या डाव्या बाजूने चाला.',
         contactName: 'दिंडी समिती',
         contactPhone: '+919999999999',
@@ -141,11 +143,12 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
       EventScheduleItem(id: 'nav-$i-b', eventId: 'navratri-$y', dayNumber: i + 1, date: d(5 + i), time: '10:00', title: navDays[i], description: 'दिवस ${i + 1} – ${navDays[i]}', order: 1),
       EventScheduleItem(id: 'nav-$i-c', eventId: 'navratri-$y', dayNumber: i + 1, date: d(5 + i), time: '19:30', title: i == 8 ? 'महाआरती' : 'सायं आरती', order: 2),
     ],
+    // Coordinates are approximate placeholders for the demo route.
     for (final (i, stop) in [
-      ('रुंधाटी', '05:30', 'मांडळ'),
-      ('मांडळ', '06:00', 'जानवे'),
-      ('जानवे', '06:00', 'पातोंडा'),
-      ('पातोंडा', '05:30', 'अमळनेर – सांगता'),
+      ('रुंधाटी', '05:30', 'मांडळ', 21.080, 75.120),
+      ('मांडळ', '06:00', 'जानवे', 21.120, 75.170),
+      ('जानवे', '06:00', 'पातोंडा', 21.095, 75.100),
+      ('पातोंडा', '05:30', 'अमळनेर – सांगता', 21.060, 75.030),
     ].indexed)
       EventScheduleItem(
         id: 'dindi-$i',
@@ -156,6 +159,8 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
         location: stop.$1,
         departureTime: stop.$2,
         mukkaam: stop.$3,
+        latitude: stop.$4,
+        longitude: stop.$5,
         order: i,
       ),
     EventScheduleItem(id: 'gp-1', eventId: 'guru-purnima-$y', title: 'गुरु पूजन', time: '08:00', order: 0),

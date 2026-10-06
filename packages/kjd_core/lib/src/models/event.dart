@@ -50,10 +50,14 @@ class DindiDetails {
     this.contactName,
     this.contactPhone,
     this.routeMapUrl,
+    this.destinationLat,
+    this.destinationLng,
   });
 
   final String? startPoint;
   final String? destination;
+  final double? destinationLat;
+  final double? destinationLng;
   final String? instructions;
   final String? contactName;
   final String? contactPhone;
@@ -68,6 +72,8 @@ class DindiDetails {
         contactName: asStringOrNull(m['contactName']),
         contactPhone: asStringOrNull(m['contactPhone']),
         routeMapUrl: asStringOrNull(m['routeMapUrl']),
+        destinationLat: asDoubleOrNull(m['destinationLat']),
+        destinationLng: asDoubleOrNull(m['destinationLng']),
       );
 
   Map<String, dynamic> toMap() => {
@@ -77,6 +83,8 @@ class DindiDetails {
         'contactName': contactName,
         'contactPhone': contactPhone,
         'routeMapUrl': routeMapUrl,
+        'destinationLat': destinationLat,
+        'destinationLng': destinationLng,
       };
 }
 
@@ -211,6 +219,8 @@ class EventScheduleItem {
     this.imageUrl,
     this.departureTime,
     this.mukkaam,
+    this.latitude,
+    this.longitude,
     this.order = 0,
   });
 
@@ -226,7 +236,13 @@ class EventScheduleItem {
   final String? imageUrl;
   final String? departureTime;
   final String? mukkaam;
+
+  /// Optional coordinates of [location] – used for the route map.
+  final double? latitude;
+  final double? longitude;
   final int order;
+
+  bool get hasCoordinates => latitude != null && longitude != null;
 
   factory EventScheduleItem.fromMap(String id, Map<String, dynamic> m) => EventScheduleItem(
         id: id,
@@ -241,6 +257,8 @@ class EventScheduleItem {
         imageUrl: asStringOrNull(m['imageUrl']),
         departureTime: asStringOrNull(m['departureTime']),
         mukkaam: asStringOrNull(m['mukkaam']),
+        latitude: asDoubleOrNull(m['latitude']),
+        longitude: asDoubleOrNull(m['longitude']),
         order: asInt(m['order']),
       );
 
@@ -256,8 +274,29 @@ class EventScheduleItem {
         'imageUrl': imageUrl,
         'departureTime': departureTime,
         'mukkaam': mukkaam,
+        'latitude': latitude,
+        'longitude': longitude,
         'order': order,
       };
+}
+
+/// Google Maps walking directions through route stops that have
+/// coordinates (origin → waypoints → destination).
+String? routeDirectionsUrl(List<EventScheduleItem> stops, {double? endLat, double? endLng}) {
+  final pts = [
+    for (final s in stops)
+      if (s.hasCoordinates) '${s.latitude},${s.longitude}',
+    if (endLat != null && endLng != null) '$endLat,$endLng',
+  ];
+  if (pts.length < 2) return null;
+  final waypoints = pts.sublist(1, pts.length - 1);
+  return Uri.https('www.google.com', '/maps/dir/', {
+    'api': '1',
+    'origin': pts.first,
+    'destination': pts.last,
+    if (waypoints.isNotEmpty) 'waypoints': waypoints.join('|'),
+    'travelmode': 'walking',
+  }).toString();
 }
 
 enum MediaType { photo, video, youtube, live }

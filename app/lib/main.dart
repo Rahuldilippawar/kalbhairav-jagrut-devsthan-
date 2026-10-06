@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'services/photo_uploader.dart';
 import 'services/push_service.dart';
 import 'services/razorpay_checkout.dart';
+import 'widgets/route_map.dart';
 
 /// Pass `--dart-define=KJD_DEMO=true` to force demo mode even when Firebase
 /// is configured.
@@ -49,7 +50,7 @@ Future<List<Override>> _bootstrap() async {
 }
 
 /// Offline, seeded configuration. Also used by widget tests.
-List<Override> demoOverrides({DateTime Function()? clock, AuthUser? user}) {
+List<Override> demoOverrides({DateTime Function()? clock, AuthUser? user, bool mapTiles = true}) {
   final now = clock ?? DateTime.now;
   final store = MemoryDataStore(buildDemoSeed(now()))..clock = now;
   final auth = DemoAuthService(initial: user);
@@ -57,6 +58,7 @@ List<Override> demoOverrides({DateTime Function()? clock, AuthUser? user}) {
   return [
     demoModeProvider.overrideWithValue(true),
     clockProvider.overrideWithValue(now),
+    if (!mapTiles) mapTileUrlProvider.overrideWithValue(null),
     dataStoreProvider.overrideWithValue(store),
     authServiceProvider.overrideWithValue(auth),
     checkoutServiceProvider.overrideWithValue(DemoCheckoutService(

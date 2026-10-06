@@ -7,6 +7,7 @@ import '../../app/providers.dart';
 import '../../app/shell.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
+import '../../widgets/route_map.dart';
 import '../../widgets/youtube_view.dart';
 import '../darshan/live_darshan_screen.dart';
 import '../gallery/gallery_screen.dart';
@@ -44,7 +45,14 @@ class EventDetailScreen extends ConsumerWidget {
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(e.title, style: const TextStyle(fontSize: 16)),
+                  // Sit above the TabBar (kTextTabBarHeight) instead of under it.
+                  titlePadding: const EdgeInsetsDirectional.only(start: 56, end: 56, bottom: kTextTabBarHeight + 14),
+                  title: Text(
+                    e.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w800, shadows: [Shadow(blurRadius: 6)]),
+                  ),
                   background: Stack(fit: StackFit.expand, children: [
                     NetImage(e.bannerUrl, fallbackIcon: categoryIcon(cats, e.categoryId)),
                     const DecoratedBox(
@@ -208,6 +216,10 @@ class _ScheduleTab extends ConsumerWidget {
         byDay.putIfAbsent(i.dayNumber, () => []).add(i);
       }
       return ListView(padding: const EdgeInsets.all(16), children: [
+        if (dindi) ...[
+          RouteMap(stops: items, dindi: event.dindi),
+          const SizedBox(height: 8),
+        ],
         for (final entry in byDay.entries) ...[
           if (entry.key != null)
             Padding(

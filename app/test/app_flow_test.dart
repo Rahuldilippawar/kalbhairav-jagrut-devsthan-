@@ -7,6 +7,7 @@ import 'package:kjd_app/app/app.dart';
 import 'package:kjd_app/app/providers.dart';
 import 'package:kjd_app/app/router.dart';
 import 'package:kjd_app/main.dart';
+import 'package:kjd_app/widgets/route_map.dart';
 import 'package:kjd_core/kjd_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +20,7 @@ Future<ProviderContainer> _start(WidgetTester tester, {AuthUser? user, String to
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 2.5;
   addTearDown(tester.view.reset);
-  final container = ProviderContainer(overrides: demoOverrides(clock: () => _now, user: user));
+  final container = ProviderContainer(overrides: demoOverrides(clock: () => _now, user: user, mapTiles: false));
   addTearDown(container.dispose);
   await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const KjdApp()));
   await tester.pump(const Duration(seconds: 2)); // splash
@@ -64,6 +65,10 @@ void main() {
     await _start(tester, to: '/event/dindi-2026');
     await tester.tap(find.text('मार्ग').first);
     await tester.pumpAndSettle();
+    expect(find.byType(RouteMap), findsOneWidget);
+    expect(find.descendant(of: find.byType(RouteMap), matching: find.text('🚩')), findsOneWidget); // destination pin
+    expect(find.descendant(of: find.byType(RouteMap), matching: find.text('4')), findsOneWidget); // day-4 stop
+    await tester.scrollUntilVisible(find.textContaining('मुक्काम: मांडळ'), 200, scrollable: find.byType(Scrollable).last);
     expect(find.textContaining('मुक्काम: मांडळ'), findsOneWidget);
   });
 
