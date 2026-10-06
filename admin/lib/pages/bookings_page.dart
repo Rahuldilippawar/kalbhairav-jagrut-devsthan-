@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kjd_core/kjd_core.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../providers.dart';
 import '../services/download.dart';
@@ -162,6 +163,13 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
     super.dispose();
   }
 
+  Future<void> _scan() async {
+    final value = await Navigator.of(context).push<String>(MaterialPageRoute(builder: (_) => const QrScanPage()));
+    if (value == null || !mounted) return;
+    _input.text = value;
+    await _submit();
+  }
+
   Future<void> _submit() async {
     final v = _input.text.trim();
     if (v.isEmpty) return;
@@ -197,6 +205,14 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
           const SizedBox(height: 12),
           const Text('Scan the QR Seva Pass or type the booking number (KJD-SEVA-000123)', textAlign: TextAlign.center),
           const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: _busy ? null : _scan,
+            icon: const Icon(Icons.photo_camera),
+            label: Text(_last == null ? 'Scan with camera' : 'Scan next pass'),
+          ),
+          const SizedBox(height: 8),
+          const Text('or', textAlign: TextAlign.center, style: TextStyle(color: KjdColors.inkMuted)),
+          const SizedBox(height: 8),
           TextField(
             controller: _input,
             focusNode: _focus,
@@ -238,4 +254,91 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
       ),
     );
   }
+}
+
+/// Full-screen camera scanner (phone or laptop camera via the browser).
+/// Returns the first Seva Pass payload it sees.
+class QrScanPage extends StatefulWidget {
+  const QrScanPage({super.key});
+  @override
+  State<QrScanPage> createState() => _QrScanPageState();
+}
+
+class _QrScanPageState extends State<QrScanPage> {
+  final _controller = MobileScannerController(formats: const [BarcodeFormat.qrCode]);
+  bool _done = false;
+  String? _ignored;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onDetect(BarcodeCapture capture) {
+    if (_done) return;
+    for (final b in capture.barcodes) {
+      final v = b.rawValue;
+      if (v == null) continue;
+      if (SevaBooking.parseQr(v) != null) {
+        _done = true;
+        Navigator.of(context).pop(v);
+        return;
+      }
+      if (v != _ignored) setState(() => _ignored = v);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          title: const Text('Scan Seva Pass'),
+          actions: [
+            IconButton(tooltip: 'Torch', onPressed: _controller.toggleTorch, icon: const Icon(Icons.flashlight_on)),
+            IconButton(tooltip: 'Switch camera', onPressed: _controller.switchCamera, icon: const Icon(Icons.cameraswitch)),
+          ],
+        ),
+        body: Stack(fit: StackFit.expand, children: [
+          MobileScanner(
+            controller: _controller,
+            onDetect: _onDetect,
+            errorBuilder: (context, error) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  error.errorCode == MobileScannerErrorCode.permissionDenied
+                      ? 'Camera permission was denied. Allow camera access for this site and try again.'
+                      : 'Camera unavailable: ${error.errorDetails?.message ?? error.errorCode.name}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          // Aiming guide, only while the camera is live.
+          ValueListenableBuilder(
+            valueListenable: _controller,
+            builder: (context, state, _) => state.isRunning && state.error == null
+                ? Center(
+                    child: Container(
+                      width: 260,
+                      height: 260,
+                      decoration: BoxDecoration(border: Border.all(color: KjdColors.gold, width: 4), borderRadius: BorderRadius.circular(20)),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 32,
+            child: Text(
+              _ignored == null ? 'Point the camera at the QR on the devotee\'s Seva Pass' : 'That QR is not a KJD Seva Pass',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: _ignored == null ? Colors.white : KjdColors.gold, fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ]),
+      );
 }
