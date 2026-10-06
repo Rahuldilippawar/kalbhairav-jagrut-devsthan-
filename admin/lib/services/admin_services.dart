@@ -9,6 +9,10 @@ abstract class AdminFunctions {
   Future<String?> setAdminRole({required String email, required AdminRole? role, String? name});
   Future<SevaBooking> checkIn({String? qr, String? bookingNo, bool complete = false});
   Future<void> cancelBooking(String bookingId, String reason);
+
+  /// First-time setup: the owner email listed in BOOTSTRAP_SUPER_ADMIN_EMAILS
+  /// claims the Super Admin role when no super admin exists yet.
+  Future<void> claimSuperAdmin();
 }
 
 class FirebaseAdminFunctions implements AdminFunctions {
@@ -37,6 +41,9 @@ class FirebaseAdminFunctions implements AdminFunctions {
   @override
   Future<void> cancelBooking(String bookingId, String reason) =>
       _call('cancelBooking', {'bookingId': bookingId, 'reason': reason});
+
+  @override
+  Future<void> claimSuperAdmin() => _call('claimSuperAdmin', {});
 }
 
 /// Demo-mode equivalents operating directly on the in-memory store.
@@ -102,6 +109,9 @@ class DemoAdminFunctions implements AdminFunctions {
     final a = actor();
     await _admin.log(actorId: a.uid, actorName: a.displayName ?? a.uid, action: 'cancel', collection: Col.sevaBookings, recordId: bookingId, summary: reason);
   }
+
+  @override
+  Future<void> claimSuperAdmin() async => throw UnsupportedError('Use super_admin@demo.kjd in demo mode');
 }
 
 /// Uploads media to Firebase Storage under `public/` and returns its URL.

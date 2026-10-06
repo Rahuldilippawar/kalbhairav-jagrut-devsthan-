@@ -69,7 +69,7 @@ export async function deliver(id: string, n: NotificationDoc): Promise<void> {
 
   const notification = { title: n.title, body: n.body, ...(n.imageUrl ? { imageUrl: n.imageUrl } : {}) };
   const data = { type: n.type ?? "announcement", route: n.route ?? "", id };
-  const android = { priority: "high" as const, notification: { channelId: "kjd_default", color: "#B71C1C" } };
+  const android = { priority: "high" as const, notification: { color: "#B71C1C" } };
   let sent = 0;
   try {
     const to = await recipients(n);

@@ -16,6 +16,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   String? _error;
   bool _busy = false;
 
+  /// Signed in, but the account has no admin role yet.
+  bool _noRole = false;
+
+  Future<void> _claim() async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(adminFunctionsProvider).claimSuperAdmin();
+      await ref.read(authServiceProvider).refresh();
+    } catch (e) {
+      setState(() => _error = '$e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   void dispose() {
     _email.dispose();
@@ -30,10 +45,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
     try {
       final u = await ref.read(authServiceProvider).signInWithEmail(_email.text.trim(), _password.text);
-      if (!u.isAdmin) {
-        await ref.read(authServiceProvider).signOut();
-        setState(() => _error = 'This account has no admin role. Ask the Super Admin to assign one.');
-      }
+      if (!u.isAdmin) setState(() => _noRole = true);
     } catch (e) {
       setState(() => _error = '$e');
     } finally {
@@ -76,6 +88,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         decoration: const InputDecoration(labelText: 'Password'),
                         onSubmitted: (_) => _login(),
                       ),
+                      if (_noRole) ...[
+                        const SizedBox(height: 12),
+                        const Text('This account has no admin role. Ask the Super Admin to assign one. '
+                            'First-time setup: if this email is listed in BOOTSTRAP_SUPER_ADMIN_EMAILS you can claim Super Admin.',
+                            style: TextStyle(color: KjdColors.kumkum)),
+                        Row(children: [
+                          TextButton(onPressed: _busy ? null : _claim, child: const Text('Claim Super Admin')),
+                          TextButton(
+                            onPressed: () {
+                              ref.read(authServiceProvider).signOut();
+                              setState(() => _noRole = false);
+                            },
+                            child: const Text('Sign out'),
+                          ),
+                        ]),
+                      ],
                       if (_error != null) ...[
                         const SizedBox(height: 12),
                         Text(_error!, style: const TextStyle(color: KjdColors.kumkum)),

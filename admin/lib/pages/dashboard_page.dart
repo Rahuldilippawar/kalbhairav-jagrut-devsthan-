@@ -125,7 +125,10 @@ class _StarterContentCard extends ConsumerWidget {
             final seed = buildDemoSeed(ref.read(clockProvider)());
             for (final col in _collections) {
               for (final e in seed[col]!.entries) {
-                await store.set(col, e.key, {...e.value, 'createdAt': store.serverTimestamp}, merge: true);
+                final data = {...e.value, 'createdAt': store.serverTimestamp};
+                // Never copy demo placeholder contact numbers into a live project.
+                if (col == Col.templeInfo) data..remove('phone')..remove('whatsapp');
+                await store.set(col, e.key, data, merge: true);
               }
             }
             await ref.read(adminRepoProvider).log(
