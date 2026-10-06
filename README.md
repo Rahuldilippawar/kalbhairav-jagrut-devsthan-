@@ -61,7 +61,9 @@ Demo payments succeed instantly and produce real receipts and QR passes. Nothing
 
 ## Going live
 
-See **[docs/SETUP.md](docs/SETUP.md)** for step-by-step instructions: Firebase project, `flutterfire configure`, Razorpay keys and webhook, deploying rules, indexes, functions and hosting, claiming the first Super Admin, and Android release builds.
+**No computer?** Follow **[docs/MOBILE_SETUP.md](docs/MOBILE_SETUP.md)** (Marathi). It uses the GitHub Actions *Deploy to Firebase* and *Build Android APK* workflows, so everything can be done from a phone browser.
+
+With a computer, see **[docs/SETUP.md](docs/SETUP.md)** for step-by-step instructions: Firebase project, `flutterfire configure`, Razorpay keys and webhook, deploying rules, indexes, functions and hosting, claiming the first Super Admin, and Android release builds.
 
 ## Tests
 
