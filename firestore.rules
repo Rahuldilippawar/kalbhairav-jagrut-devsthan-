@@ -1,0 +1,130 @@
+rules_version = '2';
+
+// Kalbhairav Jagrut Devsthan – Firestore security rules.
+//
+// * Public temple content is world-readable; only admins with the right
+//   module (see roleModules) can change it.
+// * Money documents (payments, donations, receipts, seva_bookings,
+//   counters, slot counts) are written ONLY by Cloud Functions (Admin SDK
+//   bypasses rules). Devotees can read their own.
+// * Admin roles live in the `role` custom claim set by setAdminRole.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- helpers -------------------------------------------------------
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function role() { return signedIn() ? request.auth.token.get('role', null) : null; }
+
+    // Keep in sync with packages/kjd_core/lib/src/rbac.dart and functions/src/rbac.ts.
+    function roleModules() {
+      return {
+        'super_admin': ['dashboard','temple','darshan','events','seva','bookings','checkIn','donations','payments','devotees','content','banners','gallery','live','notifications','reports','users','settings','auditLogs'],
+        'temple_admin': ['dashboard','temple','darshan','events','seva','bookings','checkIn','donations','payments','devotees','content','banners','gallery','live','notifications','reports','settings','auditLogs'],
+        'event_manager': ['dashboard','events','gallery','live','notifications'],
+        'seva_manager': ['dashboard','seva','bookings','checkIn','devotees','reports'],
+        'accounts_manager': ['dashboard','donations','payments','bookings','reports'],
+        'content_manager': ['dashboard','temple','darshan','content','banners','live','notifications'],
+        'gallery_manager': ['dashboard','gallery'],
+        'volunteer': ['dashboard','checkIn']
+      };
+    }
+    function isAdmin() { return role() != null && role() in roleModules(); }
+    function can(m) { return isAdmin() && m in roleModules()[role()]; }
+    function owns(data) { return signedIn() && data.userId == uid(); }
+
+    // ---- public content ------------------------------------------------
+    match /temple_info/{id} { allow read: if true; allow write: if can('temple'); }
+    match /home_banners/{id} { allow read: if true; allow write: if can('content') || can('temple'); }
+    match /darshan_schedule/{id} { allow read: if true; allow write: if can('darshan'); }
+    match /live_darshan/{id} { allow read: if true; allow write: if can('live'); }
+    match /app_settings/{id} { allow read: if true; allow write: if can('settings'); }
+
+    match /events/{id} {
+      allow read: if resource.data.status in ['published', 'completed'] || can('events') || can('notifications');
+      allow write: if can('events');
+    }
+    match /event_categories/{id} { allow read: if true; allow write: if can('events'); }
+    match /event_schedules/{id} { allow read: if true; allow write: if can('events'); }
+    match /event_media/{id} { allow read: if true; allow write: if can('events') || can('gallery'); }
+
+    match /daily_quotes/{id} { allow read: if true; allow write: if can('content'); }
+    match /daily_greetings/{id} { allow read: if true; allow write: if can('content'); }
+    match /tithi_content/{id} { allow read: if true; allow write: if can('content'); }
+    match /announcements/{id} { allow read: if true; allow write: if can('content') || can('notifications'); }
+    match /banner_templates/{id} { allow read: if true; allow write: if can('banners'); }
+    match /gallery/{id} { allow read: if true; allow write: if can('gallery'); }
+    match /videos/{id} { allow read: if true; allow write: if can('gallery') || can('events') || can('live'); }
+    match /sevas/{id} { allow read: if true; allow write: if can('seva'); }
+    match /seva_slot_counts/{id} { allow read: if true; allow write: if false; }
+
+    // ---- devotee data --------------------------------------------------
+    match /users/{userId} {
+      allow read: if (signedIn() && uid() == userId) || can('devotees') || can('notifications');
+      allow create, update: if signedIn() && uid() == userId
+        && request.resource.data.keys().hasOnly([
+          'name','nameLower','mobile','email','village','photoUrl','dob','dobMonthDay','anniversary',
+          'anniversaryMonthDay','spouseName','birthdayPrivacy','language','notificationsEnabled',
+          'createdAt','updatedAt'])
+        && (request.resource.data.mobile == request.auth.token.get('phone_number', request.resource.data.mobile));
+      allow delete: if false;
+
+      match /tokens/{token} {
+        allow read, write: if signedIn() && uid() == userId;
+      }
+    }
+
+    match /family_members/{id} {
+      allow read: if owns(resource.data) || can('devotees');
+      allow create: if owns(request.resource.data);
+      allow update: if owns(resource.data) && owns(request.resource.data);
+      allow delete: if owns(resource.data);
+    }
+
+    match /event_reminders/{id} {
+      allow read: if owns(resource.data) || can('events') || can('notifications');
+      allow create, update: if owns(request.resource.data) && id == uid() + '_' + request.resource.data.eventId;
+      allow delete: if owns(resource.data);
+    }
+
+    match /generated_banners/{id} {
+      allow read: if owns(resource.data) || can('banners');
+      allow create: if owns(request.resource.data);
+      allow update, delete: if owns(resource.data);
+    }
+
+    // ---- money: Cloud Functions only -----------------------------------
+    match /payments/{id} { allow read: if owns(resource.data) || can('payments'); allow write: if false; }
+    match /donations/{id} { allow read: if owns(resource.data) || can('donations') || can('reports'); allow write: if false; }
+    match /receipts/{id} {
+      allow read: if owns(resource.data) || can('donations') || can('bookings') || can('reports');
+      allow write: if false;
+    }
+    match /seva_bookings/{id} {
+      allow read: if owns(resource.data) || can('bookings') || can('checkIn') || can('reports');
+      allow write: if false;
+    }
+    match /counters/{id} { allow read, write: if false; }
+
+    // ---- notifications -------------------------------------------------
+    match /notifications/{id} {
+      allow read: if resource.data.target == 'all'
+        || (signedIn() && resource.data.target == 'user' && resource.data.targetId == uid())
+        || can('notifications');
+      allow create: if can('notifications') && !('sentAt' in request.resource.data);
+      allow update: if can('notifications') && !('sentAt' in resource.data);
+      allow delete: if can('notifications');
+    }
+
+    // ---- administration ------------------------------------------------
+    match /admin_users/{adminId} {
+      allow read: if (signedIn() && uid() == adminId) || can('users') || can('auditLogs');
+      allow write: if false; // setAdminRole function only
+    }
+    match /audit_logs/{id} {
+      allow read: if can('auditLogs');
+      allow create: if isAdmin() && request.resource.data.actorId == uid();
+      allow update, delete: if false;
+    }
+  }
+}

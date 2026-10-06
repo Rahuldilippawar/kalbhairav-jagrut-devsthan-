@@ -31,3 +31,5 @@ functions/.env*
 
 # OS
 .DS_Store
+functions/lib-test/
+rules-test/node_modules/
