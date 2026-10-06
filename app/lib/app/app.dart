@@ -7,11 +7,30 @@ import '../l10n/app_localizations.dart';
 import 'providers.dart';
 import 'router.dart';
 
-class KjdApp extends ConsumerWidget {
+class KjdApp extends ConsumerStatefulWidget {
   const KjdApp({super.key});
+  @override
+  ConsumerState<KjdApp> createState() => _KjdAppState();
+}
+
+class _KjdAppState extends ConsumerState<KjdApp> {
+  @override
+  void initState() {
+    super.initState();
+    final push = ref.read(pushServiceProvider);
+    if (push != null) {
+      push.start((route) => ref.read(routerProvider).push(route)).then((initial) {
+        if (initial != null) ref.read(pendingRouteProvider.notifier).set(initial);
+      });
+      ref.listenManual(uidProvider, (_, uid) => push.setUser(uid), fireImmediately: true);
+      // Broadcasts follow the devotee's preference; guests receive them.
+      ref.listenManual(profileProvider, (_, p) => push.setBroadcastEnabled(p.value?.notificationsEnabled ?? true),
+          fireImmediately: true);
+    }
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     // Keep the UI language in sync with the devotee's saved preference.
     ref.listen(profileProvider, (_, next) {

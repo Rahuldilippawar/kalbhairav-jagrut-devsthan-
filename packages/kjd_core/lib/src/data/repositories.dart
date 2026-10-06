@@ -282,6 +282,8 @@ class UserRepository {
   /// Stores an FCM token so the notification functions can reach the device.
   Future<void> saveFcmToken(String uid, String token) =>
       store.set('${Col.users}/$uid/tokens', token, {'token': token, 'at': store.serverTimestamp});
+
+  Future<void> deleteFcmToken(String uid, String token) => store.delete('${Col.users}/$uid/tokens', token);
 }
 
 /// Admin-side writes go through here so every change is audit-logged.

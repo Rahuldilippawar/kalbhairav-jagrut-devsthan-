@@ -4,6 +4,7 @@ import 'package:kjd_core/kjd_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/photo_uploader.dart';
+import '../services/push_service.dart';
 
 /// Overridden in `main.dart` once we know whether Firebase is available.
 final demoModeProvider = Provider<bool>((_) => true);
@@ -11,6 +12,24 @@ final dataStoreProvider = Provider<DataStore>((_) => throw UnimplementedError())
 final authServiceProvider = Provider<AuthService>((_) => throw UnimplementedError());
 final checkoutServiceProvider = Provider<CheckoutService>((_) => throw UnimplementedError());
 final photoUploaderProvider = Provider<PhotoUploader>((_) => DisabledPhotoUploader());
+
+/// Null in demo mode (no FCM).
+final pushServiceProvider = Provider<PushService?>((_) => null);
+
+/// A route to open once start-up (splash) finishes, e.g. from the
+/// notification that launched the app.
+class PendingRoute extends Notifier<String?> {
+  @override
+  String? build() => null;
+  void set(String? r) => state = r;
+  String? take() {
+    final r = state;
+    state = null;
+    return r;
+  }
+}
+
+final pendingRouteProvider = NotifierProvider<PendingRoute, String?>(PendingRoute.new);
 
 /// Injectable clock so tests can pin "today".
 final clockProvider = Provider<DateTime Function()>((_) => DateTime.now);

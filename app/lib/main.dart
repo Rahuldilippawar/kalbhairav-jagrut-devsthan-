@@ -34,13 +34,13 @@ Future<List<Override>> _bootstrap() async {
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
       final store = FirestoreDataStore();
       final auth = FirebaseAuthService();
-      auth.authStateChanges().listen((u) => PushService(UserRepository(store)).init(uid: u?.uid));
       return [
         demoModeProvider.overrideWithValue(false),
         dataStoreProvider.overrideWithValue(store),
         authServiceProvider.overrideWithValue(auth),
         checkoutServiceProvider.overrideWithValue(RazorpayCheckoutService()),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
+        pushServiceProvider.overrideWithValue(PushService(FirebasePushPlatform(), UserRepository(store))),
       ];
     } catch (e) {
       debugPrint('Firebase unavailable, starting in demo mode: $e');

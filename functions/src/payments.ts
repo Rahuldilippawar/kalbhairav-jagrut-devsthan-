@@ -136,9 +136,10 @@ export async function finalizePayment(orderId: string, paymentId: string, source
 
     if (pay.purpose === "donation") {
       const input = pay.intent as DonationInput;
-      const receiptNo = formatSequence("KJD-RCPT", await nextNumber(tx, "receipt"));
+      const receiptSeq = await nextNumber(tx, "receipt");
+      const receiptNo = formatSequence("KJD-RCPT", receiptSeq);
       const donationRef = db().collection("donations").doc();
-      tx.set(db().doc("counters/receipt"), { value: Number(receiptNo.slice(-6)) }, { merge: true });
+      tx.set(db().doc("counters/receipt"), { value: receiptSeq }, { merge: true });
       tx.set(donationRef, {
         ...input, receiptNo, userId: pay.userId, status: "SUCCESS", paymentId, orderId, createdAt: now,
       });
@@ -167,11 +168,13 @@ export async function finalizePayment(orderId: string, paymentId: string, source
       });
       return { refId: "", receiptId: "", number: "", refundRequired: true };
     }
-    const bookingNo = formatSequence("KJD-SEVA", await nextNumber(tx, "seva_booking"));
-    const receiptNo = formatSequence("KJD-RCPT", await nextNumber(tx, "receipt"));
+    const bookingSeq = await nextNumber(tx, "seva_booking");
+    const receiptSeq = await nextNumber(tx, "receipt");
+    const bookingNo = formatSequence("KJD-SEVA", bookingSeq);
+    const receiptNo = formatSequence("KJD-RCPT", receiptSeq);
     const bookingRef = db().collection("seva_bookings").doc();
-    tx.set(db().doc("counters/seva_booking"), { value: Number(bookingNo.slice(-6)) }, { merge: true });
-    tx.set(db().doc("counters/receipt"), { value: Number(receiptNo.slice(-6)) }, { merge: true });
+    tx.set(db().doc("counters/seva_booking"), { value: bookingSeq }, { merge: true });
+    tx.set(db().doc("counters/receipt"), { value: receiptSeq }, { merge: true });
     tx.set(slotRef, { count: used + 1, sevaId: input.sevaId, date: input.date, timeSlot: input.timeSlot }, { merge: true });
     tx.set(bookingRef, {
       bookingNo, userId: pay.userId, sevaId: input.sevaId, sevaName: input.sevaName, date: istMidnight(input.date),

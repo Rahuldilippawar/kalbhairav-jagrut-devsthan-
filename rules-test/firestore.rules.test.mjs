@@ -76,6 +76,16 @@ test("profile is self-only and cannot carry extra fields", async () => {
   await assertFails(setDoc(doc(other(), "users/u1"), { name: "x", mobile: "+919000000000" }));
   await assertFails(getDoc(doc(other(), "users/u1")));
   await assertSucceeds(getDoc(doc(admin("seva_manager"), "users/u1")));
+  await assertFails(getDoc(doc(admin("event_manager"), "users/u1")));
+  await assertFails(getDoc(doc(admin("content_manager"), "users/u1")));
+});
+
+test("a devotee can watch their own not-yet-created reminder", async () => {
+  // The app's "Remind me" button watches event_reminders/{uid}_{eventId}
+  // before the document exists.
+  await assertSucceeds(getDoc(doc(devotee(), "event_reminders/u1_pub")));
+  await assertFails(getDoc(doc(devotee(), "event_reminders/u2_pub")));
+  await assertFails(getDoc(doc(guest(), "event_reminders/u1_pub")));
 });
 
 test("reminders and family are owner-scoped", async () => {

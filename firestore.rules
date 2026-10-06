@@ -60,7 +60,9 @@ service cloud.firestore {
 
     // ---- devotee data --------------------------------------------------
     match /users/{userId} {
-      allow read: if (signedIn() && uid() == userId) || can('devotees') || can('notifications');
+      // Devotee PII: self, or staff who manage devotees. (Notifications are
+      // fanned out by Cloud Functions, which don't need this rule.)
+      allow read: if (signedIn() && uid() == userId) || can('devotees');
       allow create, update: if signedIn() && uid() == userId
         && request.resource.data.keys().hasOnly([
           'name','nameLower','mobile','email','village','photoUrl','dob','dobMonthDay','anniversary',
@@ -82,7 +84,11 @@ service cloud.firestore {
     }
 
     match /event_reminders/{id} {
-      allow read: if owns(resource.data) || can('events') || can('notifications');
+      // `get` by id must also work before the reminder exists (the app
+      // watches it to render the "Remind me" toggle).
+      allow get: if (signedIn() && id.matches('^' + uid() + '_.+$'))
+        || (resource != null && owns(resource.data)) || can('events') || can('notifications');
+      allow list: if owns(resource.data) || can('events') || can('notifications');
       allow create, update: if owns(request.resource.data) && id == uid() + '_' + request.resource.data.eventId;
       allow delete: if owns(resource.data);
     }

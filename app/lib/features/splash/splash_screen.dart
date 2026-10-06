@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../app/providers.dart';
 import '../../widgets/common.dart';
 
 const onboardingSeenKey = 'onboarding_seen_v1';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
@@ -26,7 +28,13 @@ class _SplashScreenState extends State<SplashScreen> {
       seen = (await SharedPreferences.getInstance()).getBool(onboardingSeenKey) ?? false;
     } catch (_) {}
     await Future<void>.delayed(const Duration(milliseconds: 1400));
-    if (mounted) context.go(seen ? '/home' : '/onboarding');
+    if (!mounted) return;
+    context.go(seen ? '/home' : '/onboarding');
+    // Opened from a notification: show its screen on top of Home.
+    if (seen) {
+      final pending = ref.read(pendingRouteProvider.notifier).take();
+      if (pending != null) context.push(pending);
+    }
   }
 
   @override
