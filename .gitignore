@@ -1,0 +1,35 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+**/ios/Pods/
+**/ios/.symlinks/
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/android/app/upload-keystore.jks
+**/Generated.xcconfig
+**/flutter_export_environment.sh
+
+# Firebase
+functions/node_modules/
+functions/lib/
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+**/google-services.json
+**/GoogleService-Info.plist
+functions/.env*
+!functions/.env.example
+.runtimeconfig.json
+
+# OS
+.DS_Store
+functions/lib-test/
+rules-test/node_modules/
