@@ -1255,6 +1255,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip'**
   String get skip;
+
+  /// No description provided for @computedData.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculated for Rundhati (approximate); the temple may update it'**
+  String get computedData;
 }
 
 class _AppLocalizationsDelegate

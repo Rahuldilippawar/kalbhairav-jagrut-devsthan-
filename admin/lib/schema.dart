@@ -40,6 +40,7 @@ class CollectionSpec {
     this.singletonId,
     this.searchFields = const [],
     this.readOnly = false,
+    this.beforeSave,
   });
 
   final String collection;
@@ -60,6 +61,9 @@ class CollectionSpec {
   final String? singletonId;
   final List<String> searchFields;
   final bool readOnly;
+
+  /// Last chance to adjust data written by the admin form.
+  final Map<String, dynamic> Function(Map<String, dynamic> data)? beforeSave;
 
   FieldSpec? field(String key) => fields.where((f) => f.key == key).firstOrNull;
 }
@@ -309,7 +313,11 @@ abstract final class Specs {
     title: "Today's Tithi (Panchang)",
     module: AdminModule.content,
     docIdField: 'date',
-    columns: const ['date', 'vaar', 'tithi', 'paksha', 'nakshatra', 'specialDay', 'source'],
+    columns: const ['date', 'vaar', 'tithi', 'paksha', 'masa', 'nakshatra', 'specialDay', 'source'],
+    orderBy: 'date',
+    descending: true,
+    // Anything an admin saves by hand is protected from the auto-generator.
+    beforeSave: (d) => {...d, 'source': 'manual', 'manualOverride': true},
     fields: const [
       FieldSpec('date', 'Date (yyyy-MM-dd)', required: true, help: 'Used as the document id'),
       FieldSpec('vaar', 'वार'),

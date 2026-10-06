@@ -41,8 +41,10 @@ void main() {
     await _start(tester);
     expect(find.text('श्री काळभैरव जागृत देवस्थान'), findsWidgets);
     expect(find.textContaining('शुभ प्रभात'), findsWidgets);
-    await tester.scrollUntilVisible(find.text('दशमी'), 300, scrollable: find.byType(Scrollable).first);
-    expect(find.text('दशमी'), findsOneWidget); // today's tithi
+    // Today's tithi is computed (no admin entry in demo): Bhadrapada Krishna Ekadashi.
+    await tester.scrollUntilVisible(find.text('आश्लेषा'), 300, scrollable: find.byType(Scrollable).first);
+    expect(find.text('एकादशी'), findsWidgets);
+    expect(find.textContaining('गणनेवर आधारित'), findsOneWidget);
     await tester.scrollUntilVisible(find.text('आगामी उत्सव'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.textContaining('नवरात्र उत्सव 2026'), findsWidgets);
   });

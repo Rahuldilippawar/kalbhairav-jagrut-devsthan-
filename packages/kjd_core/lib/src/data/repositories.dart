@@ -5,6 +5,7 @@ import '../models/event.dart';
 import '../models/seva.dart';
 import '../models/temple.dart';
 import '../models/user.dart';
+import '../panchang/panchang.dart';
 import '../utils/convert.dart';
 import 'collections.dart';
 import 'data_store.dart';
@@ -54,9 +55,11 @@ class ContentRepository {
   Stream<DailyQuote?> watchQuoteOfDay(DateTime day) =>
       watchQuotes().map((q) => DailyQuote.pickForDay(q, day));
 
+  /// Admin-published Panchang for [day], or the computed one when the
+  /// temple has not published (or imported) that day.
   Stream<TithiInfo?> watchTithi(DateTime day) => store
       .watchDoc(Col.tithiContent, dateKey(day))
-      .map((d) => d == null ? null : TithiInfo.fromMap(d.id, d.data));
+      .map((d) => d == null ? computeTithi(day) : TithiInfo.fromMap(d.id, d.data));
 
   Stream<List<Announcement>> watchActiveAnnouncements(DateTime now) => store
       .watch(Col.announcements, const Query(where: [Where.eq('status', 'published')]))

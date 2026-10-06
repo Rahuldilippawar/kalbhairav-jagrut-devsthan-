@@ -76,4 +76,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Booking is CHECK-IN'), findsOneWidget);
   });
+
+  testWidgets('tithi generator fills computed days but keeps manual ones', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.contentManager));
+    final store = c.read(dataStoreProvider);
+    await store.set(Col.tithiContent, '2026-10-07', {'date': '2026-10-07', 'tithi': 'हाताने', 'source': 'manual', 'manualOverride': true});
+    await tester.tap(find.text('Tithi / Panchang'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Generate next 30 days'));
+    await tester.pumpAndSettle();
+    final docs = (store as MemoryDataStore).dump(Col.tithiContent);
+    expect(docs, hasLength(30));
+    expect(docs['2026-10-07']!['tithi'], 'हाताने');
+    expect(docs['2026-10-06']!['tithi'], 'एकादशी');
+    expect(docs['2026-10-06']!['source'], 'computed');
+  });
 }

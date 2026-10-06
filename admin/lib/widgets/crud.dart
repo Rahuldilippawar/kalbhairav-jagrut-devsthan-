@@ -73,6 +73,7 @@ class CollectionListPage extends ConsumerStatefulWidget {
     this.rowActions,
     this.embedded = false,
     this.subtitle,
+    this.headerActions = const [],
   });
 
   final CollectionSpec spec;
@@ -82,6 +83,7 @@ class CollectionListPage extends ConsumerStatefulWidget {
   final List<Widget> Function(Doc doc)? rowActions;
   final bool embedded;
   final String? subtitle;
+  final List<Widget> headerActions;
 
   @override
   ConsumerState<CollectionListPage> createState() => _CollectionListPageState();
@@ -155,6 +157,7 @@ class _CollectionListPageState extends ConsumerState<CollectionListPage> {
               onChanged: (v) => setState(() => _q = v.trim()),
             ),
           ),
+          for (final a in widget.headerActions) ...[const SizedBox(width: 8), a],
           const SizedBox(width: 8),
           if (canWrite) FilledButton.icon(onPressed: () => _edit(null), icon: const Icon(Icons.add), label: const Text('Add')),
         ]),
@@ -354,7 +357,7 @@ class _RecordFormState extends ConsumerState<RecordForm> {
       setPath(out, f.key, v);
     }
     out.addAll(widget.fixedValues);
-    return out;
+    return spec.beforeSave?.call(out) ?? out;
   }
 
   Future<void> _save() async {

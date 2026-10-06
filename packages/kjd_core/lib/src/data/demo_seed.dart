@@ -9,8 +9,8 @@ import 'collections.dart';
 /// `tool/seed_firestore` in the admin app. Dates are relative to [now] so
 /// there are always upcoming and archived events to look at.
 ///
-/// Tithi/Panchang values here are illustrative placeholders, flagged with
-/// `source: 'demo'`; real values must come from the admin or a Panchang API.
+/// Tithi is not seeded: it is computed (see `computeTithi`) unless an admin
+/// publishes a day.
 Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
   final today = dateOnly(now);
   DateTime d(int days) => today.add(Duration(days: days));
@@ -205,20 +205,6 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
     ),
   ];
 
-  final tithi = TithiInfo(
-    date: dateKey(today),
-    vaar: const ['सोमवार', 'मंगळवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार', 'रविवार'][today.weekday - 1],
-    tithi: 'दशमी',
-    paksha: 'कृष्ण पक्ष',
-    nakshatra: 'पुष्य',
-    yoga: 'सिद्ध',
-    karana: 'वणिज',
-    sunrise: '06:24',
-    sunset: '18:12',
-    masa: 'भाद्रपद',
-    source: 'demo',
-  );
-
   Map<String, Map<String, dynamic>> byId<T>(List<T> items, String Function(T) id, Map<String, dynamic> Function(T) m) =>
       {for (final i in items) id(i): m(i)};
 
@@ -254,7 +240,6 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
     Col.darshanSchedule: byId(darshan, (s) => s.id, (s) => s.toMap()),
     Col.dailyQuotes: byId(quotes, (q) => q.id, (q) => q.toMap()),
     Col.dailyGreetings: byId(greetings, (g) => g.id, (g) => g.toMap()),
-    Col.tithiContent: {tithi.date: tithi.toMap()},
     Col.announcements: {
       'a1': Announcement(
         id: 'a1',

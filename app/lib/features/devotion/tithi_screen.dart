@@ -110,9 +110,10 @@ class TithiCard extends StatelessWidget {
               Text('🌅 ${l.sunrise} ${t.sunrise}'),
               Text('🌇 ${l.sunset} ${t.sunset}'),
             ]),
-            if (t.source == 'demo') ...[
+            if (t.source == 'demo' || t.source == 'computed') ...[
               const SizedBox(height: 8),
-              Text(l.sampleData, style: const TextStyle(fontSize: 11, color: KjdColors.saffron)),
+              Text(t.source == 'demo' ? l.sampleData : l.computedData,
+                  style: const TextStyle(fontSize: 11, color: KjdColors.saffron)),
             ],
           ]),
         ),

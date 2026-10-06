@@ -602,4 +602,8 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get skip => 'वगळा';
+
+  @override
+  String get computedData =>
+      'रुंधाटीसाठी गणनेवर आधारित माहिती (अंदाजे) – मंदिर प्रशासन बदल करू शकते';
 }

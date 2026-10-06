@@ -13,6 +13,7 @@ import 'events_page.dart';
 import 'finance_pages.dart';
 import 'notifications_page.dart';
 import 'reports_page.dart';
+import 'tithi_page.dart';
 import 'users_page.dart';
 
 class NavItem {
@@ -37,7 +38,7 @@ final List<NavItem> navItems = [
   NavItem('reports', 'Reports', Icons.bar_chart, AdminModule.reports, () => const ReportsPage(), group: 'Finance'),
   NavItem('greetings', 'Daily Subhechha', Icons.wb_sunny_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.greetings), group: 'Content'),
   NavItem('quotes', 'Quotes', Icons.format_quote, AdminModule.content, () => CollectionListPage(spec: Specs.quotes), group: 'Content'),
-  NavItem('tithi', 'Tithi / Panchang', Icons.calendar_month, AdminModule.content, () => CollectionListPage(spec: Specs.tithi), group: 'Content'),
+  NavItem('tithi', 'Tithi / Panchang', Icons.calendar_month, AdminModule.content, () => const TithiPage(), group: 'Content'),
   NavItem('announcements', 'Announcements', Icons.campaign_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.announcements), group: 'Content'),
   NavItem('home_banners', 'Home Banners', Icons.view_carousel_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.homeBanners), group: 'Content'),
   NavItem('banner_templates', 'Banner Studio Templates', Icons.palette_outlined, AdminModule.banners, () => CollectionListPage(spec: Specs.bannerTemplates), group: 'Content'),
