@@ -44,6 +44,9 @@ Future<void> sharePngAsPdf(Uint8List png, {required String fileName}) async {
 Future<bool> openUrl(String url) =>
     launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
 
+/// Opens a page inside the app (Custom Tab / SFSafariViewController).
+Future<bool> openInApp(String url) => launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView);
+
 Future<bool> callNumber(String phone) => launchUrl(Uri(scheme: 'tel', path: phone));
 
 Future<bool> openWhatsApp(String phone, {String text = ''}) {

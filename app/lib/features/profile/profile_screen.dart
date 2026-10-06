@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
+import '../../services/share_service.dart';
 import '../../widgets/common.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -16,20 +17,12 @@ class ProfileScreen extends ConsumerWidget {
     final profile = ref.watch(profileProvider).value;
 
     if (uid == null) {
+      // Anonymous sign-in has not finished yet (e.g. offline start-up).
       return Scaffold(
         appBar: AppBar(title: Text(l.profile)),
-        body: ListView(padding: const EdgeInsets.all(24), children: [
-          const TempleLogo(size: 140),
-          const SizedBox(height: 16),
-          Text(l.loginRequired, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
-          const SizedBox(height: 16),
-          FilledButton(onPressed: () => context.push('/login?from=%2Fprofile'), child: Text(l.login)),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => context.push('/profile/settings'),
-            icon: const Icon(Icons.language),
-            label: Text(l.language),
-          ),
+        body: ListView(padding: const EdgeInsets.all(16), children: [
+          const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
+          const _TempleManagementTile(),
         ]),
       );
     }
@@ -65,7 +58,8 @@ class ProfileScreen extends ConsumerWidget {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text((profile?.name.isNotEmpty ?? false) ? profile!.name : 'भक्त',
                     style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
-                Text(profile?.mobile ?? '', style: const TextStyle(color: KjdColors.goldLight)),
+                if ((profile?.mobile ?? '').isNotEmpty)
+                  Text(profile!.mobile, style: const TextStyle(color: KjdColors.goldLight)),
                 if (profile?.village != null) Text('📍 ${profile!.village}', style: const TextStyle(color: KjdColors.goldLight)),
               ]),
             ),
@@ -82,7 +76,8 @@ class ProfileScreen extends ConsumerWidget {
               color: KjdColors.goldLight,
               child: ListTile(
                 leading: const Icon(Icons.info_outline, color: KjdColors.kumkum),
-                title: Text(l.editProfile),
+                title: Text(l.editProfile, style: const TextStyle(fontWeight: FontWeight.w700)),
+                subtitle: Text(l.devoteeGuestNote),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push('/profile/edit'),
               ),
@@ -101,15 +96,29 @@ class ProfileScreen extends ConsumerWidget {
           ]),
         ),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
-          icon: const Icon(Icons.logout),
-          label: Text(l.logout),
-          onPressed: () async {
-            await ref.read(pushServiceProvider)?.detachUser();
-            await ref.read(authServiceProvider).signOut();
-          },
-        ),
+        const _TempleManagementTile(),
       ]),
+    );
+  }
+}
+
+/// Staff entry point: opens the admin panel login inside the app.
+class _TempleManagementTile extends ConsumerWidget {
+  const _TempleManagementTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final url = ref.watch(adminPanelUrlProvider);
+    return Card(
+      color: KjdColors.goldLight,
+      child: ListTile(
+        leading: const Text('🛕', style: TextStyle(fontSize: 26)),
+        title: Text(l.templeManagement, style: const TextStyle(fontWeight: FontWeight.w800)),
+        subtitle: Text(l.templeManagementHint),
+        trailing: const Icon(Icons.admin_panel_settings_outlined, color: KjdColors.kumkum),
+        onTap: () => url == null ? context.toast(l.adminUnavailableDemo) : openInApp(url),
+      ),
     );
   }
 }

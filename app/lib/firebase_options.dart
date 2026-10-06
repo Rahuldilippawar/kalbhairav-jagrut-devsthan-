@@ -17,6 +17,9 @@ class DefaultFirebaseOptions {
   static const _webAppId = String.fromEnvironment('FIREBASE_WEB_APP_ID');
   static const _androidAppId = String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
 
+  /// Admin panel (Firebase Hosting) for the "मंदिर व्यवस्थापन" button.
+  static String? get adminPanelUrl => _projectId.isEmpty ? null : 'https://$_projectId.web.app';
+
   static bool get isConfigured => _apiKey.isNotEmpty && _projectId.isNotEmpty && _senderId.isNotEmpty;
 
   static FirebaseOptions get currentPlatform {

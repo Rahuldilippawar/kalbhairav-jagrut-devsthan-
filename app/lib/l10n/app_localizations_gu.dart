@@ -664,4 +664,18 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get listen => 'સાંભળો';
+
+  @override
+  String get templeManagement => 'મંદિર વ્યવસ્થાપન';
+
+  @override
+  String get templeManagementHint => 'ફક્ત મંદિર કર્મચારીઓ માટે – એડમિન લૉગિન';
+
+  @override
+  String get adminUnavailableDemo =>
+      'સર્વર સાથે જોડાયા પછી એડમિન પેનલ ઉપલબ્ધ થશે.';
+
+  @override
+  String get devoteeGuestNote =>
+      'તમારી સેવા, પાવતી અને રિમાઇન્ડર આ ફોન પર સચવાય છે. મંદિર ઓળખી શકે તે માટે નામ અને મોબાઇલ નંબર ભરો.';
 }

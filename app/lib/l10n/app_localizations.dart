@@ -1373,6 +1373,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Listen'**
   String get listen;
+
+  /// No description provided for @templeManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Temple Management'**
+  String get templeManagement;
+
+  /// No description provided for @templeManagementHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For temple staff – admin login'**
+  String get templeManagementHint;
+
+  /// No description provided for @adminUnavailableDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'The admin panel is available once the app is connected to the temple server.'**
+  String get adminUnavailableDemo;
+
+  /// No description provided for @devoteeGuestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your seva bookings, receipts and reminders are saved on this phone. Add your name and mobile so the temple can recognise you.'**
+  String get devoteeGuestNote;
 }
 
 class _AppLocalizationsDelegate

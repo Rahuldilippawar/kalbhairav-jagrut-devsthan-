@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
+import '../../app/shell.dart';
 import '../../widgets/common.dart';
 
 /// Donate → Purpose → Amount → Details → Razorpay → Verification → Receipt.
@@ -54,6 +55,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
     );
     final err = CheckoutValidator.donation(request, settings);
     if (err != null) return context.toast(err);
+    if (await ensureUid(context, ref) == null) return;
     setState(() => _busy = true);
     final result = await ref.read(checkoutServiceProvider).donate(request);
     if (!mounted) return;

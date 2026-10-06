@@ -106,8 +106,8 @@ class _DetailsTab extends ConsumerWidget {
     final dindi = e.dindi;
 
     Future<void> toggleReminder() async {
-      if (!await ensureLoggedIn(context, ref)) return;
-      final uid = ref.read(uidProvider)!;
+      final uid = await ensureUid(context, ref);
+      if (uid == null) return;
       await ref.read(eventRepoProvider).setReminder(uid, e, !reminder);
       if (context.mounted) context.toast(!reminder ? l.reminderOn : l.cancel);
     }

@@ -666,4 +666,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get listen => 'Listen';
+
+  @override
+  String get templeManagement => 'Temple Management';
+
+  @override
+  String get templeManagementHint => 'For temple staff – admin login';
+
+  @override
+  String get adminUnavailableDemo =>
+      'The admin panel is available once the app is connected to the temple server.';
+
+  @override
+  String get devoteeGuestNote =>
+      'Your seva bookings, receipts and reminders are saved on this phone. Add your name and mobile so the temple can recognise you.';
 }

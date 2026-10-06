@@ -15,8 +15,8 @@ Deploy करणे आणि APK बनवणे ही कामे **GitHub �
 2. डावीकडे खाली **Spark → Upgrade** → **Blaze** → billing account जोडा (card/UPI).
    Google Cloud Billing मध्ये **Budget alert** (उदा. ₹500) नक्की लावा. छोट्या वापराला मोफत मर्यादा पुरेशी असते.
 3. **Build → Authentication → Get started → Sign-in method**:
-   - **Phone** → Enable. चाचणीसाठी **"Phone numbers for testing"** मध्ये एक नंबर आणि OTP जोडा (उदा. `+91 9999999999` / `123456`).
-   - **Email/Password** → Enable.
+   - **Anonymous** → Enable. भक्तांना लॉगिन करावे लागत नाही; ॲप प्रत्येक फोनसाठी आपोआप अनामिक खाते बनवते.
+   - **Email/Password** → Enable (ॲडमिन / "मंदिर व्यवस्थापन" लॉगिनसाठी).
 4. **Build → Firestore Database → Create database**:
    - Location: **`asia-south1 (Mumbai)`**. ⚠️ ही location नंतर बदलता येत नाही आणि दुसरी location निवडली तर deploy अयशस्वी होईल.
    - **Production mode**.
@@ -135,7 +135,7 @@ Firebase Variables भरण्यापूर्वी बनवलेली AP
 
 ## टप्पा 8: चाचणी
 
-- APK मध्ये टप्पा 1 मधील test नंबरने लॉगिन करून पाहा.
+- APK उघडताच लॉगिनशिवाय थेट Home दिसायला हवे. Profile → **मंदिर व्यवस्थापन** ने ॲडमिन लॉगिन उघडते का ते पाहा.
 - देणगी: Razorpay test card `4111 1111 1111 1111`, कोणतीही पुढची expiry, कोणताही CVV. पावती येते का ते पाहा.
 - सेवा बुक करा → QR पास → ॲडमिनमधील **QR Check-in** ने मोबाईल कॅमेऱ्याने scan करा.
 - ॲडमिनमधून एक Notification पाठवा. फोनवर येते का ते पाहा.
@@ -157,6 +157,6 @@ Firebase Variables भरण्यापूर्वी बनवलेली AP
 | `Billing account not configured` | प्रोजेक्ट Blaze plan वर आहे का ते तपासा |
 | Region / location error | Firestore `asia-south1` मध्ये नाही; नवीन प्रोजेक्ट Mumbai मध्ये बनवावा लागेल |
 | Build service account error (पहिल्या deploy ला) | काही मिनिटांनी पुन्हा Run करा; तरी आला तर संदेश Claude ला पाठवा |
-| APK मध्ये OTP येत नाही | टप्पा 2 मधील SHA-1/SHA-256 जोडले का; `FIREBASE_ANDROID_APP_ID` बरोबर आहे का |
+| ॲपमध्ये "operation is not allowed" | Authentication → Sign-in method मध्ये **Anonymous** Enable केले का |
 
 > Play Store साठीची खरी signing key वेगळी असते. ती नंतर सुरक्षितपणे बनवू. ही APK फक्त चाचणीसाठी आहे.

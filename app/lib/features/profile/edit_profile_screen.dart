@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
+import '../../app/shell.dart';
 import '../../widgets/common.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -16,6 +18,7 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _form = GlobalKey<FormState>();
   final _name = TextEditingController();
+  final _mobile = TextEditingController();
   final _email = TextEditingController();
   final _village = TextEditingController();
   final _spouse = TextEditingController();
@@ -45,7 +48,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   void dispose() {
-    for (final c in [_name, _email, _village, _spouse]) {
+    for (final c in [_name, _mobile, _email, _village, _spouse]) {
       c.dispose();
     }
     super.dispose();
@@ -54,6 +57,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void _load(DevoteeProfile p) {
     _loaded = p;
     _name.text = p.name;
+    _mobile.text = p.mobile.replaceFirst('+91', '');
     _email.text = p.email ?? '';
     _village.text = p.village ?? '';
     _spouse.text = p.spouseName ?? '';
@@ -72,13 +76,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> _save() async {
     if (!_form.currentState!.validate()) return;
-    final uid = ref.read(uidProvider)!;
-    final base = _loaded ?? DevoteeProfile(uid: uid, mobile: ref.read(authServiceProvider).currentUser?.phone ?? '');
+    final uid = await ensureUid(context, ref);
+    if (uid == null) return;
+    final base = _loaded ?? DevoteeProfile(uid: uid, language: ref.read(localeProvider).languageCode);
     String? opt(TextEditingController c) => c.text.trim().isEmpty ? null : c.text.trim();
     final updated = DevoteeProfile(
       uid: uid,
       name: _name.text.trim(),
-      mobile: base.mobile,
+      mobile: normaliseIndianMobile(_mobile.text) ?? '',
       email: opt(_email),
       village: opt(_village),
       photoUrl: _photoUrl,
@@ -133,6 +138,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             controller: _name,
             decoration: InputDecoration(labelText: l.name),
             validator: (v) => (v ?? '').trim().length < 2 ? l.required : null,
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _mobile,
+            keyboardType: TextInputType.phone,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
+            decoration: InputDecoration(labelText: l.mobile, prefixText: '+91 '),
+            validator: (v) => (v ?? '').isEmpty || normaliseIndianMobile(v!) != null ? null : l.invalidMobile,
           ),
           const SizedBox(height: 12),
           TextFormField(controller: _email, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: l.email)),

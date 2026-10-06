@@ -665,4 +665,19 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get listen => 'सुनें';
+
+  @override
+  String get templeManagement => 'मंदिर प्रबंधन';
+
+  @override
+  String get templeManagementHint =>
+      'केवल मंदिर कर्मचारियों के लिए – एडमिन लॉगिन';
+
+  @override
+  String get adminUnavailableDemo =>
+      'सर्वर से जुड़ने के बाद एडमिन पैनल उपलब्ध होगा।';
+
+  @override
+  String get devoteeGuestNote =>
+      'आपकी सेवाएँ, रसीदें और रिमाइंडर इस फ़ोन पर सहेजे जाते हैं। मंदिर पहचान सके इसलिए नाम और मोबाइल नंबर भरें।';
 }

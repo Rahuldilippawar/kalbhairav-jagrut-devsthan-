@@ -665,4 +665,18 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get listen => 'ऐका';
+
+  @override
+  String get templeManagement => 'मंदिर व्यवस्थापन';
+
+  @override
+  String get templeManagementHint => 'फक्त मंदिर कर्मचाऱ्यांसाठी – ॲडमिन लॉगिन';
+
+  @override
+  String get adminUnavailableDemo =>
+      'सर्व्हर जोडल्यानंतर ॲडमिन पॅनेल उपलब्ध होईल.';
+
+  @override
+  String get devoteeGuestNote =>
+      'तुमच्या सेवा, पावत्या आणि आठवणी या फोनवर जतन होतात. मंदिराला ओळख पटावी म्हणून नाव व मोबाईल नंबर भरा.';
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kjd_app/app/app.dart';
 import 'package:kjd_app/app/providers.dart';
@@ -72,22 +71,31 @@ void main() {
     expect(find.textContaining('मुक्काम: मांडळ'), findsOneWidget);
   });
 
-  testWidgets('guest is sent to login for donation', (tester) async {
-    await _start(tester, to: '/donate');
-    expect(find.text('मोबाईल नंबरने लॉगिन करा'), findsOneWidget);
+  testWidgets('no login: a guest device donates with an anonymous account', (tester) async {
+    final c = await _start(tester, to: '/donate');
+    expect(find.text('मोबाईल नंबरने लॉगिन करा'), findsNothing);
+    await tester.tap(find.text('₹101'));
+    await tester.pump();
+    await tester.enterText(find.widgetWithText(TextFormField, 'पूर्ण नाव'), 'भक्त');
+    await tester.enterText(find.widgetWithText(TextFormField, 'मोबाईल नंबर'), '9876543210');
+    final pay = find.widgetWithText(FilledButton, '₹101 देणगी द्या');
+    await tester.scrollUntilVisible(pay, 200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(pay);
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).state.matchedLocation, startsWith('/receipt/'));
+    final user = c.read(authServiceProvider).currentUser!;
+    expect(user.isAnonymous, isTrue);
+    expect(user.uid, startsWith('demo-guest-'));
   });
 
-  testWidgets('OTP login creates a profile', (tester) async {
-    final c = await _start(tester, to: '/donate');
-    await tester.enterText(find.byType(TextField).first, '9876543210');
-    await tester.tap(find.text('OTP पाठवा'));
+  testWidgets('profile offers Temple Management (admin) entry', (tester) async {
+    await _start(tester, to: '/profile');
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).at(1), '123456');
-    await tester.tap(find.text('पडताळा'));
-    await tester.pumpAndSettle();
-    expect(c.read(routerProvider).state.matchedLocation, '/donate');
-    final profile = await UserRepository(c.read(dataStoreProvider)).getProfile('demo-919876543210');
-    expect(profile?.mobile, '+919876543210');
+    final tile = find.text('मंदिर व्यवस्थापन');
+    await tester.scrollUntilVisible(tile, 200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(tile);
+    await tester.pump();
+    expect(find.textContaining('सर्व्हर जोडल्यानंतर ॲडमिन पॅनेल'), findsOneWidget); // demo mode
   });
 
   testWidgets('donation produces a receipt', (tester) async {
@@ -176,13 +184,4 @@ void main() {
     expect(find.textContaining('नमुना'), findsWidgets); // demo trust name / note
   });
 
-  test('protected paths', () {
-    expect(needsLogin('/donate'), isTrue);
-    expect(needsLogin('/book/x'), isTrue);
-    expect(needsLogin('/profile'), isFalse);
-    expect(needsLogin('/profile/seva'), isTrue);
-    expect(needsLogin('/profile/settings'), isFalse);
-    expect(needsLogin('/events'), isFalse);
-    expect(GoRouter, isNotNull);
-  });
 }

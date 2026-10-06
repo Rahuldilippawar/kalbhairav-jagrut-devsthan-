@@ -20,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     try {
       await (await SharedPreferences.getInstance()).setBool(onboardingSeenKey, true);
     } catch (_) {}
-    if (mounted) context.go('/login?from=%2Fhome');
+    if (mounted) context.go('/home');
   }
 
   @override

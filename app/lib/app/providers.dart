@@ -13,6 +13,9 @@ final authServiceProvider = Provider<AuthService>((_) => throw UnimplementedErro
 final checkoutServiceProvider = Provider<CheckoutService>((_) => throw UnimplementedError());
 final photoUploaderProvider = Provider<PhotoUploader>((_) => DisabledPhotoUploader());
 
+/// Admin panel address; null in demo mode.
+final adminPanelUrlProvider = Provider<String?>((_) => null);
+
 /// Null in demo mode (no FCM).
 final pushServiceProvider = Provider<PushService?>((_) => null);
 

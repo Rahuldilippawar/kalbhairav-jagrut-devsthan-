@@ -40,11 +40,15 @@ class AppShell extends ConsumerWidget {
   }
 }
 
-/// Helper so screens can require login before an action.
-Future<bool> ensureLoggedIn(BuildContext context, WidgetRef ref) async {
-  if (ref.read(uidProvider) != null) return true;
-  final from = GoRouterState.of(context).uri.toString();
-  context.toast(context.l10n.loginRequired);
-  await context.push('/login?from=${Uri.encodeComponent(from)}');
-  return ref.read(uidProvider) != null;
+/// Returns the device's (anonymous) user id, signing in first if the
+/// start-up sign-in has not finished (e.g. the phone was offline).
+Future<String?> ensureUid(BuildContext context, WidgetRef ref) async {
+  final uid = ref.read(uidProvider);
+  if (uid != null) return uid;
+  try {
+    return (await ref.read(authServiceProvider).ensureSignedIn()).uid;
+  } catch (e) {
+    if (context.mounted) context.toast('${context.l10n.error}: $e');
+    return null;
+  }
 }

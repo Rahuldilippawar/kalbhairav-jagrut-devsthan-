@@ -17,6 +17,8 @@ class _KjdAppState extends ConsumerState<KjdApp> {
   @override
   void initState() {
     super.initState();
+    // Start-up sign-in may have been skipped (offline); retry once the UI is up.
+    ref.read(authServiceProvider).ensureSignedIn().then((_) {}, onError: (Object e) => debugPrint('Sign-in retry failed: $e'));
     final push = ref.read(pushServiceProvider);
     if (push != null) {
       push.start((route) => ref.read(routerProvider).push(route)).then((initial) {

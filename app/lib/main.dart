@@ -25,7 +25,15 @@ Future<void> main() async {
   await initializeDateFormatting('gu');
 
   final overrides = await _bootstrap();
-  runApp(ProviderScope(overrides: overrides, child: const KjdApp()));
+  final container = ProviderContainer(overrides: overrides);
+  // No login for devotees: give this device an anonymous account before the
+  // first screen. Offline start-up continues; screens retry when needed.
+  try {
+    await container.read(authServiceProvider).ensureSignedIn().timeout(const Duration(seconds: 8));
+  } catch (e) {
+    debugPrint('Anonymous sign-in deferred: $e');
+  }
+  runApp(UncontrolledProviderScope(container: container, child: const KjdApp()));
 }
 
 Future<List<Override>> _bootstrap() async {
@@ -40,6 +48,7 @@ Future<List<Override>> _bootstrap() async {
         authServiceProvider.overrideWithValue(auth),
         checkoutServiceProvider.overrideWithValue(RazorpayCheckoutService()),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
+        adminPanelUrlProvider.overrideWithValue(DefaultFirebaseOptions.adminPanelUrl),
         pushServiceProvider.overrideWithValue(PushService(FirebasePushPlatform(), UserRepository(store))),
       ];
     } catch (e) {

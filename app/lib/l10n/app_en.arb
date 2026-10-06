@@ -260,5 +260,9 @@
       }
     }
   },
-  "listen": "Listen"
+  "listen": "Listen",
+  "templeManagement": "Temple Management",
+  "templeManagementHint": "For temple staff – admin login",
+  "adminUnavailableDemo": "The admin panel is available once the app is connected to the temple server.",
+  "devoteeGuestNote": "Your seva bookings, receipts and reminders are saved on this phone. Add your name and mobile so the temple can recognise you."
 }

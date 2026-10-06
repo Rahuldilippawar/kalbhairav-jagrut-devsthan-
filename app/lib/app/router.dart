@@ -1,12 +1,7 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
 
-import '../features/auth/login_screen.dart';
-import 'providers.dart';
 import '../features/banner/banner_studio_screen.dart';
 import '../features/darshan/darshan_screen.dart';
 import '../features/darshan/live_darshan_screen.dart';
@@ -34,52 +29,14 @@ import '../features/splash/splash_screen.dart';
 import '../features/temple/temple_info_screen.dart';
 import 'shell.dart';
 
-/// Paths that need a signed-in devotee.
-const _protected = ['/donate', '/book', '/pass', '/receipt', '/profile/'];
-
-/// Guests may still change the app language.
-const _public = ['/profile/settings'];
-
-bool needsLogin(String location) =>
-    !_public.any(location.startsWith) && _protected.any(location.startsWith);
-
-class _AuthRefresh extends ChangeNotifier {
-  _AuthRefresh(Stream<AuthUser?> s) {
-    _sub = s.listen((_) => notifyListeners());
-  }
-  late final StreamSubscription<AuthUser?> _sub;
-  @override
-  void dispose() {
-    _sub.cancel();
-    super.dispose();
-  }
-}
-
+/// Devotees never log in: the app signs each device in anonymously (see
+/// `ensureSignedIn`), so there are no login redirects.
 final routerProvider = Provider<GoRouter>((ref) {
-  final auth = ref.watch(authServiceProvider);
-  final refresh = _AuthRefresh(auth.authStateChanges());
-  ref.onDispose(refresh.dispose);
-
   return GoRouter(
     initialLocation: '/splash',
-    refreshListenable: refresh,
-    redirect: (context, state) {
-      final loc = state.matchedLocation;
-      if (auth.currentUser == null && needsLogin(loc)) {
-        return '/login?from=${Uri.encodeComponent(state.uri.toString())}';
-      }
-      if (auth.currentUser != null && loc == '/login') {
-        return state.uri.queryParameters['from'] ?? '/home';
-      }
-      return null;
-    },
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/onboarding', builder: (_, _) => const OnboardingScreen()),
-      GoRoute(
-        path: '/login',
-        builder: (_, s) => LoginScreen(from: s.uri.queryParameters['from']),
-      ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => AppShell(shell: shell),
         branches: [

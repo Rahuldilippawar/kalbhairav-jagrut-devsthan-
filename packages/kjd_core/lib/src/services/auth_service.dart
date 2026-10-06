@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fa;
 import '../rbac.dart';
 
 class AuthUser {
-  const AuthUser({required this.uid, this.phone, this.email, this.displayName, this.role});
+  const AuthUser({required this.uid, this.phone, this.email, this.displayName, this.role, this.isAnonymous = false});
 
   final String uid;
   final String? phone;
@@ -14,6 +14,10 @@ class AuthUser {
 
   /// Admin role from the custom claim; null for ordinary devotees.
   final AdminRole? role;
+
+  /// Devotees use the app without logging in; each device gets an
+  /// anonymous account so donations, bookings and receipts belong to it.
+  final bool isAnonymous;
 
   bool get isAdmin => role != null;
 }
@@ -33,6 +37,9 @@ abstract class AuthService {
   /// auto-retrieved, in which case [onAutoVerified] fires.
   Future<String> sendOtp(String e164Phone, {void Function()? onAutoVerified});
   Future<AuthUser> verifyOtp(String verificationId, String code);
+
+  /// Signs this device in anonymously if nobody is signed in yet.
+  Future<AuthUser> ensureSignedIn();
 
   /// Email/password sign-in used by the admin panel.
   Future<AuthUser> signInWithEmail(String email, String password);
@@ -56,6 +63,7 @@ class FirebaseAuthService implements AuthService {
       email: u.email,
       displayName: u.displayName,
       role: AdminRole.fromKey(token.claims?['role']),
+      isAnonymous: u.isAnonymous,
     );
   }
 
@@ -97,6 +105,18 @@ class FirebaseAuthService implements AuthService {
       return (_current = await _toUser(r.user))!;
     } on fa.FirebaseAuthException catch (e) {
       throw AuthException(e.code == 'invalid-verification-code' ? 'चुकीचा OTP' : (e.message ?? e.code));
+    }
+  }
+
+  @override
+  Future<AuthUser> ensureSignedIn() async {
+    final existing = _auth.currentUser;
+    if (existing != null) return (_current = await _toUser(existing))!;
+    try {
+      final r = await _auth.signInAnonymously();
+      return (_current = await _toUser(r.user))!;
+    } on fa.FirebaseAuthException catch (e) {
+      throw AuthException(e.message ?? e.code);
     }
   }
 
@@ -149,6 +169,15 @@ class DemoAuthService implements AuthService {
     if (code != demoOtp) throw AuthException('चुकीचा OTP (डेमो OTP: $demoOtp)');
     final phone = verificationId.replaceFirst('demo:', '');
     final u = AuthUser(uid: 'demo-${phone.replaceAll('+', '')}', phone: phone);
+    _set(u);
+    return u;
+  }
+
+  @override
+  Future<AuthUser> ensureSignedIn() async {
+    final existing = _current;
+    if (existing != null) return existing;
+    final u = AuthUser(uid: 'demo-guest-${DateTime.now().millisecondsSinceEpoch}', isAnonymous: true);
     _set(u);
     return u;
   }
