@@ -679,4 +679,25 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get devoteeGuestNote =>
       'तुमच्या सेवा, पावत्या आणि आठवणी या फोनवर जतन होतात. मंदिराला ओळख पटावी म्हणून नाव व मोबाईल नंबर भरा.';
+
+  @override
+  String get bannerFormat => 'आकार';
+
+  @override
+  String get formatSquare => 'पोस्ट';
+
+  @override
+  String get formatStory => 'स्टेटस';
+
+  @override
+  String get formatLandscape => 'आडवा';
+
+  @override
+  String get bannerSender => 'शुभेच्छुक (तुमचे नाव)';
+
+  @override
+  String get senderPhoto => 'तुमचा फोटो';
+
+  @override
+  String get bannerDesign => 'सजावट शैली';
 }

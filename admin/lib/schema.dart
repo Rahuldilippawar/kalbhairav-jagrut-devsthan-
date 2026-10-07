@@ -387,7 +387,7 @@ abstract final class Specs {
     title: 'Banner Templates',
     module: AdminModule.banners,
     orderBy: 'order',
-    columns: const ['name', 'category', 'headline', 'active'],
+    columns: const ['name', 'category', 'layout', 'headline', 'active'],
     fields: [
       const FieldSpec('name', 'Name', required: true),
       FieldSpec('category', 'Category', type: FieldType.select, options: [for (final c in BannerCategory.values) (c.name, c.labelMr)], defaultValue: 'festival'),
@@ -398,6 +398,7 @@ abstract final class Specs {
       const FieldSpec('accentColor', 'Accent colour (hex)', type: FieldType.colors, defaultValue: 0xFFFFD54F),
       const FieldSpec('backgroundUrl', 'Background image', type: FieldType.image),
       const FieldSpec('footer', 'Footer', defaultValue: 'श्री काळभैरव जागृत देवस्थान, रुंधाटी'),
+      FieldSpec('layout', 'Layout', type: FieldType.select, options: [for (final e in BannerTemplate.layouts.entries) (e.key, e.value)], defaultValue: 'royal'),
       FieldSpec('headlineFont', 'Headline font', type: FieldType.select, options: [for (final e in BannerTemplate.fonts.entries) (e.key, e.value)], defaultValue: 'yatraOne'),
       FieldSpec('bodyFont', 'Message font', type: FieldType.select, options: [for (final e in BannerTemplate.fonts.entries) (e.key, e.value)], defaultValue: 'mukta'),
       const FieldSpec('showLogo', 'Show logo', type: FieldType.boolean, defaultValue: true),

@@ -680,4 +680,25 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get devoteeGuestNote =>
       'Your seva bookings, receipts and reminders are saved on this phone. Add your name and mobile so the temple can recognise you.';
+
+  @override
+  String get bannerFormat => 'Size';
+
+  @override
+  String get formatSquare => 'Post';
+
+  @override
+  String get formatStory => 'Status';
+
+  @override
+  String get formatLandscape => 'Wide';
+
+  @override
+  String get bannerSender => 'Greeted by (your name)';
+
+  @override
+  String get senderPhoto => 'Your photo';
+
+  @override
+  String get bannerDesign => 'Style';
 }

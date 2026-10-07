@@ -428,6 +428,7 @@ class BannerTemplate {
     this.headline,
     this.defaultMessage,
     this.footer = 'श्री काळभैरव जागृत देवस्थान, रुंधाटी',
+    this.layout = 'classic',
     this.headlineFont = 'yatraOne',
     this.bodyFont = 'mukta',
     this.logoUrl,
@@ -435,6 +436,15 @@ class BannerTemplate {
     this.active = true,
     this.order = 0,
   });
+
+  /// Banner layouts: key → display name.
+  static const layouts = {
+    'classic': 'पारंपरिक',
+    'royal': 'राजेशाही (सोनेरी चौकट)',
+    'festive': 'उत्सवी (तोरण व दिवे)',
+    'photoHero': 'फोटो मुख्य',
+    'minimal': 'साधी व मोहक',
+  };
 
   /// Bundled banner fonts: key → display name.
   static const fonts = {
@@ -446,6 +456,9 @@ class BannerTemplate {
   final String id;
   final String name;
   final BannerCategory category;
+
+  /// Key of [layouts].
+  final String layout;
 
   /// Keys of [fonts].
   final String headlineFont;
@@ -481,6 +494,7 @@ class BannerTemplate {
       headline: asStringOrNull(m['headline']),
       defaultMessage: asStringOrNull(m['defaultMessage']),
       footer: asString(m['footer'], 'श्री काळभैरव जागृत देवस्थान, रुंधाटी'),
+      layout: layouts.containsKey(m['layout']) ? m['layout'] as String : 'classic',
       headlineFont: fonts.containsKey(m['headlineFont']) ? m['headlineFont'] as String : 'yatraOne',
       bodyFont: fonts.containsKey(m['bodyFont']) ? m['bodyFont'] as String : 'mukta',
       logoUrl: asStringOrNull(m['logoUrl']),
@@ -500,6 +514,7 @@ class BannerTemplate {
         'headline': headline,
         'defaultMessage': defaultMessage,
         'footer': footer,
+        'layout': layout,
         'headlineFont': headlineFont,
         'bodyFont': bodyFont,
         'logoUrl': logoUrl,

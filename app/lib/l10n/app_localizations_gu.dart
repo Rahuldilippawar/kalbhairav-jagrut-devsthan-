@@ -678,4 +678,25 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get devoteeGuestNote =>
       'તમારી સેવા, પાવતી અને રિમાઇન્ડર આ ફોન પર સચવાય છે. મંદિર ઓળખી શકે તે માટે નામ અને મોબાઇલ નંબર ભરો.';
+
+  @override
+  String get bannerFormat => 'કદ';
+
+  @override
+  String get formatSquare => 'પોસ્ટ';
+
+  @override
+  String get formatStory => 'સ્ટેટસ';
+
+  @override
+  String get formatLandscape => 'પહોળું';
+
+  @override
+  String get bannerSender => 'શુભેચ્છક (તમારું નામ)';
+
+  @override
+  String get senderPhoto => 'તમારો ફોટો';
+
+  @override
+  String get bannerDesign => 'શૈલી';
 }

@@ -680,4 +680,25 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get devoteeGuestNote =>
       'आपकी सेवाएँ, रसीदें और रिमाइंडर इस फ़ोन पर सहेजे जाते हैं। मंदिर पहचान सके इसलिए नाम और मोबाइल नंबर भरें।';
+
+  @override
+  String get bannerFormat => 'आकार';
+
+  @override
+  String get formatSquare => 'पोस्ट';
+
+  @override
+  String get formatStory => 'स्टेटस';
+
+  @override
+  String get formatLandscape => 'चौड़ा';
+
+  @override
+  String get bannerSender => 'शुभेच्छुक (आपका नाम)';
+
+  @override
+  String get senderPhoto => 'आपकी फ़ोटो';
+
+  @override
+  String get bannerDesign => 'सजावट शैली';
 }

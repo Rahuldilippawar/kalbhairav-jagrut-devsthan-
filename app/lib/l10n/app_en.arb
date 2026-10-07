@@ -264,5 +264,12 @@
   "templeManagement": "Temple Management",
   "templeManagementHint": "For temple staff – admin login",
   "adminUnavailableDemo": "The admin panel is available once the app is connected to the temple server.",
-  "devoteeGuestNote": "Your seva bookings, receipts and reminders are saved on this phone. Add your name and mobile so the temple can recognise you."
+  "devoteeGuestNote": "Your seva bookings, receipts and reminders are saved on this phone. Add your name and mobile so the temple can recognise you.",
+  "bannerFormat": "Size",
+  "formatSquare": "Post",
+  "formatStory": "Status",
+  "formatLandscape": "Wide",
+  "bannerSender": "Greeted by (your name)",
+  "senderPhoto": "Your photo",
+  "bannerDesign": "Style"
 }

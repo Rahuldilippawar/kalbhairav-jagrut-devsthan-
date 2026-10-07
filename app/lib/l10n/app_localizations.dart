@@ -1397,6 +1397,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your seva bookings, receipts and reminders are saved on this phone. Add your name and mobile so the temple can recognise you.'**
   String get devoteeGuestNote;
+
+  /// No description provided for @bannerFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get bannerFormat;
+
+  /// No description provided for @formatSquare.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get formatSquare;
+
+  /// No description provided for @formatStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get formatStory;
+
+  /// No description provided for @formatLandscape.
+  ///
+  /// In en, this message translates to:
+  /// **'Wide'**
+  String get formatLandscape;
+
+  /// No description provided for @bannerSender.
+  ///
+  /// In en, this message translates to:
+  /// **'Greeted by (your name)'**
+  String get bannerSender;
+
+  /// No description provided for @senderPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Your photo'**
+  String get senderPhoto;
+
+  /// No description provided for @bannerDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Style'**
+  String get bannerDesign;
 }
 
 class _AppLocalizationsDelegate
