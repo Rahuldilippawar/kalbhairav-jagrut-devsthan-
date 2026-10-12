@@ -11,6 +11,7 @@ import 'dashboard_page.dart';
 import 'devotees_page.dart';
 import 'events_page.dart';
 import 'finance_pages.dart';
+import 'media_pages.dart';
 import 'notifications_page.dart';
 import 'reports_page.dart';
 import 'tithi_page.dart';
@@ -49,7 +50,8 @@ final List<NavItem> navItems = [
   NavItem('temple', 'Temple Info', Icons.temple_hindu_outlined, AdminModule.temple, () => SingletonPage(spec: Specs.templeInfo), group: 'Temple'),
   NavItem('darshan', 'Darshan Timings', Icons.access_time, AdminModule.darshan, () => CollectionListPage(spec: Specs.darshan), group: 'Temple'),
   NavItem('live', 'Live Darshan', Icons.live_tv, AdminModule.live, () => SingletonPage(spec: Specs.live), group: 'Temple'),
-  NavItem('gallery', 'Gallery', Icons.photo_library_outlined, AdminModule.gallery, () => CollectionListPage(spec: Specs.gallery), group: 'Temple'),
+  NavItem('darshan_photos', "Today's Darshan", Icons.add_photo_alternate_outlined, AdminModule.live, () => const DarshanPhotosPage(), group: 'Temple'),
+  NavItem('gallery', 'Gallery', Icons.photo_library_outlined, AdminModule.gallery, () => CollectionListPage(spec: Specs.gallery, header: const GalleryUpload()), group: 'Temple'),
   NavItem('videos', 'Videos', Icons.video_library_outlined, AdminModule.gallery, () => CollectionListPage(spec: Specs.videos), group: 'Temple'),
   NavItem('devotees', 'Devotees', Icons.people_outline, AdminModule.devotees, () => const DevoteesPage(), group: 'Admin'),
   NavItem('users', 'Admin Users & Roles', Icons.admin_panel_settings_outlined, AdminModule.users, () => const UsersPage(), group: 'Admin'),

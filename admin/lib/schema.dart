@@ -412,6 +412,23 @@ abstract final class Specs {
     ],
   );
 
+  static final darshanPhotos = CollectionSpec(
+    collection: Col.darshanPhotos,
+    title: 'Daily Darshan Photos',
+    module: AdminModule.live,
+    orderBy: 'date',
+    descending: true,
+    columns: const ['url', 'date', 'type', 'caption'],
+    searchFields: const ['date', 'caption'],
+    fields: const [
+      FieldSpec('url', 'Photo / video', type: FieldType.image, required: true),
+      FieldSpec('date', 'Date (yyyy-MM-dd)', required: true),
+      FieldSpec('type', 'Type', type: FieldType.select, options: [('photo', 'Photo'), ('video', 'Video')], defaultValue: 'photo'),
+      FieldSpec('caption', 'Caption'),
+      FieldSpec('order', 'Order', type: FieldType.integer, defaultValue: 0),
+    ],
+  );
+
   static final gallery = CollectionSpec(
     collection: Col.gallery,
     title: 'Temple Gallery',

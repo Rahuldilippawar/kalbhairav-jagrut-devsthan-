@@ -70,3 +70,23 @@ export function upiReference(paymentId: string): string {
 export function isValidUpiId(v: unknown): v is string {
   return typeof v === "string" && /^[A-Za-z0-9._-]{2,256}@[A-Za-z][A-Za-z0-9.-]{1,64}$/.test(v.trim());
 }
+
+export interface QuoteDoc {
+  id: string;
+  text: string;
+  author?: string | null;
+  status?: string;
+  scheduledDate?: string | null;
+}
+
+/** Today's suvichar; mirrors DailyQuote.pickForDay in kjd_core. */
+export function pickQuoteForDay(quotes: QuoteDoc[], dayKey: string): QuoteDoc | null {
+  const published = quotes.filter((q) => q.status === "published").sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  if (published.length === 0) return null;
+  const scheduled = published.find((q) => q.scheduledDate === dayKey);
+  if (scheduled) return scheduled;
+  const unscheduled = published.filter((q) => !q.scheduledDate);
+  const pool = unscheduled.length ? unscheduled : published;
+  const dayNumber = Math.floor(Date.parse(`${dayKey}T00:00:00Z`) / 86400000);
+  return pool[dayNumber % pool.length];
+}

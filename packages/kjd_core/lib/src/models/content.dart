@@ -311,6 +311,60 @@ class AppNotification {
       };
 }
 
+/// True for a direct video file (uploaded mp4/webm/mov) rather than a
+/// YouTube link.
+bool isDirectVideoUrl(String url) {
+  final path = Uri.tryParse(url)?.path.toLowerCase() ?? '';
+  return RegExp(r'\.(mp4|m4v|mov|webm|3gp|mkv)$').hasMatch(path) || url.contains('%2Fvideos%2F');
+}
+
+/// `darshan_photos` – the day's darshan / shringar photos and short videos
+/// (e.g. each Navratri day), shown as a slider on Darshan and Home.
+class DarshanPhoto {
+  const DarshanPhoto({
+    required this.id,
+    required this.url,
+    required this.date,
+    this.isVideo = false,
+    this.caption,
+    this.eventId,
+    this.order = 0,
+    this.createdAt,
+  });
+
+  final String id;
+  final String url;
+
+  /// IST day, `yyyy-MM-dd`.
+  final String date;
+  final bool isVideo;
+  final String? caption;
+  final String? eventId;
+  final int order;
+  final DateTime? createdAt;
+
+  factory DarshanPhoto.fromMap(String id, Map<String, dynamic> m) => DarshanPhoto(
+        id: id,
+        url: asString(m['url']),
+        date: asString(m['date']),
+        isVideo: m['type'] == 'video',
+        caption: asStringOrNull(m['caption']),
+        eventId: asStringOrNull(m['eventId']),
+        order: asInt(m['order']),
+        createdAt: asDate(m['createdAt']),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'url': url,
+        'date': date,
+        'type': isVideo ? 'video' : 'photo',
+        'caption': caption,
+        'eventId': eventId,
+        'order': order,
+        'createdAt': createdAt,
+      };
+}
+
 /// `gallery` – the temple-wide photo gallery.
 class GalleryItem {
   const GalleryItem({

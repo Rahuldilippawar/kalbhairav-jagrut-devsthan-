@@ -75,6 +75,7 @@ final tithiProvider = StreamProvider.family<TithiInfo?, DateTime>(
     (ref, day) => ref.watch(contentRepoProvider).watchTithi(day));
 final announcementsProvider = StreamProvider(
     (ref) => ref.watch(contentRepoProvider).watchActiveAnnouncements(ref.watch(clockProvider)()));
+final latestDarshanProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchLatestDarshan());
 final galleryProvider = StreamProvider.family<List<GalleryItem>, String?>(
     (ref, cat) => ref.watch(contentRepoProvider).watchGallery(category: cat));
 final videosProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchVideos());
@@ -173,3 +174,40 @@ class LocaleController extends Notifier<Locale> {
 }
 
 final localeProvider = NotifierProvider<LocaleController, Locale>(LocaleController.new);
+
+// ---- Daily suvichar popup ----
+/// Whether today's suvichar pops up once a day when the app opens.
+class DailyQuotePopupController extends Notifier<bool> {
+  static const enabledKey = 'daily_quote_popup_v1';
+  static const shownKey = 'daily_quote_shown_v1';
+
+  @override
+  bool build() {
+    SharedPreferences.getInstance().then((p) {
+      final saved = p.getBool(enabledKey);
+      if (saved != null && saved != state) state = saved;
+    }).catchError((_) {});
+    return true;
+  }
+
+  void set(bool v) {
+    state = v;
+    SharedPreferences.getInstance().then((p) => p.setBool(enabledKey, v)).catchError((_) => false);
+  }
+
+  /// True the first time it is called on [day] (and the popup is enabled).
+  Future<bool> claim(DateTime day) async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      if (!(p.getBool(enabledKey) ?? true)) return false;
+      final key = dateKey(day);
+      if (p.getString(shownKey) == key) return false;
+      await p.setString(shownKey, key);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+}
+
+final dailyQuotePopupProvider = NotifierProvider<DailyQuotePopupController, bool>(DailyQuotePopupController.new);

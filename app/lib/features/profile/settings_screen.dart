@@ -44,6 +44,15 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
         ],
+        SectionHeader(l.dailyQuoteTitle, icon: '🌼'),
+        Card(
+          child: SwitchListTile(
+            title: Text(l.dailyQuotePopup),
+            subtitle: Text(l.dailyQuotePopupHint),
+            value: ref.watch(dailyQuotePopupProvider),
+            onChanged: (v) => ref.read(dailyQuotePopupProvider.notifier).set(v),
+          ),
+        ),
         const SizedBox(height: 24),
         const Center(child: Text('Kalbhairav Jagrut Devsthan • v1.0.0', style: TextStyle(color: Colors.grey))),
       ]),

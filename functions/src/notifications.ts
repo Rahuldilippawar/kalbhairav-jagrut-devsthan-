@@ -4,7 +4,7 @@ import { logger } from "firebase-functions";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 
-import { addDays, chunk, istDateKey, istMonthDay } from "./util.js";
+import { addDays, chunk, istDateKey, istMonthDay, pickQuoteForDay, type QuoteDoc } from "./util.js";
 
 const REGION = "asia-south1";
 const TZ = "Asia/Kolkata";
@@ -115,7 +115,7 @@ export const sendScheduledNotifications = onSchedule({ schedule: "every 15 minut
 
 /**
  * 06:30 IST daily:
- *  - push today's published Subhechha,
+ *  - push today's published Subhechha and the day's suvichar,
  *  - event reminders (1 day before and on the event day) to followers,
  *  - birthday / anniversary greetings (respecting privacy),
  *  - mark finished events as completed so they move to the archive.
@@ -132,6 +132,17 @@ export const dailyJobs = onSchedule({ schedule: "30 6 * * *", timeZone: TZ, regi
     const g = greetings.docs[0].data();
     await notifications.doc(`greeting-${today}`).create({
       title: g.title, body: g.message, type: "greeting", target: "all", route: "/greetings", imageUrl: g.imageUrl ?? null, createdAt: now, system: true,
+    }).catch(() => undefined); // already sent today
+  }
+
+  // Daily suvichar (opens the greetings screen with today's quote).
+  const quotes = await db().collection("daily_quotes").where("status", "==", "published").get();
+  const quote = pickQuoteForDay(quotes.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<QuoteDoc, "id">) })), today);
+  if (quote) {
+    await notifications.doc(`quote-${today}`).create({
+      title: "🌼 आजचा सुविचार",
+      body: quote.author ? `${quote.text} — ${quote.author}` : quote.text,
+      type: "greeting", target: "all", route: "/greetings", createdAt: now, system: true,
     }).catch(() => undefined); // already sent today
   }
 

@@ -5,6 +5,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
+import '../../widgets/media_viewer.dart';
 import '../../widgets/youtube_view.dart';
 
 class LiveDarshanScreen extends ConsumerWidget {
@@ -71,11 +72,15 @@ class VideoTile extends StatelessWidget {
             contentPadding: const EdgeInsets.all(8),
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: NetImage(youtubeThumbnail(video.url), width: 96, height: 56, fallbackIcon: '🎥'),
+              child: isDirectVideoUrl(video.url)
+                  ? const SizedBox(width: 96, height: 56, child: VideoThumb(size: 28))
+                  : NetImage(youtubeThumbnail(video.url), width: 96, height: 56, fallbackIcon: '🎥'),
             ),
             title: Text(video.title, maxLines: 2, overflow: TextOverflow.ellipsis),
             trailing: video.isLive ? const LivePill() : const Icon(Icons.play_circle_outline),
-            onTap: () => showYoutubeSheet(context, video.url, video.title),
+            onTap: () => isDirectVideoUrl(video.url)
+                ? MediaViewer.open(context, [MediaEntry(url: video.url, isVideo: true, caption: video.title)])
+                : showYoutubeSheet(context, video.url, video.title),
           ),
         ),
       );

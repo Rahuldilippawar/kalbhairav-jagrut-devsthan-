@@ -70,3 +70,14 @@ test("upi helpers", async () => {
   assert.equal(isValidUpiId("no-at-sign"), false);
   assert.equal(isValidUpiId(undefined), false);
 });
+
+test("daily suvichar matches the app's pick", async () => {
+  const { pickQuoteForDay } = await import("../src/util.js");
+  const q = (id: string, extra: Record<string, unknown> = {}) => ({ id, text: id, status: "published", ...extra });
+  const quotes = [q("b"), q("a"), q("c", { scheduledDate: "2026-10-12" }), q("d", { status: "draft" })];
+  assert.equal(pickQuoteForDay(quotes, "2026-10-12")?.id, "c");
+  // Unscheduled pool sorted by id = [a, b]; day 20736 (2026-10-10) is even → "a", 20737 → "b".
+  assert.equal(pickQuoteForDay(quotes, "2026-10-10")?.id, "a");
+  assert.equal(pickQuoteForDay(quotes, "2026-10-11")?.id, "b");
+  assert.equal(pickQuoteForDay([], "2026-10-12"), null);
+});

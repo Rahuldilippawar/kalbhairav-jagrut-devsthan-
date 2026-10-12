@@ -5,6 +5,7 @@ import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
+import 'darshan_slider.dart';
 
 class DarshanScreen extends ConsumerWidget {
   const DarshanScreen({super.key});
@@ -28,6 +29,7 @@ class DarshanScreen extends ConsumerWidget {
                 subtitle: Text(info.closureNotice!),
               ),
             ),
+          const DarshanSlider(height: 340),
           const SizedBox(height: 8),
           const DarshanSummaryCard(),
           const SizedBox(height: 12),

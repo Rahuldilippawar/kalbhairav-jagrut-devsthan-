@@ -9,8 +9,10 @@ service firebase.storage {
 
     match /public/{allPaths=**} {
       allow read: if true;
-      allow write: if isAdmin() && request.resource.size < 15 * 1024 * 1024
-        && (isImage() || request.resource.contentType.matches('video/.*'));
+      // Photos up to 15 MB, short darshan / utsav videos up to 200 MB.
+      allow write: if isAdmin() && (
+        (isImage() && request.resource.size < 15 * 1024 * 1024)
+        || (request.resource.contentType.matches('video/.*') && request.resource.size < 200 * 1024 * 1024));
     }
 
     match /users/{userId}/{allPaths=**} {

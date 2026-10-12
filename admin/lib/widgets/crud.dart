@@ -74,6 +74,7 @@ class CollectionListPage extends ConsumerStatefulWidget {
     this.embedded = false,
     this.subtitle,
     this.headerActions = const [],
+    this.header,
   });
 
   final CollectionSpec spec;
@@ -84,6 +85,9 @@ class CollectionListPage extends ConsumerStatefulWidget {
   final bool embedded;
   final String? subtitle;
   final List<Widget> headerActions;
+
+  /// Extra controls under the title, e.g. a bulk photo uploader.
+  final Widget? header;
 
   @override
   ConsumerState<CollectionListPage> createState() => _CollectionListPageState();
@@ -162,6 +166,8 @@ class _CollectionListPageState extends ConsumerState<CollectionListPage> {
           if (canWrite) FilledButton.icon(onPressed: () => _edit(null), icon: const Icon(Icons.add), label: const Text('Add')),
         ]),
       ),
+      if (canWrite && widget.header != null)
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: widget.header),
       Expanded(
         child: docs.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -215,9 +221,16 @@ class _Cell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (field?.type == FieldType.image && value is String && (value as String).startsWith('http')) {
+      final url = value as String;
       return Padding(
         padding: const EdgeInsets.all(4),
-        child: ClipRRect(borderRadius: BorderRadius.circular(6), child: Image.network(value as String, width: 56, height: 40, fit: BoxFit.cover)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: isDirectVideoUrl(url)
+              ? const ColoredBox(color: Colors.black87, child: SizedBox(width: 56, height: 40, child: Icon(Icons.play_circle, color: Colors.white)))
+              : Image.network(url, width: 56, height: 40, fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const SizedBox(width: 56, height: 40, child: Icon(Icons.broken_image_outlined))),
+        ),
       );
     }
     final text = displayValue(field, value);

@@ -6,8 +6,10 @@ import 'package:kjd_core/kjd_core.dart';
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
 import '../darshan/darshan_screen.dart';
+import '../darshan/darshan_slider.dart';
 import '../devotion/tithi_screen.dart';
 import '../events/events_screen.dart';
+import 'daily_quote_popup.dart';
 
 /// Home: everything on it is driven by admin-managed content.
 class HomeScreen extends ConsumerWidget {
@@ -30,7 +32,9 @@ class HomeScreen extends ConsumerWidget {
         },
         child: CustomScrollView(slivers: [
           const _Header(),
+          const SliverToBoxAdapter(child: DailyQuoteGate()),
           const SliverToBoxAdapter(child: _HeroCarousel()),
+          const SliverToBoxAdapter(child: DarshanSlider(height: 240, padding: EdgeInsets.symmetric(horizontal: 16), maxAgeDays: 1)),
           const SliverToBoxAdapter(child: _CelebrationCard()),
           const SliverToBoxAdapter(child: _QuickActions()),
           const SliverToBoxAdapter(child: _LiveStrip()),

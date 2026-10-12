@@ -78,6 +78,19 @@ class ContentRepository {
           return (b.publishAt ?? b.createdAt ?? now).compareTo(a.publishAt ?? a.createdAt ?? now);
         }));
 
+  /// Photos/videos of the most recent darshan day (today during a utsav).
+  Stream<List<DarshanPhoto>> watchLatestDarshan() => store
+      .watch(Col.darshanPhotos, const Query(orderBy: 'date', descending: true, limit: 40))
+      .map((d) {
+        final all = _map(d, DarshanPhoto.fromMap);
+        if (all.isEmpty) return all;
+        final latest = all.first.date;
+        return all.where((p) => p.date == latest).toList()
+          ..sort((a, b) => a.order != b.order
+              ? a.order.compareTo(b.order)
+              : (a.createdAt ?? DateTime(0)).compareTo(b.createdAt ?? DateTime(0)));
+      });
+
   Stream<List<GalleryItem>> watchGallery({String? category}) => store
       .watch(
           Col.gallery,

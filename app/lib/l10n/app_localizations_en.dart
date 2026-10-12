@@ -783,4 +783,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get upiSecureNote =>
       'Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)';
+
+  @override
+  String get latestDarshan => 'Latest darshan';
+
+  @override
+  String get dailyQuoteTitle => 'Today\'s thought';
+
+  @override
+  String get dontShowDaily => 'Don\'t show daily';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get dailyQuotePopup => 'Daily thought on opening';
+
+  @override
+  String get dailyQuotePopupHint =>
+      'Show today\'s suvichar once a day when the app opens';
+
+  @override
+  String get makeBanner => 'Make banner';
 }

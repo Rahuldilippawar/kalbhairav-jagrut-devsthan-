@@ -1,20 +1,26 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kjd_admin/main.dart';
 import 'package:kjd_admin/providers.dart';
+import 'package:kjd_admin/services/admin_services.dart';
+import 'package:kjd_admin/widgets/bulk_upload.dart';
+import 'package:kjd_admin/pages/media_pages.dart';
 import 'package:kjd_core/kjd_core.dart';
 
 final _now = DateTime(2026, 10, 6, 9, 30);
 
 AuthUser _admin(AdminRole r) => AuthUser(uid: 'admin-${r.key}', email: '${r.key}@demo.kjd', displayName: r.label, role: r);
 
-Future<ProviderContainer> _start(WidgetTester tester, AuthUser? user) async {
+Future<ProviderContainer> _start(WidgetTester tester, AuthUser? user, {List<Override> overrides = const []}) async {
   tester.view.physicalSize = const Size(1600, 2000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final c = ProviderContainer(overrides: demoOverrides(clock: () => _now, user: user));
+  final c = ProviderContainer(overrides: [...demoOverrides(clock: () => _now, user: user), ...overrides]);
   addTearDown(c.dispose);
   await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const AdminApp()));
   await tester.pumpAndSettle();
@@ -124,4 +130,63 @@ void main() {
     final actions = store.dump(Col.auditLogs).values.map((l) => l['action']);
     expect(actions, containsAll(['upi_approve', 'upi_reject']));
   });
+
+  testWidgets("Today's Darshan uploads many photos and videos at once and notifies devotees", (tester) async {
+    final uploaded = <String>[];
+    final c = await _start(tester, _admin(AdminRole.eventManager), overrides: [
+      uploaderProvider.overrideWithValue(_FakeUploader(uploaded)),
+      mediaPickerProvider.overrideWithValue(({bool allowVideo = true}) async => [
+            PickedMedia(name: 'a.jpg', bytes: Uint8List(3), isVideo: false),
+            PickedMedia(name: 'b.jpg', bytes: Uint8List(3), isVideo: false),
+            PickedMedia(name: 'aarti.mp4', bytes: Uint8List(3), isVideo: true),
+          ]),
+    ]);
+    await tester.tap(find.text("Today's Darshan"));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextField, 'Caption (e.g. नवरात्र दिवस 5 – अलंकार)'), 'नवरात्र दिवस 1');
+    await tester.tap(find.text('Upload photos / videos (many)'));
+    await tester.pumpAndSettle();
+    expect(find.text('3 uploaded'), findsOneWidget);
+    expect(uploaded, ['darshan/2026-10-06/a.jpg', 'darshan/2026-10-06/b.jpg', 'videos/darshan/2026-10-06/aarti.mp4']);
+    final store = c.read(dataStoreProvider) as MemoryDataStore;
+    final photos = store.dump(Col.darshanPhotos).values.toList();
+    expect(photos.map((p) => p['type']), ['photo', 'photo', 'video']);
+    expect(photos.every((p) => p['date'] == '2026-10-06' && p['caption'] == 'नवरात्र दिवस 1'), isTrue);
+    final latest = await ContentRepository(store).watchLatestDarshan().first;
+    expect(latest.map((p) => p.order), [0, 1, 2]);
+    final n = store.dump(Col.notifications).values.where((n) => n['route'] == '/darshan').single;
+    expect(n['imageUrl'], 'https://cdn.test/darshan/2026-10-06/a.jpg');
+  });
+
+  testWidgets('event album bulk upload adds every file to the album', (tester) async {
+    final uploaded = <String>[];
+    final c = await _start(tester, _admin(AdminRole.eventManager), overrides: [
+      uploaderProvider.overrideWithValue(_FakeUploader(uploaded)),
+      mediaPickerProvider.overrideWithValue(({bool allowVideo = true}) async => [
+            for (var i = 0; i < 5; i++) PickedMedia(name: 'p$i.jpg', bytes: Uint8List(1), isVideo: false),
+          ]),
+    ]);
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: c,
+      child: const MaterialApp(home: Scaffold(body: EventMediaUpload(eventId: 'navratri-2026'))),
+    ));
+    await tester.enterText(find.byType(TextField), 'दिवस 3');
+    await tester.tap(find.text('Upload photos / videos (many)'));
+    await tester.pumpAndSettle();
+    final media = (c.read(dataStoreProvider) as MemoryDataStore).dump(Col.eventMedia).values
+        .where((m) => m['album'] == 'दिवस 3' && m['eventId'] == 'navratri-2026');
+    expect(media.length, 5);
+  });
+}
+
+class _FakeUploader implements MediaUploader {
+  _FakeUploader(this.log);
+  final List<String> log;
+  @override
+  bool get enabled => true;
+  @override
+  Future<String> upload(Uint8List bytes, {required String fileName, required String folder}) async {
+    log.add('$folder/$fileName');
+    return 'https://cdn.test/$folder/$fileName';
+  }
 }

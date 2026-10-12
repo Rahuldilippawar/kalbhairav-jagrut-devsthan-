@@ -34,6 +34,7 @@ abstract final class Col {
   static const notifications = 'notifications';
 
   static const gallery = 'gallery';
+  static const darshanPhotos = 'darshan_photos';
   static const videos = 'videos';
 
   static const templeInfo = 'temple_info';

@@ -1589,6 +1589,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)'**
   String get upiSecureNote;
+
+  /// No description provided for @latestDarshan.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest darshan'**
+  String get latestDarshan;
+
+  /// No description provided for @dailyQuoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s thought'**
+  String get dailyQuoteTitle;
+
+  /// No description provided for @dontShowDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t show daily'**
+  String get dontShowDaily;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @dailyQuotePopup.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily thought on opening'**
+  String get dailyQuotePopup;
+
+  /// No description provided for @dailyQuotePopupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show today\'s suvichar once a day when the app opens'**
+  String get dailyQuotePopupHint;
+
+  /// No description provided for @makeBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Make banner'**
+  String get makeBanner;
 }
 
 class _AppLocalizationsDelegate

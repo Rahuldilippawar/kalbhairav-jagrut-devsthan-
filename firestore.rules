@@ -37,6 +37,7 @@ service cloud.firestore {
     match /temple_info/{id} { allow read: if true; allow write: if can('temple'); }
     match /home_banners/{id} { allow read: if true; allow write: if can('content') || can('temple'); }
     match /darshan_schedule/{id} { allow read: if true; allow write: if can('darshan'); }
+    match /darshan_photos/{id} { allow read: if true; allow write: if can('live') || can('darshan') || can('gallery'); }
     match /live_darshan/{id} { allow read: if true; allow write: if can('live'); }
     match /app_settings/{id} { allow read: if true; allow write: if can('settings'); }
 

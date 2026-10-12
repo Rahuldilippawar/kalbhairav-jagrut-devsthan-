@@ -141,6 +141,19 @@ class DemoAdminFunctions implements AdminFunctions {
   }
 }
 
+/// MIME type for an uploaded file extension (photos and short videos).
+String mediaContentType(String ext) => switch (ext) {
+      'png' => 'image/png',
+      'webp' => 'image/webp',
+      'gif' => 'image/gif',
+      'mp4' || 'm4v' => 'video/mp4',
+      'mov' => 'video/quicktime',
+      'webm' => 'video/webm',
+      '3gp' => 'video/3gpp',
+      'mkv' => 'video/x-matroska',
+      _ => 'image/jpeg',
+    };
+
 /// Uploads media to Firebase Storage under `public/` and returns its URL.
 abstract class MediaUploader {
   bool get enabled;
@@ -156,7 +169,7 @@ class FirebaseMediaUploader implements MediaUploader {
     final safe = fileName.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
     final ref = FirebaseStorage.instance.ref('public/$folder/${DateTime.now().millisecondsSinceEpoch}_$safe');
     final ext = safe.split('.').last.toLowerCase();
-    final type = switch (ext) { 'png' => 'image/png', 'webp' => 'image/webp', 'gif' => 'image/gif', _ => 'image/jpeg' };
+    final type = mediaContentType(ext);
     await ref.putData(bytes, SettableMetadata(contentType: type, cacheControl: 'public,max-age=31536000'));
     return ref.getDownloadURL();
   }

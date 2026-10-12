@@ -247,5 +247,12 @@
   "upiStep1": "1. पैसे भरा",
   "upiStep2": "2. UTR क्रमांक भरा",
   "upiReference": "संदर्भ",
-  "upiSecureNote": "UPI ने थेट मंदिराच्या खात्यात (GPay, PhonePe, Paytm, BHIM)"
+  "upiSecureNote": "UPI ने थेट मंदिराच्या खात्यात (GPay, PhonePe, Paytm, BHIM)",
+  "latestDarshan": "नवीनतम दर्शन",
+  "dailyQuoteTitle": "आजचा सुविचार",
+  "dontShowDaily": "रोज दाखवू नका",
+  "close": "बंद करा",
+  "dailyQuotePopup": "रोज सुविचार दाखवा",
+  "dailyQuotePopupHint": "ॲप उघडल्यावर दिवसातून एकदा आजचा सुविचार दाखवा",
+  "makeBanner": "बॅनर बनवा"
 }

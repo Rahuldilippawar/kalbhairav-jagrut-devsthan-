@@ -5,6 +5,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../providers.dart';
 import '../schema.dart';
 import '../widgets/crud.dart';
+import 'media_pages.dart';
 
 /// Events list (all years = the archive). "Manage" opens schedule/route and
 /// media for one event.
@@ -79,6 +80,7 @@ class EventManagePage extends ConsumerWidget {
             embedded: true,
             fixedValues: {'eventId': eventId},
             subtitle: 'Group photos into albums such as "Day 1", "Final Day". Use type youtube/live for video links.',
+            header: EventMediaUpload(eventId: eventId),
           ),
         ]),
       ),

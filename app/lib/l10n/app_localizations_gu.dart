@@ -780,4 +780,26 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get upiSecureNote =>
       'UPI થી સીધા મંદિરના ખાતામાં (GPay, PhonePe, Paytm, BHIM)';
+
+  @override
+  String get latestDarshan => 'નવીનતમ દર્શન';
+
+  @override
+  String get dailyQuoteTitle => 'આજનો સુવિચાર';
+
+  @override
+  String get dontShowDaily => 'રોજ ન બતાવો';
+
+  @override
+  String get close => 'બંધ કરો';
+
+  @override
+  String get dailyQuotePopup => 'રોજ સુવિચાર બતાવો';
+
+  @override
+  String get dailyQuotePopupHint =>
+      'એપ ખોલતાં દિવસમાં એક વાર આજનો સુવિચાર બતાવો';
+
+  @override
+  String get makeBanner => 'બેનર બનાવો';
 }

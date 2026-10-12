@@ -296,5 +296,12 @@
   "upiStep1": "1. Pay",
   "upiStep2": "2. Enter the UTR number",
   "upiReference": "Reference",
-  "upiSecureNote": "Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)"
+  "upiSecureNote": "Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)",
+  "latestDarshan": "Latest darshan",
+  "dailyQuoteTitle": "Today's thought",
+  "dontShowDaily": "Don't show daily",
+  "close": "Close",
+  "dailyQuotePopup": "Daily thought on opening",
+  "dailyQuotePopupHint": "Show today's suvichar once a day when the app opens",
+  "makeBanner": "Make banner"
 }

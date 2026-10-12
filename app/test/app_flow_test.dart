@@ -6,6 +6,7 @@ import 'package:kjd_app/app/app.dart';
 import 'package:kjd_app/app/providers.dart';
 import 'package:kjd_app/app/router.dart';
 import 'package:kjd_app/main.dart';
+import 'package:kjd_app/widgets/media_viewer.dart';
 import 'package:kjd_app/widgets/route_map.dart';
 import 'package:kjd_core/kjd_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,8 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 final _now = DateTime(2026, 10, 6, 9, 30);
 const _devotee = AuthUser(uid: 'demo-919876543210', phone: '+919876543210');
 
-Future<ProviderContainer> _start(WidgetTester tester, {AuthUser? user, String to = '/home'}) async {
-  SharedPreferences.setMockInitialValues({'onboarding_seen_v1': true});
+Future<ProviderContainer> _start(WidgetTester tester, {AuthUser? user, String to = '/home', bool quotePopup = false}) async {
+  SharedPreferences.setMockInitialValues({'onboarding_seen_v1': true, 'daily_quote_popup_v1': quotePopup});
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 2.5;
   addTearDown(tester.view.reset);
@@ -154,6 +155,48 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('पडताळणी सुरू'), findsNothing);
     expect(find.textContaining('KJD-RCPT-000001'), findsOneWidget);
+  });
+
+  testWidgets('daily suvichar pops up once a day and can be turned off', (tester) async {
+    final c = await _start(tester, quotePopup: true);
+    expect(find.byType(Dialog), findsOneWidget);
+    expect(find.text('🌼 आजचा सुविचार'), findsOneWidget);
+    await tester.tap(find.text('रोज दाखवू नका'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
+    expect(c.read(dailyQuotePopupProvider), isFalse);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString('daily_quote_shown_v1'), '2026-10-06');
+  });
+
+  testWidgets("today's darshan photos slide on Darshan and Home", (tester) async {
+    final c = await _start(tester, to: '/darshan');
+    final store = c.read(dataStoreProvider);
+    for (var i = 0; i < 3; i++) {
+      await store.add(Col.darshanPhotos, {
+        ...DarshanPhoto(id: '', url: '', date: '2026-10-06', isVideo: i == 2, caption: 'नवरात्र दिवस 1 – अलंकार', order: i).toMap(),
+        'createdAt': _now,
+      });
+    }
+    // An older day is not shown.
+    await store.add(Col.darshanPhotos, {...const DarshanPhoto(id: '', url: '', date: '2026-10-01').toMap(), 'createdAt': _now});
+    await tester.pumpAndSettle();
+    expect(find.text('आजचे दर्शन 🙏'), findsOneWidget);
+    expect(find.text('नवरात्र दिवस 1 – अलंकार'), findsOneWidget);
+    expect(find.text('1/3'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5)); // auto-slide
+    await tester.pumpAndSettle();
+    expect(find.text('2/3'), findsOneWidget);
+    await tester.tap(find.byType(PageView).first);
+    await tester.pumpAndSettle();
+    expect(find.byType(MediaViewer), findsOneWidget); // full-screen viewer
+    expect(find.descendant(of: find.byType(MediaViewer), matching: find.byType(BackButtonIcon)), findsOneWidget);
+    Navigator.of(tester.element(find.byType(MediaViewer))).pop();
+    await tester.pumpAndSettle();
+
+    c.read(routerProvider).go('/home');
+    await tester.pumpAndSettle();
+    expect(find.text('आजचे दर्शन 🙏'), findsOneWidget);
   });
 
   testWidgets('seva booking issues a QR pass', (tester) async {
