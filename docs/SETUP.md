@@ -11,7 +11,7 @@ These steps take the project from demo mode to production. Commands are run from
 
 ## 2. Firebase project
 
-1. Create a project in the [Firebase console](https://console.firebase.google.com), on the **Blaze** plan. Cloud Functions and outbound calls to Razorpay need Blaze.
+1. Create a project in the [Firebase console](https://console.firebase.google.com), on the **Blaze** plan. Cloud Functions need Blaze.
 2. Enable these services:
    - **Authentication:** turn on the *Phone* provider (devotees) and the *Email/Password* provider (admins). For Phone auth on Android, add the app's SHA-1 and SHA-256 fingerprints in Project settings.
    - **Firestore** (production mode). Choose region `asia-south1` (Mumbai).
@@ -27,22 +27,19 @@ These steps take the project from demo mode to production. Commands are run from
 
    Once `firebase_options.dart` has real values, the apps leave demo mode. Pass `--dart-define=KJD_DEMO=true` to force demo mode again.
 
-## 3. Razorpay
+## 3. Payments (UPI, e.g. PhonePe Business)
 
-1. Create a Razorpay account. Use **Test mode** keys first.
-2. Configure Functions:
+Devotees pay by UPI straight to the temple; there is no payment gateway or fee.
+
+1. Configure Functions:
 
    ```bash
    cp functions/.env.example functions/.env.<project-id>
-   # edit RAZORPAY_KEY_ID and BOOTSTRAP_SUPER_ADMIN_EMAILS
-   firebase functions:secrets:set RAZORPAY_KEY_SECRET
-   firebase functions:secrets:set RAZORPAY_WEBHOOK_SECRET
+   # edit BOOTSTRAP_SUPER_ADMIN_EMAILS
    ```
 
-3. After deploying (step 4), add a webhook in Razorpay Dashboard → Settings → Webhooks:
-   - URL: `https://asia-south1-<project-id>.cloudfunctions.net/razorpayWebhook`
-   - Events: `payment.captured`, `payment.failed`, `order.paid`
-   - Secret: the same value as `RAZORPAY_WEBHOOK_SECRET`
+2. After deploying, open the admin panel → **App Settings** and set **Temple UPI ID** (from the PhonePe Business app), the **UPI payee name** in English and, optionally, a photo of the temple's PhonePe Business QR.
+3. The app offers PhonePe, Google Pay, Paytm and any other UPI app, plus a QR with the amount filled in. The devotee enters the 12-digit UTR; the office matches it against the PhonePe Business statement under **Finance → UPI Verification** and approves, which issues the receipt or seva pass.
 
 ## 4. Deploy
 
@@ -78,12 +75,12 @@ The admin panel is then served at `https://<project-id>.web.app`.
    keyPassword=…
    ```
 
-   The Gradle config picks it up automatically and enables R8 shrinking with Razorpay's keep rules (`app/android/app/proguard-rules.pro`).
+   The Gradle config picks it up automatically and enables R8 shrinking (`app/android/app/proguard-rules.pro`).
 3. Add the upload key's SHA-1/SHA-256 (and, after the first upload, Play App Signing's) to the Firebase Android app – phone OTP needs them.
 4. Bump `version:` in `app/pubspec.yaml`, then `cd app && flutter build appbundle --release`.
 5. Play Console checklist:
    - Privacy policy URL.
-   - Data safety form: phone number, name, photos (optional) and payment info (processed by Razorpay).
+   - Data safety form: phone number, name, photos (optional) and UPI transaction references (UTR).
    - Content rating.
    - Target API level as required by Play.
 

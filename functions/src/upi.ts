@@ -15,7 +15,7 @@ import { slotDocId, type SevaDoc } from "./validation.js";
  *    `submitUpiPayment`. A seva place is held from this point.
  * 3. The office checks the bank / UPI-app statement and approves or rejects
  *    with `reviewUpiPayment`. Only approval creates the donation/booking and
- *    receipt (through the same `finalizePayment` as Razorpay).
+ *    receipt (through `finalizePayment`).
  *
  * UPI gives no automatic confirmation for a personal or plain merchant UPI
  * ID, so step 3 is a human check against the statement.

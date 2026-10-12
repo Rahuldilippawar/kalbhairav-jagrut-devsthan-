@@ -28,6 +28,18 @@ class FunctionsUpiGateway implements UpiGateway {
   Future<void> submit(String paymentId, String utr) => _call('submitUpiPayment', {'paymentId': paymentId, 'utr': utr});
 }
 
+/// Before the temple has set its UPI ID (admin → App Settings).
+class UnavailableCheckout implements CheckoutService {
+  const UnavailableCheckout();
+  static const _message = 'मंदिराचे ऑनलाइन (UPI) पेमेंट अजून सुरू झालेले नाही. कृपया मंदिर कार्यालयाशी संपर्क साधा.';
+
+  @override
+  Future<CheckoutResult> donate(DonationRequest request) async => const CheckoutResult.failure(_message);
+
+  @override
+  Future<CheckoutResult> bookSeva(SevaBookingRequest request) async => const CheckoutResult.failure(_message);
+}
+
 /// Root navigator shared with the router so checkout can show the UPI screen.
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 

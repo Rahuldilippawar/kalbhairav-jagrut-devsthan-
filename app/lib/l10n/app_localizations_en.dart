@@ -357,7 +357,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadPdf => 'Download PDF';
 
   @override
-  String get securePayment => 'Secure payment via Razorpay';
+  String get securePayment =>
+      'Pay by UPI directly to the temple (PhonePe, GPay, Paytm, BHIM)';
 
   @override
   String get login => 'Login';
@@ -782,7 +783,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upiSecureNote =>
-      'Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)';
+      'Pay by UPI directly to the temple (PhonePe, GPay, Paytm, BHIM)';
 
   @override
   String get latestDarshan => 'Latest darshan';
@@ -922,4 +923,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainDeity => 'Main deity';
+
+  @override
+  String get payWithPhonePe => 'Pay with PhonePe';
+
+  @override
+  String get otherUpiApp => 'Other UPI app';
+
+  @override
+  String get appNotInstalled =>
+      'This app is not on the phone. Choose another option or scan the QR.';
+
+  @override
+  String get qrWithAmount => 'QR with amount';
+
+  @override
+  String get templeQr => 'Temple\'s PhonePe QR';
+
+  @override
+  String templeQrNote(String amount) {
+    return 'After scanning this QR, enter the amount $amount yourself.';
+  }
 }

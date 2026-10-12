@@ -141,7 +141,7 @@
   "paymentId": "Payment ID",
   "purpose": "Purpose",
   "downloadPdf": "Download PDF",
-  "securePayment": "Secure payment via Razorpay",
+  "securePayment": "Pay by UPI directly to the temple (PhonePe, GPay, Paytm, BHIM)",
   "login": "Login",
   "loginTitle": "Login with mobile number",
   "sendOtp": "Send OTP",
@@ -296,7 +296,7 @@
   "upiStep1": "1. Pay",
   "upiStep2": "2. Enter the UTR number",
   "upiReference": "Reference",
-  "upiSecureNote": "Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)",
+  "upiSecureNote": "Pay by UPI directly to the temple (PhonePe, GPay, Paytm, BHIM)",
   "latestDarshan": "Latest darshan",
   "dailyQuoteTitle": "Today's thought",
   "dontShowDaily": "Don't show daily",
@@ -348,5 +348,18 @@
   "quickTithi": "Tithi",
   "quickMantras": "Mantras",
   "copied": "Copied",
-  "mainDeity": "Main deity"
+  "mainDeity": "Main deity",
+  "payWithPhonePe": "Pay with PhonePe",
+  "otherUpiApp": "Other UPI app",
+  "appNotInstalled": "This app is not on the phone. Choose another option or scan the QR.",
+  "qrWithAmount": "QR with amount",
+  "templeQr": "Temple's PhonePe QR",
+  "templeQrNote": "After scanning this QR, enter the amount {amount} yourself.",
+  "@templeQrNote": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

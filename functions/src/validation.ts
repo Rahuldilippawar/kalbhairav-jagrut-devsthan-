@@ -6,7 +6,7 @@ export interface Settings {
   minDonationRupees: number;
   maxDonationRupees: number;
   bookingWindowDays: number;
-  /** Temple UPI ID; when set, devotees pay by UPI QR instead of Razorpay. */
+  /** Temple UPI ID (e.g. PhonePe Business); devotees pay by UPI QR / UPI apps. */
   upiId?: string;
   upiPayeeName?: string;
 }

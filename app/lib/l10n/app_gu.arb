@@ -113,7 +113,7 @@
   "paymentId": "ચુકવણી ID",
   "purpose": "હેતુ",
   "downloadPdf": "PDF ડાઉનલોડ",
-  "securePayment": "Razorpay દ્વારા સુરક્ષિત ચુકવણી",
+  "securePayment": "UPI થી સીધા મંદિરના ખાતામાં (PhonePe, GPay, Paytm, BHIM)",
   "login": "લૉગિન",
   "loginTitle": "મોબાઇલ નંબરથી લૉગિન કરો",
   "sendOtp": "OTP મોકલો",
@@ -247,7 +247,7 @@
   "upiStep1": "1. ચુકવણી કરો",
   "upiStep2": "2. UTR નંબર ભરો",
   "upiReference": "સંદર્ભ",
-  "upiSecureNote": "UPI થી સીધા મંદિરના ખાતામાં (GPay, PhonePe, Paytm, BHIM)",
+  "upiSecureNote": "UPI થી સીધા મંદિરના ખાતામાં (PhonePe, GPay, Paytm, BHIM)",
   "latestDarshan": "નવીનતમ દર્શન",
   "dailyQuoteTitle": "આજનો સુવિચાર",
   "dontShowDaily": "રોજ ન બતાવો",
@@ -292,5 +292,11 @@
   "quickTithi": "તિથિ",
   "quickMantras": "મંત્ર",
   "copied": "કૉપિ થયું",
-  "mainDeity": "મુખ્ય દેવતા"
+  "mainDeity": "મુખ્ય દેવતા",
+  "payWithPhonePe": "PhonePe થી ચૂકવો",
+  "otherUpiApp": "અન્ય UPI એપ",
+  "appNotInstalled": "આ એપ ફોનમાં નથી. બીજો વિકલ્પ પસંદ કરો અથવા QR સ્કેન કરો.",
+  "qrWithAmount": "રકમ સાથે QR",
+  "templeQr": "મંદિરનો PhonePe QR",
+  "templeQrNote": "આ QR સ્કેન કર્યા પછી રકમ {amount} જાતે ભરો."
 }

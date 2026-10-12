@@ -65,6 +65,24 @@ class UpiPaymentRequest {
   }
 }
 
+/// UPI apps the pay screen offers directly.
+enum UpiApp {
+  phonePe('phonepe://pay'),
+  googlePay('tez://upi/pay'),
+  paytm('paytmmp://pay'),
+
+  /// Android shows its chooser of installed UPI apps (BHIM, bank apps…).
+  any('upi://pay');
+
+  const UpiApp(this.base);
+  final String base;
+}
+
+extension UpiAppLinks on UpiPaymentRequest {
+  /// Same payment details, opened in a particular UPI app.
+  Uri uriFor(UpiApp app) => Uri.parse('${app.base}?${uri.query}');
+}
+
 /// Server side of UPI payments (Cloud Functions in production).
 abstract class UpiGateway {
   /// Validates and prices [payload] (a DonationRequest / SevaBookingRequest
@@ -113,7 +131,7 @@ class UpiCheckoutService implements CheckoutService {
 }
 
 /// Uses UPI when the temple has set a UPI ID, otherwise [fallback]
-/// (Razorpay in production, the instant demo checkout offline).
+/// (a "not available yet" message in production, the instant demo checkout offline).
 class UpiOrFallbackCheckout implements CheckoutService {
   UpiOrFallbackCheckout({required this.settings, required this.upi, required this.fallback});
   final Future<AppSettings> Function() settings;

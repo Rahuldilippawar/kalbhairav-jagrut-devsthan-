@@ -16,6 +16,10 @@ void main() {
     expect(const UpiPaymentRequest(paymentId: 'a', amountPaise: 100, upiId: 'a@b', payeeName: 'KJD Trust', reference: 'R').uri.queryParameters['pn'], 'KJD Trust');
     expect(uri.queryParameters['tn'], startsWith('KJDABC'));
     expect(uri.queryParameters.containsKey('tr'), isFalse);
+    expect(r.uriFor(UpiApp.phonePe).toString(), startsWith('phonepe://pay?pa=kalbhairav%40sbi'));
+    expect(r.uriFor(UpiApp.googlePay).scheme, 'tez');
+    expect(r.uriFor(UpiApp.paytm).queryParameters['am'], '501.50');
+    expect(r.uriFor(UpiApp.any), r.uri);
     expect(normaliseUtr('4123 4567 8901'), '412345678901');
     expect(normaliseUtr('41234567890'), isNull);
     expect(isValidUpiId('9876543210@ybl'), isTrue);

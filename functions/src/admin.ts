@@ -118,7 +118,7 @@ export const checkInBooking = onCall({ region: REGION }, async (req) => {
   return booking;
 });
 
-/** Seva manager cancels a booking and frees its slot. Refunds are handled in Razorpay. */
+/** Seva manager cancels a booking and frees its slot. Any refund is made from the UPI app. */
 export const cancelBooking = onCall({ region: REGION }, async (req) => {
   const actor = requireModule(req, "bookings");
   const { bookingId, reason } = (req.data ?? {}) as { bookingId?: string; reason?: string };

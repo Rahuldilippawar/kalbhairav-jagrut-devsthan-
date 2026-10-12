@@ -92,7 +92,7 @@ class Donation {
       };
 }
 
-/// `payments` – one per Razorpay order or UPI attempt; the audit trail for
+/// `payments` – one per UPI payment attempt; the audit trail for
 /// every rupee.
 class PaymentRecord {
   const PaymentRecord({
@@ -102,8 +102,8 @@ class PaymentRecord {
     required this.userId,
     required this.amountPaise,
     required this.status,
-    this.method = 'razorpay',
-    this.razorpayPaymentId,
+    this.method = 'upi',
+    this.paymentRef,
     this.refId,
     this.receiptId,
     this.number,
@@ -120,7 +120,7 @@ class PaymentRecord {
     this.updatedAt,
   });
 
-  /// `razorpay` or `upi`.
+  /// `upi` (older records may say `razorpay`).
   final String method;
   bool get isUpi => method == 'upi';
 
@@ -149,7 +149,8 @@ class PaymentRecord {
   final String userId;
   final int amountPaise;
   final PaymentStatus status;
-  final String? razorpayPaymentId;
+  /// e.g. `UPI-<utr>` once the payment is accepted.
+  final String? paymentRef;
 
   /// Id of the donation or booking created on success.
   final String? refId;
@@ -164,8 +165,8 @@ class PaymentRecord {
         userId: asString(m['userId']),
         amountPaise: asInt(m['amountPaise']),
         status: PaymentStatus.fromCode(m['status']),
-        method: asString(m['method'], 'razorpay'),
-        razorpayPaymentId: asStringOrNull(m['razorpayPaymentId']),
+        method: asString(m['method'], 'upi'),
+        paymentRef: asStringOrNull(m['paymentRef'] ?? m['razorpayPaymentId']),
         refId: asStringOrNull(m['refId']),
         receiptId: asStringOrNull(m['receiptId']),
         number: asStringOrNull(m['number']),
@@ -189,7 +190,7 @@ class PaymentRecord {
         'amountPaise': amountPaise,
         'status': status.code,
         'method': method,
-        'razorpayPaymentId': razorpayPaymentId,
+        'paymentRef': paymentRef,
         'refId': refId,
         'receiptId': receiptId,
         'number': number,

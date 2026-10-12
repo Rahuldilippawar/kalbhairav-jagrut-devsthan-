@@ -9,7 +9,7 @@ import '../../app/shell.dart';
 import '../../widgets/common.dart';
 import '../payment/upi_pay_screen.dart';
 
-/// Donate → Purpose → Amount → Details → Razorpay → Verification → Receipt.
+/// Donate → Purpose → Amount → Details → UPI → office verification → Receipt.
 class DonationScreen extends ConsumerStatefulWidget {
   const DonationScreen({super.key, this.initialCategory});
   final String? initialCategory;

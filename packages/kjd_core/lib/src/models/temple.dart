@@ -284,12 +284,12 @@ class AppSettings {
     ],
     this.minDonationRupees = 11,
     this.maxDonationRupees = 500000,
-    this.razorpayKeyId,
     this.maintenanceMode = false,
     this.maintenanceMessage,
     this.bookingWindowDays = 60,
     this.upiId,
     this.upiPayeeName,
+    this.upiQrImageUrl,
   });
 
   /// Temple UPI ID (e.g. `kalbhairav@sbi`). When set, devotees pay by UPI
@@ -298,6 +298,10 @@ class AppSettings {
 
   /// Name shown in the devotee's UPI app; defaults to the temple name.
   final String? upiPayeeName;
+
+  /// The temple's own printed QR (e.g. PhonePe Business), shown as an
+  /// alternative to the QR the app draws with the amount filled in.
+  final String? upiQrImageUrl;
   bool get upiEnabled => isValidUpiId(upiId);
 
   final List<int> donationPresetsRupees;
@@ -305,8 +309,6 @@ class AppSettings {
   final int minDonationRupees;
   final int maxDonationRupees;
 
-  /// Publishable Razorpay key id. The secret never leaves Cloud Functions.
-  final String? razorpayKeyId;
   final bool maintenanceMode;
   final String? maintenanceMessage;
 
@@ -322,12 +324,12 @@ class AppSettings {
       donationCategories: cats.isEmpty ? d.donationCategories : cats,
       minDonationRupees: asInt(m['minDonationRupees'], d.minDonationRupees),
       maxDonationRupees: asInt(m['maxDonationRupees'], d.maxDonationRupees),
-      razorpayKeyId: asStringOrNull(m['razorpayKeyId']),
       maintenanceMode: asBool(m['maintenanceMode']),
       maintenanceMessage: asStringOrNull(m['maintenanceMessage']),
       bookingWindowDays: asInt(m['bookingWindowDays'], d.bookingWindowDays),
       upiId: asStringOrNull(m['upiId'])?.trim(),
       upiPayeeName: asStringOrNull(m['upiPayeeName']),
+      upiQrImageUrl: asStringOrNull(m['upiQrImageUrl']),
     );
   }
 
@@ -336,11 +338,11 @@ class AppSettings {
         'donationCategories': donationCategories,
         'minDonationRupees': minDonationRupees,
         'maxDonationRupees': maxDonationRupees,
-        'razorpayKeyId': razorpayKeyId,
         'maintenanceMode': maintenanceMode,
         'maintenanceMessage': maintenanceMessage,
         'bookingWindowDays': bookingWindowDays,
         'upiId': upiId,
         'upiPayeeName': upiPayeeName,
+        'upiQrImageUrl': upiQrImageUrl,
       };
 }

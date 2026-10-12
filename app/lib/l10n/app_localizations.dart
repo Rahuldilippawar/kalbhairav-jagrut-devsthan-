@@ -783,7 +783,7 @@ abstract class AppLocalizations {
   /// No description provided for @securePayment.
   ///
   /// In en, this message translates to:
-  /// **'Secure payment via Razorpay'**
+  /// **'Pay by UPI directly to the temple (PhonePe, GPay, Paytm, BHIM)'**
   String get securePayment;
 
   /// No description provided for @login.
@@ -1587,7 +1587,7 @@ abstract class AppLocalizations {
   /// No description provided for @upiSecureNote.
   ///
   /// In en, this message translates to:
-  /// **'Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)'**
+  /// **'Pay by UPI directly to the temple (PhonePe, GPay, Paytm, BHIM)'**
   String get upiSecureNote;
 
   /// No description provided for @latestDarshan.
@@ -1859,6 +1859,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Main deity'**
   String get mainDeity;
+
+  /// No description provided for @payWithPhonePe.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with PhonePe'**
+  String get payWithPhonePe;
+
+  /// No description provided for @otherUpiApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Other UPI app'**
+  String get otherUpiApp;
+
+  /// No description provided for @appNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'This app is not on the phone. Choose another option or scan the QR.'**
+  String get appNotInstalled;
+
+  /// No description provided for @qrWithAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'QR with amount'**
+  String get qrWithAmount;
+
+  /// No description provided for @templeQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Temple\'s PhonePe QR'**
+  String get templeQr;
+
+  /// No description provided for @templeQrNote.
+  ///
+  /// In en, this message translates to:
+  /// **'After scanning this QR, enter the amount {amount} yourself.'**
+  String templeQrNote(String amount);
 }
 
 class _AppLocalizationsDelegate

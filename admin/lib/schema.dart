@@ -114,11 +114,12 @@ abstract final class Specs {
     module: AdminModule.settings,
     columns: const [],
     fields: const [
-      FieldSpec('upiId', 'Temple UPI ID (e.g. kalbhairav@sbi)',
-          help: 'When set, devotees pay by UPI QR / UPI app and the office verifies the UTR under Finance → UPI Verification. '
-              'Leave empty to use Razorpay. Prefer a trust bank account / merchant UPI ID.'),
-      FieldSpec('upiPayeeName', 'UPI payee name', help: 'Shown in the UPI app, e.g. Shri Kalbhairav Jagrut Devsthan'),
-      FieldSpec('razorpayKeyId', 'Razorpay key id (publishable)'),
+      FieldSpec('upiId', 'Temple UPI ID (PhonePe Business)',
+          help: 'PhonePe Business app → Profile / Settings → UPI ID (looks like name@ybl or Q…@ybl). Devotees pay to it by '
+              'PhonePe, GPay, Paytm or any UPI app; the office verifies the UTR under Finance → UPI Verification.'),
+      FieldSpec('upiPayeeName', 'UPI payee name', help: 'In English, as in PhonePe Business, e.g. Shri Kalbhairav Jagrut Devsthan'),
+      FieldSpec('upiQrImageUrl', 'PhonePe Business QR (photo)', type: FieldType.image,
+          help: 'Optional: a photo/screenshot of the temple\'s PhonePe Business QR. Shown as a second QR devotees can scan.'),
       FieldSpec('donationCategories', 'Donation categories', type: FieldType.tags),
       FieldSpec('donationPresetsRupees', 'Donation presets (₹)', type: FieldType.intList),
       FieldSpec('minDonationRupees', 'Minimum donation (₹)', type: FieldType.integer),

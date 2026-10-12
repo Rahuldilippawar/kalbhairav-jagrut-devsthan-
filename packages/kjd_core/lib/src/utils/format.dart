@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 final _inr = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
 
-/// Amounts are stored in paise (Razorpay convention) to avoid float errors.
+/// Amounts are stored in paise to avoid float errors.
 String formatPaise(int paise) => _inr.format(paise / 100);
 
 String formatRupees(num rupees) => _inr.format(rupees);

@@ -113,7 +113,7 @@
   "paymentId": "पेमेंट ID",
   "purpose": "उद्देश",
   "downloadPdf": "PDF डाउनलोड",
-  "securePayment": "Razorpay द्वारे सुरक्षित पेमेंट",
+  "securePayment": "UPI ने थेट मंदिराच्या खात्यात (PhonePe, GPay, Paytm, BHIM)",
   "login": "लॉगिन",
   "loginTitle": "मोबाईल नंबरने लॉगिन करा",
   "sendOtp": "OTP पाठवा",
@@ -247,7 +247,7 @@
   "upiStep1": "1. पैसे भरा",
   "upiStep2": "2. UTR क्रमांक भरा",
   "upiReference": "संदर्भ",
-  "upiSecureNote": "UPI ने थेट मंदिराच्या खात्यात (GPay, PhonePe, Paytm, BHIM)",
+  "upiSecureNote": "UPI ने थेट मंदिराच्या खात्यात (PhonePe, GPay, Paytm, BHIM)",
   "latestDarshan": "नवीनतम दर्शन",
   "dailyQuoteTitle": "आजचा सुविचार",
   "dontShowDaily": "रोज दाखवू नका",
@@ -292,5 +292,11 @@
   "quickTithi": "तिथी",
   "quickMantras": "मंत्र",
   "copied": "कॉपी झाले",
-  "mainDeity": "मुख्य देवता"
+  "mainDeity": "मुख्य देवता",
+  "payWithPhonePe": "PhonePe ने पैसे भरा",
+  "otherUpiApp": "इतर UPI ॲप",
+  "appNotInstalled": "हे ॲप या फोनमध्ये नाही. दुसरा पर्याय निवडा किंवा QR स्कॅन करा.",
+  "qrWithAmount": "रकमेसह QR",
+  "templeQr": "मंदिराचा PhonePe QR",
+  "templeQrNote": "हा QR स्कॅन केल्यावर रक्कम {amount} स्वतः टाका."
 }

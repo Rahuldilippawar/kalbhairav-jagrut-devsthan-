@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kjd_core/kjd_core.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
 
-/// Pays the temple's UPI ID: open a UPI app (or scan / share the QR), then
-/// enter the 12-digit UTR. Pops with the UTR, or null if the devotee left.
-class UpiPayScreen extends StatefulWidget {
+const _phonePePurple = Color(0xFF5F259F);
+
+/// Pays the temple's UPI ID (PhonePe Business): open PhonePe / GPay / Paytm /
+/// any UPI app, or scan / share the QR, then enter the 12-digit UTR.
+/// Pops with the UTR, or null if the devotee left.
+class UpiPayScreen extends ConsumerStatefulWidget {
   const UpiPayScreen({super.key, required this.request});
   final UpiPaymentRequest request;
 
   @override
-  State<UpiPayScreen> createState() => _UpiPayScreenState();
+  ConsumerState<UpiPayScreen> createState() => _UpiPayScreenState();
 }
 
-class _UpiPayScreenState extends State<UpiPayScreen> {
+class _UpiPayScreenState extends ConsumerState<UpiPayScreen> {
   final _qrKey = GlobalKey();
   final _utr = TextEditingController();
   bool _openedApp = false;
+  bool _templeQr = false;
 
   UpiPaymentRequest get r => widget.request;
 
@@ -30,19 +36,35 @@ class _UpiPayScreenState extends State<UpiPayScreen> {
     super.dispose();
   }
 
-  Future<void> _openApp() async {
+  Future<void> _openApp(UpiApp app) async {
     final l = context.l10n;
     var ok = false;
     try {
-      ok = await launchUrl(r.uri, mode: LaunchMode.externalApplication);
+      ok = await launchUrl(r.uriFor(app), mode: LaunchMode.externalApplication);
     } catch (_) {}
     if (!mounted) return;
     if (ok) {
       setState(() => _openedApp = true);
     } else {
-      context.toast(l.upiNoApp);
+      context.toast(app == UpiApp.any ? l.upiNoApp : l.appNotInstalled);
     }
   }
+
+  Widget _appButton(String label, Color color, UpiApp app) => Expanded(
+    child: OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: color,
+        side: BorderSide(color: color.withValues(alpha: .6)),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+      onPressed: () => _openApp(app),
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+      ),
+    ),
+  );
 
   Future<void> _shareQr() async {
     try {
@@ -78,6 +100,7 @@ class _UpiPayScreenState extends State<UpiPayScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final templeQrUrl = ref.watch(settingsProvider).value?.upiQrImageUrl;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -85,90 +108,157 @@ class _UpiPayScreenState extends State<UpiPayScreen> {
       },
       child: Scaffold(
         appBar: AppBar(title: Text(l.payByUpi)),
-        body: ListView(padding: const EdgeInsets.all(16), children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(gradient: KjdColors.heroGradient, borderRadius: BorderRadius.circular(20)),
-            child: Column(children: [
-              Text(formatPaise(r.amountPaise),
-                  style: const TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 4),
-              Text('${l.upiPayTo}: ${r.payeeName}',
-                  textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 6),
-              InkWell(
-                onTap: () {
-                  Clipboard.setData(ClipboardData(text: r.upiId));
-                  context.toast(l.upiCopied);
-                },
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Text(r.upiId, style: const TextStyle(color: KjdColors.goldLight, fontWeight: FontWeight.w700)),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.copy, size: 16, color: KjdColors.goldLight),
-                ]),
-              ),
-              Text('${l.upiReference}: ${r.reference}', style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            ]),
-          ),
-          const SizedBox(height: 8),
-          Text(l.upiCheckAmount, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12.5)),
-          SectionHeader(l.upiStep1),
-          FilledButton.icon(
-            onPressed: _openApp,
-            icon: const Icon(Icons.account_balance_wallet_outlined),
-            label: Text(l.upiOpenApp),
-            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-          ),
-          const SizedBox(height: 12),
-          Text(l.upiScanQr, textAlign: TextAlign.center),
-          const SizedBox(height: 8),
-          Center(
-            child: RepaintBoundary(
-              key: _qrKey,
-              child: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(14),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  QrImageView(
-                    data: r.uri.toString(),
-                    size: 220,
-                    backgroundColor: Colors.white,
-                    errorCorrectionLevel: QrErrorCorrectLevel.M,
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(gradient: KjdColors.heroGradient, borderRadius: BorderRadius.circular(20)),
+              child: Column(
+                children: [
+                  Text(
+                    formatPaise(r.amountPaise),
+                    style: const TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900),
                   ),
-                  Text(r.payeeName, style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.black)),
-                  Text('${formatPaise(r.amountPaise)} • ${r.reference}', style: const TextStyle(color: Colors.black87)),
-                ]),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${l.upiPayTo}: ${r.payeeName}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 6),
+                  InkWell(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: r.upiId));
+                      context.toast(l.upiCopied);
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          r.upiId,
+                          style: const TextStyle(color: KjdColors.goldLight, fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(width: 6),
+                        const Icon(Icons.copy, size: 16, color: KjdColors.goldLight),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '${l.upiReference}: ${r.reference}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
               ),
             ),
-          ),
-          TextButton.icon(onPressed: _shareQr, icon: const Icon(Icons.share), label: Text(l.upiShareQr)),
-          SectionHeader(l.upiStep2),
-          TextField(
-            controller: _utr,
-            autofocus: false,
-            keyboardType: TextInputType.number,
-            maxLength: 14,
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]'))],
-            decoration: InputDecoration(
-              labelText: l.upiUtrLabel,
-              prefixIcon: const Icon(Icons.tag),
-              helperText: l.upiUtrHelp,
-              helperMaxLines: 4,
+            const SizedBox(height: 8),
+            Text(l.upiCheckAmount, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12.5)),
+            SectionHeader(l.upiStep1),
+            FilledButton.icon(
+              onPressed: () => _openApp(UpiApp.phonePe),
+              icon: const Icon(Icons.account_balance_wallet),
+              label: Text(l.payWithPhonePe, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(54), backgroundColor: _phonePePurple),
             ),
-            onSubmitted: (_) => _submit(),
-          ),
-          const SizedBox(height: 12),
-          FilledButton.icon(
-            onPressed: _submit,
-            icon: const Icon(Icons.verified_outlined),
-            label: Text(l.upiSubmit),
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(52),
-              backgroundColor: _openedApp ? KjdColors.kumkum : null,
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                _appButton('Google Pay', const Color(0xFF1A73E8), UpiApp.googlePay),
+                const SizedBox(width: 8),
+                _appButton('Paytm', const Color(0xFF00A3D9), UpiApp.paytm),
+                const SizedBox(width: 8),
+                _appButton(l.otherUpiApp, KjdColors.kumkum, UpiApp.any),
+              ],
             ),
-          ),
-          const SizedBox(height: 24),
-        ]),
+            const SizedBox(height: 14),
+            Text(l.upiScanQr, textAlign: TextAlign.center),
+            if (templeQrUrl != null) ...[
+              const SizedBox(height: 8),
+              Center(
+                child: SegmentedButton<bool>(
+                  segments: [
+                    ButtonSegment(value: false, label: Text(l.qrWithAmount)),
+                    ButtonSegment(value: true, label: Text(l.templeQr)),
+                  ],
+                  selected: {_templeQr},
+                  showSelectedIcon: false,
+                  onSelectionChanged: (v) => setState(() => _templeQr = v.first),
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            if (_templeQr && templeQrUrl != null) ...[
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: NetImage(templeQrUrl, width: 280, fit: BoxFit.contain),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                l.templeQrNote(formatPaise(r.amountPaise)),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: KjdColors.kumkum, fontWeight: FontWeight.w700),
+              ),
+            ] else
+              Center(
+                child: RepaintBoundary(
+                  key: _qrKey,
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        QrImageView(
+                          data: r.uri.toString(),
+                          size: 220,
+                          backgroundColor: Colors.white,
+                          errorCorrectionLevel: QrErrorCorrectLevel.M,
+                        ),
+                        Text(
+                          r.payeeName,
+                          style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.black),
+                        ),
+                        Text(
+                          '${formatPaise(r.amountPaise)} • ${r.reference}',
+                          style: const TextStyle(color: Colors.black87),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            if (!_templeQr)
+              TextButton.icon(onPressed: _shareQr, icon: const Icon(Icons.share), label: Text(l.upiShareQr)),
+            SectionHeader(l.upiStep2),
+            TextField(
+              controller: _utr,
+              autofocus: false,
+              keyboardType: TextInputType.number,
+              maxLength: 14,
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]'))],
+              decoration: InputDecoration(
+                labelText: l.upiUtrLabel,
+                prefixIcon: const Icon(Icons.tag),
+                helperText: l.upiUtrHelp,
+                helperMaxLines: 4,
+              ),
+              onSubmitted: (_) => _submit(),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              onPressed: _submit,
+              icon: const Icon(Icons.verified_outlined),
+              label: Text(l.upiSubmit),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(52),
+                backgroundColor: _openedApp ? KjdColors.kumkum : null,
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
@@ -183,7 +273,9 @@ Future<void> showUpiSubmitted(BuildContext context) async {
       icon: const Icon(Icons.hourglass_top, color: KjdColors.saffron, size: 40),
       title: Text(l.upiSubmittedTitle),
       content: Text(l.upiSubmittedBody),
-      actions: [FilledButton(onPressed: () => Navigator.pop(c), child: Text(MaterialLocalizations.of(c).okButtonLabel))],
+      actions: [
+        FilledButton(onPressed: () => Navigator.pop(c), child: Text(MaterialLocalizations.of(c).okButtonLabel)),
+      ],
     ),
   );
 }

@@ -11,7 +11,6 @@ import 'app/providers.dart';
 import 'firebase_options.dart';
 import 'services/photo_uploader.dart';
 import 'services/push_service.dart';
-import 'services/razorpay_checkout.dart';
 import 'services/upi_gateway.dart';
 import 'widgets/route_map.dart';
 
@@ -48,12 +47,11 @@ Future<List<Override>> _bootstrap() async {
         demoModeProvider.overrideWithValue(false),
         dataStoreProvider.overrideWithValue(store),
         authServiceProvider.overrideWithValue(auth),
-        // UPI QR when the temple has set a UPI ID in App Settings, else Razorpay.
+        // UPI (QR / PhonePe / GPay / Paytm) to the temple's UPI ID from App Settings.
         checkoutServiceProvider.overrideWithValue(UpiOrFallbackCheckout(
           settings: () => ContentRepository(store).watchSettings().first,
           upi: UpiCheckoutService(FunctionsUpiGateway(), showUpiPayScreen),
-          // Razorpay Checkout is a native SDK; the web app pays by UPI only.
-          fallback: kIsWeb ? const UnavailableCheckout() : RazorpayCheckoutService(),
+          fallback: const UnavailableCheckout(),
         )),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
         adminPanelUrlProvider.overrideWithValue(DefaultFirebaseOptions.adminPanelUrl),

@@ -1,25 +1,9 @@
 import assert from "node:assert/strict";
-import { createHmac } from "node:crypto";
 import { test } from "node:test";
 
 import { can } from "../src/rbac.js";
-import { addDays, formatSequence, istDateKey, normaliseIndianMobile, verifyCheckoutSignature, verifyWebhookSignature } from "../src/util.js";
+import { addDays, formatSequence, istDateKey, normaliseIndianMobile } from "../src/util.js";
 import { DEFAULT_SETTINGS, parseBooking, parseDonation, slotDocId } from "../src/validation.js";
-
-test("razorpay checkout signature", () => {
-  const secret = "test_secret";
-  const sig = createHmac("sha256", secret).update("order_1|pay_1").digest("hex");
-  assert.equal(verifyCheckoutSignature("order_1", "pay_1", sig, secret), true);
-  assert.equal(verifyCheckoutSignature("order_1", "pay_2", sig, secret), false);
-  assert.equal(verifyCheckoutSignature("order_1", "pay_1", "short", secret), false);
-});
-
-test("razorpay webhook signature", () => {
-  const body = JSON.stringify({ event: "payment.captured" });
-  const sig = createHmac("sha256", "wh").update(body).digest("hex");
-  assert.equal(verifyWebhookSignature(body, sig, "wh"), true);
-  assert.equal(verifyWebhookSignature(body + " ", sig, "wh"), false);
-});
 
 test("helpers", () => {
   assert.equal(formatSequence("KJD-SEVA", 42), "KJD-SEVA-000042");

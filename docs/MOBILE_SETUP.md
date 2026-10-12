@@ -68,25 +68,23 @@ Deploy करणे आणि APK बनवणे ही कामे **GitHub �
 
 > ⚠️ ही फाइल किंवा तिचा मजकूर कोणालाही पाठवू नका, WhatsApp वर किंवा chat मध्येही नाही. फक्त GitHub Secrets मध्ये ठेवा आणि नंतर फाइल delete करा.
 
-## टप्पा 3A: Razorpay (आत्ता नसले तरी चालेल)
+## टप्पा 3A: UPI पेमेंट (PhonePe Business)
 
-https://dashboard.razorpay.com → **Test Mode** चालू ठेवा → **Settings → API Keys → Generate Test Key**.
-- **Key ID** (`rzp_test_…`) → Variable `RAZORPAY_KEY_ID`
-- **Key Secret** → Secret `RAZORPAY_KEY_SECRET`
-- `RAZORPAY_WEBHOOK_SECRET` साठी स्वतः एक मोठा password ठरवा (30+ अक्षरे). तो टप्पा 7 मध्येही लागेल.
+भाविक PhonePe, Google Pay, Paytm किंवा कोणत्याही UPI ॲपने थेट मंदिराच्या खात्यात पैसे भरतात. यासाठी कोणतेही शुल्क नाही.
 
-Razorpay नसले तरी deploy होईल. फक्त ऑनलाइन पेमेंट "उपलब्ध नाही" दाखवेल. Keys नंतर जोडून पुन्हा deploy करता येते.
+1. **PhonePe Business** ॲप उघडा → Profile / Settings मध्ये **UPI ID** पाहा (उदा. `xxxx@ybl`). तो लिहून ठेवा.
+2. PhonePe Business मधील **QR** चा screenshot घ्या (ऐच्छिक).
+3. ॲडमिन पॅनेल → **App Settings**:
+   - **Temple UPI ID** → PhonePe Business चा UPI ID
+   - **UPI payee name** → इंग्रजीत, उदा. `Shri Kalbhairav Jagrut Devsthan`
+   - **PhonePe Business QR (photo)** → QR चा screenshot upload करा (ऐच्छिक)
+   - **Save** दाबा.
+4. भाविकाला देणगी / सेवा बुकिंगमध्ये **"PhonePe ने पैसे भरा"**, Google Pay, Paytm, इतर UPI ॲप ही बटणे, रकमेसह QR आणि मंदिराचा PhonePe QR दिसतो. पैसे भरल्यावर तो 12 अंकी **UTR** भरतो.
+5. ॲडमिन → **Finance → UPI Verification** मध्ये PhonePe Business च्या व्यवहार यादीत तो UTR व रक्कम शोधा:
+   - सापडले → **Approve** (पावती / सेवा पास तयार होतो, भाविकाला सूचना जाते)
+   - सापडले नाही → **Reject** (सेवेची जागा परत मोकळी होते)
 
-## टप्पा 3B: थेट UPI QR पेमेंट (Razorpay ऐवजी, शुल्क नाही)
-
-1. ट्रस्टच्या बँक खात्याचा **UPI ID** मिळवा. शक्यतो बँकेचा merchant / business UPI (उदा. BHIM / SBI / PhonePe Business / Paytm for Business) वापरा.
-2. ॲडमिन पॅनेल → **App Settings** → **Temple UPI ID** (उदा. `kalbhairav@sbi`) आणि **UPI payee name** (इंग्रजीत, उदा. `Shri Kalbhairav Jagrut Devsthan`) भरा → **Save**.
-3. ॲपमध्ये देणगी किंवा सेवा बुकिंग केल्यावर भक्ताला QR, "UPI ॲपने पैसे भरा" बटण आणि 12 अंकी UTR भरण्याची जागा दिसते.
-4. ॲडमिन → **Finance → UPI Verification** मध्ये बँक / UPI ॲपच्या statement मध्ये तो UTR व रक्कम शोधा:
-   - सापडले तर **Approve** करा. पावती किंवा सेवा पास तयार होतो आणि भक्ताला सूचना जाते.
-   - सापडले नाही तर **Reject** करा. सेवेची राखून ठेवलेली जागा परत मोकळी होते.
-
-UPI ID रिकामा ठेवल्यास ॲप पुन्हा Razorpay वापरते.
+UPI ID भरेपर्यंत ॲपमध्ये "ऑनलाइन पेमेंट अजून सुरू झालेले नाही" असा संदेश दिसतो.
 
 ## टप्पा 4: GitHub मध्ये माहिती भरणे
 
@@ -100,8 +98,6 @@ Repository उघडा: https://github.com/Rahuldilippawar/kalbhairav-jagrut-de
 | Name | Value |
 |---|---|
 | `FIREBASE_SERVICE_ACCOUNT` | टप्पा 3 मधील JSON चा संपूर्ण मजकूर |
-| `RAZORPAY_KEY_SECRET` | Razorpay Key Secret (नंतरही चालेल) |
-| `RAZORPAY_WEBHOOK_SECRET` | तुम्ही ठरवलेला password (नंतरही चालेल) |
 
 **Variables** tab → **New repository variable**:
 
@@ -115,13 +111,12 @@ Repository उघडा: https://github.com/Rahuldilippawar/kalbhairav-jagrut-de
 | `FIREBASE_WEB_APP_ID` | Web ॲपचा appId |
 | `FIREBASE_ANDROID_APP_ID` | Android ॲपचा App ID |
 | `BOOTSTRAP_SUPER_ADMIN_EMAILS` | पहिल्या Super Admin चा ईमेल |
-| `RAZORPAY_KEY_ID` | `rzp_test_…` (नंतरही चालेल) |
 
 ## टप्पा 5: Deploy (बटण दाबा)
 
 1. GitHub → **Actions → Deploy to Firebase → Run workflow**.
 2. Branch: `main`, target: **all** → **Run workflow**.
-3. 10–15 मिनिटे थांबा. ✅ हिरवे झाल्यावर run उघडा. Summary मध्ये **ॲडमिन पॅनेलचा पत्ता** (`https://<project-id>.web.app`) आणि **Razorpay webhook URL** दिसतील.
+3. 10–15 मिनिटे थांबा. ✅ हिरवे झाल्यावर run उघडा. Summary मध्ये **ॲडमिन पॅनेल** (`https://<project-id>.web.app`) आणि **भाविकांचे वेब ॲप** (`https://<project-id>-app.web.app`) यांचे पत्ते दिसतील.
 
 ❌ लाल झाले तर run उघडून लाल step मधील शेवटच्या ओळी कॉपी करा आणि Claude ला पाठवा.
 
@@ -139,15 +134,12 @@ Firebase Variables भरण्यापूर्वी बनवलेली AP
 2. ॲडमिन पॅनेल (`https://<project-id>.web.app`) उघडून लॉगिन करा. "No admin role" संदेश येईल, तिथे **Claim Super Admin** दाबा.
 3. Dashboard → **Load starter content**.
 4. **Temple Info** मध्ये खरी माहिती भरा: फोन, WhatsApp, पत्ता, latitude/longitude, इतिहास, ट्रस्ट नोंदणी, PAN, 80G. **Seva Catalogue** मध्ये खरे दर भरा.
-5. Razorpay: **Settings → Webhooks → Add**:
-   - URL: टप्पा 5 च्या summary मधील webhook URL
-   - Secret: `RAZORPAY_WEBHOOK_SECRET`
-   - Events: `payment.captured`, `payment.failed`, `order.paid`
+5. **App Settings** मध्ये PhonePe Business चा UPI ID भरा (टप्पा 3A).
 
 ## टप्पा 8: चाचणी
 
 - APK उघडताच लॉगिनशिवाय थेट Home दिसायला हवे. Profile → **मंदिर व्यवस्थापन** ने ॲडमिन लॉगिन उघडते का ते पाहा.
-- देणगी: Razorpay test card `4111 1111 1111 1111`, कोणतीही पुढची expiry, कोणताही CVV. पावती येते का ते पाहा.
+- देणगी: ₹1 देणगी PhonePe ने भरा, UTR भरा, मग ॲडमिनच्या UPI Verification मध्ये Approve करा. पावती येते का ते पाहा.
 - सेवा बुक करा → QR पास → ॲडमिनमधील **QR Check-in** ने मोबाईल कॅमेऱ्याने scan करा.
 - ॲडमिनमधून एक Notification पाठवा. फोनवर येते का ते पाहा.
 
@@ -156,7 +148,6 @@ Firebase Variables भरण्यापूर्वी बनवलेली AP
 | काय बदलले | काय Run करायचे |
 |---|---|
 | कोड (Claude ने बदल केले) | Deploy → **all**, आणि Build Android APK |
-| फक्त Razorpay keys | Secrets/Variables बदला → Deploy → **functions** |
 | फक्त ॲडमिन पॅनेल | Deploy → **admin** |
 
 ## अडचणी

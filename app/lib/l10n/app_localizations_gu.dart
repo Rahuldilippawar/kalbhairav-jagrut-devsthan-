@@ -357,7 +357,8 @@ class AppLocalizationsGu extends AppLocalizations {
   String get downloadPdf => 'PDF ડાઉનલોડ';
 
   @override
-  String get securePayment => 'Razorpay દ્વારા સુરક્ષિત ચુકવણી';
+  String get securePayment =>
+      'UPI થી સીધા મંદિરના ખાતામાં (PhonePe, GPay, Paytm, BHIM)';
 
   @override
   String get login => 'લૉગિન';
@@ -779,7 +780,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get upiSecureNote =>
-      'UPI થી સીધા મંદિરના ખાતામાં (GPay, PhonePe, Paytm, BHIM)';
+      'UPI થી સીધા મંદિરના ખાતામાં (PhonePe, GPay, Paytm, BHIM)';
 
   @override
   String get latestDarshan => 'નવીનતમ દર્શન';
@@ -919,4 +920,25 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get mainDeity => 'મુખ્ય દેવતા';
+
+  @override
+  String get payWithPhonePe => 'PhonePe થી ચૂકવો';
+
+  @override
+  String get otherUpiApp => 'અન્ય UPI એપ';
+
+  @override
+  String get appNotInstalled =>
+      'આ એપ ફોનમાં નથી. બીજો વિકલ્પ પસંદ કરો અથવા QR સ્કેન કરો.';
+
+  @override
+  String get qrWithAmount => 'રકમ સાથે QR';
+
+  @override
+  String get templeQr => 'મંદિરનો PhonePe QR';
+
+  @override
+  String templeQrNote(String amount) {
+    return 'આ QR સ્કેન કર્યા પછી રકમ $amount જાતે ભરો.';
+  }
 }

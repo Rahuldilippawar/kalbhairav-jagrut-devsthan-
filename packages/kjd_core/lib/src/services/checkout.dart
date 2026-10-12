@@ -130,10 +130,9 @@ class CheckoutResult {
   final String? number;
 }
 
-/// Pays for a donation or seva booking. The production implementation (in
-/// the mobile app) creates a Razorpay order through Cloud Functions, opens
-/// Razorpay Checkout and has the server verify the signature before any
-/// donation/booking/receipt document exists.
+/// Pays for a donation or seva booking. In production this is UPI to the
+/// temple's UPI ID ([UpiCheckoutService]); the donation/booking/receipt is
+/// created only after the office verifies the payment.
 abstract class CheckoutService {
   Future<CheckoutResult> donate(DonationRequest request);
   Future<CheckoutResult> bookSeva(SevaBookingRequest request);
@@ -185,7 +184,7 @@ abstract final class CheckoutValidator {
 }
 
 /// Demo-mode checkout: no gateway, writes the same documents the
-/// `verifyPayment` Cloud Function writes after a successful payment.
+/// UPI approval (`reviewUpiPayment`) writes after a verified payment.
 class DemoCheckoutService implements CheckoutService {
   DemoCheckoutService(this.store, {required this.userId, required this.settings, DateTime Function()? clock})
       : clock = clock ?? DateTime.now;
@@ -281,7 +280,7 @@ class DemoCheckoutService implements CheckoutService {
     if (upi) {
       await store.update(Col.payments, orderId, {
         'status': PaymentStatus.success.code,
-        'razorpayPaymentId': paymentId,
+        'paymentRef': paymentId,
         'refId': refId,
         'receiptId': receiptId,
         'number': number,
@@ -296,7 +295,7 @@ class DemoCheckoutService implements CheckoutService {
       userId: uid,
       amountPaise: amountPaise,
       status: PaymentStatus.success,
-      razorpayPaymentId: paymentId,
+      paymentRef: paymentId,
       refId: refId,
       receiptId: receiptId,
       number: number,

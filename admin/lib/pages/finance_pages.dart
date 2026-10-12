@@ -112,20 +112,20 @@ class _PaymentsPageState extends ConsumerState<PaymentsPage> {
           label: const Text('CSV'),
           onPressed: () => downloadText('payments.csv', toCsv(
             ['Order ID', 'Method', 'Payment ID', 'UTR', 'Purpose', 'User', 'Amount (₹)', 'Status', 'Failure', 'Created', 'Updated'],
-            [for (final p in list) [p.orderId, p.method, p.razorpayPaymentId, p.utr, p.purpose.name, p.userId, p.amountPaise / 100, p.status.code, p.failureReason ?? p.rejectReason, p.createdAt?.toIso8601String(), p.updatedAt?.toIso8601String()]],
+            [for (final p in list) [p.orderId, p.method, p.paymentRef, p.utr, p.purpose.name, p.userId, p.amountPaise / 100, p.status.code, p.failureReason ?? p.rejectReason, p.createdAt?.toIso8601String(), p.updatedAt?.toIso8601String()]],
           )),
         ),
       ]),
       const SizedBox(height: 8),
-      const Text('Pending = order created but not yet verified. The Razorpay webhook reconciles payments if the app closed mid-way; '
-          'REFUND_REQUIRED means the seva slot filled up and an automatic refund was issued.',
+      const Text('PENDING = the devotee opened the UPI screen but did not submit a UTR. PENDING_VERIFICATION = UTR submitted, '
+          'check it under Finance → UPI Verification. REFUND_REQUIRED = the seva slot filled up; refund from the UPI app.',
           style: TextStyle(color: KjdColors.inkMuted)),
       const SizedBox(height: 12),
       ReportTable(
         headers: const ['Order ID', 'Method', 'Payment ID / UTR', 'Purpose', 'Amount', 'Status', 'Created', 'Failure'],
         rows: [
           for (final p in list)
-            [p.orderId, p.method, p.utr ?? p.razorpayPaymentId, p.purpose.name, formatPaise(p.amountPaise), p.status.code, p.createdAt,
+            [p.orderId, p.method, p.utr ?? p.paymentRef, p.purpose.name, formatPaise(p.amountPaise), p.status.code, p.createdAt,
               p.failureReason ?? p.rejectReason],
         ],
       ),
