@@ -31,12 +31,15 @@ jobs:
           channel: stable
           cache: true
 
-      # Headroom for Gradle/R8 + Dart AOT on the small private-repo runner.
-      - name: Add swap
+      # Headroom for Gradle/R8 + Dart AOT on the small private-repo runner:
+      # drop toolchains this build never uses, then add swap.
+      - name: Free disk and add swap
         run: |
-          sudo fallocate -l 6G /swapfile2 && sudo chmod 600 /swapfile2
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost \
+            /opt/hostedtoolcache/CodeQL /usr/local/share/powershell /usr/share/swift
+          sudo fallocate -l 4G /swapfile2 && sudo chmod 600 /swapfile2
           sudo mkswap /swapfile2 && sudo swapon /swapfile2
-          free -h
+          df -h / && free -h
 
       - name: Build APK
         working-directory: app
