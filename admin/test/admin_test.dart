@@ -9,6 +9,7 @@ import 'package:kjd_admin/main.dart';
 import 'package:kjd_admin/providers.dart';
 import 'package:kjd_admin/services/admin_services.dart';
 import 'package:kjd_admin/widgets/bulk_upload.dart';
+import 'package:kjd_admin/widgets/library_loader.dart';
 import 'package:kjd_admin/pages/media_pages.dart';
 import 'package:kjd_core/kjd_core.dart';
 
@@ -232,6 +233,23 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Save'));
     await tester.pumpAndSettle();
     expect(store.dump(Col.deities)['vitthal']!['photos'], hasLength(3));
+  });
+
+  testWidgets('suvichar library adds only the missing items', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.contentManager));
+    final store = c.read(dataStoreProvider) as MemoryDataStore;
+    await store.delete(Col.dailyQuotes, 'sv001');
+    await store.delete(Col.dailyQuotes, 'sv050');
+    await store.update(Col.dailyQuotes, 'sv002', {'text': 'मंदिराने बदललेला सुविचार'});
+    await tester.tap(find.text('Quotes'));
+    await tester.pumpAndSettle();
+    expect(find.text('Suvichar library: 2 ready to add'), findsOneWidget);
+    await tester.tap(find.descendant(of: find.byType(LibraryLoader), matching: find.byType(FilledButton)));
+    await tester.pumpAndSettle();
+    final docs = store.dump(Col.dailyQuotes);
+    expect(docs.containsKey('sv001') && docs.containsKey('sv050'), isTrue);
+    expect(docs['sv002']!['text'], 'मंदिराने बदललेला सुविचार'); // edits kept
+    expect(find.textContaining('ready to add'), findsNothing);
   });
 }
 

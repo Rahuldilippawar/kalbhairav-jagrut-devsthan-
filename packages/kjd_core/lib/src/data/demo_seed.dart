@@ -5,6 +5,7 @@ import '../models/seva.dart';
 import '../models/temple.dart';
 import '../utils/convert.dart';
 import 'collections.dart';
+import 'devotion_library.dart';
 
 /// Sample content used in demo mode (no Firebase project configured) and by
 /// `tool/seed_firestore` in the admin app. Dates are relative to [now] so
@@ -281,8 +282,8 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
           photoUrl: 'asset:logo').toMap(),
     },
     Col.darshanSchedule: byId(darshan, (s) => s.id, (s) => s.toMap()),
-    Col.dailyQuotes: byId(quotes, (q) => q.id, (q) => q.toMap()),
-    Col.mantras: byId(mantras, (m) => m.id, (m) => m.toMap()),
+    Col.dailyQuotes: byId([...quotes, ...suvicharLibrary], (q) => q.id, (q) => q.toMap()),
+    Col.mantras: byId([...mantras, ...mantraLibrary], (m) => m.id, (m) => m.toMap()),
     Col.publicGreetings: {
       dateKey(today): const PublicGreetings(date: '', entries: [
         PublicGreeting(name: 'श्री. रमेश पाटील', village: 'रुंधाटी', kind: GreetingKind.birthday),

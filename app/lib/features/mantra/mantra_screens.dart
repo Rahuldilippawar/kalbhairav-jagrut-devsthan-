@@ -9,52 +9,108 @@ import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
 
-class MantrasScreen extends ConsumerWidget {
+class MantrasScreen extends ConsumerStatefulWidget {
   const MantrasScreen({super.key});
+  @override
+  ConsumerState<MantrasScreen> createState() => _MantrasScreenState();
+}
+
+class _MantrasScreenState extends ConsumerState<MantrasScreen> {
+  String? _deity;
+  String _q = '';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l = context.l10n;
     final mantras = ref.watch(mantrasProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l.mantras)),
-      body: AsyncView(mantras, data: (list) {
-        if (list.isEmpty) return const EmptyState();
-        return ListView.separated(
-          padding: const EdgeInsets.all(16),
-          itemCount: list.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 12),
-          itemBuilder: (context, i) {
-            final m = list[i];
-            return Card(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(18),
-                onTap: () => context.push('/mantra/${m.id}'),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Row(children: [
-                      Expanded(child: Text(m.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16))),
-                      Pill(m.deity),
-                    ]),
-                    const SizedBox(height: 8),
-                    Text(m.text,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontFamily: bannerFontFamily('tiroMarathi'), fontSize: 18, color: KjdColors.kumkumDark)),
-                    const SizedBox(height: 6),
-                    Row(children: [
-                      const Icon(Icons.radio_button_checked, size: 14, color: KjdColors.saffron),
-                      const SizedBox(width: 4),
-                      Text('${l.mantraJapa} × ${m.japaCount}', style: const TextStyle(color: KjdColors.inkMuted, fontSize: 13)),
-                    ]),
-                  ]),
-                ),
-              ),
-            );
-          },
-        );
+      body: AsyncView(mantras, data: (all) {
+        if (all.isEmpty) return const EmptyState();
+        final deities = <String>[];
+        for (final m in all) {
+          if (!deities.contains(m.deity)) deities.add(m.deity);
+        }
+        final list = all
+            .where((m) => _deity == null || m.deity == _deity)
+            .where((m) => _q.isEmpty || m.title.contains(_q) || m.text.contains(_q) || (m.meaning?.contains(_q) ?? false))
+            .toList();
+        return Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: TextField(
+              decoration: InputDecoration(isDense: true, prefixIcon: const Icon(Icons.search), hintText: l.search),
+              onChanged: (v) => setState(() => _q = v.trim()),
+            ),
+          ),
+          SizedBox(
+            height: 52,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              children: [
+                for (final d in [null, ...deities])
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: ChoiceChip(
+                      label: Text(d ?? '${l.allCategories} (${all.length})'),
+                      selected: _deity == d,
+                      selectedColor: KjdColors.goldLight,
+                      // Tapping the selected chip again clears the filter.
+                      onSelected: (on) => setState(() => _deity = on ? d : null),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: list.isEmpty
+                ? EmptyState(message: l.nothingHereYet)
+                : ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                    itemCount: list.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    itemBuilder: (context, i) => _MantraTile(m: list[i]),
+                  ),
+          ),
+        ]);
       }),
+    );
+  }
+}
+
+class _MantraTile extends StatelessWidget {
+  const _MantraTile({required this.m});
+  final Mantra m;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Card(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () => context.push('/mantra/${m.id}'),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(m.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16))),
+              Pill(m.deity),
+            ]),
+            const SizedBox(height: 8),
+            Text(m.text,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontFamily: bannerFontFamily('tiroMarathi'), fontSize: 18, color: KjdColors.kumkumDark)),
+            const SizedBox(height: 6),
+            Row(children: [
+              const Icon(Icons.radio_button_checked, size: 14, color: KjdColors.saffron),
+              const SizedBox(width: 4),
+              Text('${l.mantraJapa} × ${m.japaCount}', style: const TextStyle(color: KjdColors.inkMuted, fontSize: 13)),
+            ]),
+          ]),
+        ),
+      ),
     );
   }
 }

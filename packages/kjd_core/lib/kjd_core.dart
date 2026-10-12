@@ -5,6 +5,7 @@ library;
 export 'src/data/collections.dart';
 export 'src/data/data_store.dart';
 export 'src/data/demo_seed.dart';
+export 'src/data/devotion_library.dart';
 export 'src/data/firestore_data_store.dart';
 export 'src/data/memory_data_store.dart';
 export 'src/data/repositories.dart';

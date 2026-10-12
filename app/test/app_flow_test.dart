@@ -265,6 +265,21 @@ void main() {
     expect(find.text('जीवन परिचय'), findsOneWidget);
   });
 
+  testWidgets('100+ mantras filter by deity and search', (tester) async {
+    await _start(tester, to: '/mantras');
+    expect(find.textContaining('सर्व ('), findsOneWidget);
+    await tester.dragUntilVisible(find.text('नवग्रह'), find.byType(ListView).first, const Offset(-200, 0));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ChoiceChip, 'नवग्रह'));
+    await tester.pumpAndSettle();
+    expect(find.text('नवग्रह – सूर्य'), findsOneWidget);
+    expect(find.text('पंचाक्षरी मंत्र'), findsNothing);
+    await tester.tap(find.widgetWithText(ChoiceChip, 'नवग्रह'));
+    await tester.enterText(find.byType(TextField).first, 'महामृत्युंजय');
+    await tester.pumpAndSettle();
+    expect(find.text('महामृत्युंजय मंत्र'), findsOneWidget);
+  });
+
   testWidgets('seva booking issues a QR pass', (tester) async {
     final c = await _start(tester, user: _devotee, to: '/book/abhishek');
     // Pick a date: opens the picker, accept the default (today).

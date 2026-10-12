@@ -64,18 +64,53 @@ class GreetingsScreen extends ConsumerWidget {
           ),
         ),
         if (quotes.length > 1) ...[
-          const SectionHeader('संग्रह', icon: '📜'),
-          for (final q in quotes.where((q) => q.id != quoteOfDay?.id))
-            Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                title: Text(q.text),
-                subtitle: Text(q.category),
-                trailing: IconButton(icon: const Icon(Icons.share), onPressed: () => share(q.text, BannerCategory.special)),
-              ),
-            ),
+          SectionHeader('संग्रह (${quotes.length})', icon: '📜'),
+          _QuoteCollection(
+            quotes: [for (final q in quotes) if (q.id != quoteOfDay?.id) q],
+            onShare: (q) => share(q.text, BannerCategory.special),
+          ),
         ],
       ]),
     );
+  }
+}
+
+/// Suvichar collection with category chips.
+class _QuoteCollection extends StatefulWidget {
+  const _QuoteCollection({required this.quotes, required this.onShare});
+  final List<DailyQuote> quotes;
+  final ValueChanged<DailyQuote> onShare;
+
+  @override
+  State<_QuoteCollection> createState() => _QuoteCollectionState();
+}
+
+class _QuoteCollectionState extends State<_QuoteCollection> {
+  String? _category;
+
+  @override
+  Widget build(BuildContext context) {
+    final list = widget.quotes.where((q) => _category == null || q.category == _category).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Wrap(spacing: 6, runSpacing: 6, children: [
+        for (final c in [null, ...DailyQuote.categories])
+          ChoiceChip(
+            label: Text(c ?? context.l10n.allCategories),
+            selected: _category == c,
+            selectedColor: KjdColors.goldLight,
+            onSelected: (_) => setState(() => _category = c),
+          ),
+      ]),
+      const SizedBox(height: 8),
+      for (final q in list)
+        Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            title: Text(q.text, style: const TextStyle(height: 1.45)),
+            subtitle: Text(q.author == null ? q.category : '— ${q.author} • ${q.category}'),
+            trailing: IconButton(icon: const Icon(Icons.share), onPressed: () => widget.onShare(q)),
+          ),
+        ),
+    ]);
   }
 }

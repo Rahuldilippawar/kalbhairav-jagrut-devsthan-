@@ -5,6 +5,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../providers.dart';
 import '../schema.dart';
 import '../widgets/crud.dart';
+import '../widgets/library_loader.dart';
 import 'audit_page.dart';
 import 'bookings_page.dart';
 import 'dashboard_page.dart';
@@ -42,8 +43,8 @@ final List<NavItem> navItems = [
   NavItem('payments', 'Payments', Icons.payments_outlined, AdminModule.payments, () => const PaymentsPage(), group: 'Finance'),
   NavItem('reports', 'Reports', Icons.bar_chart, AdminModule.reports, () => const ReportsPage(), group: 'Finance'),
   NavItem('greetings', 'Daily Subhechha', Icons.wb_sunny_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.greetings), group: 'Content'),
-  NavItem('quotes', 'Quotes', Icons.format_quote, AdminModule.content, () => CollectionListPage(spec: Specs.quotes), group: 'Content'),
-  NavItem('mantras', 'Mantras', Icons.self_improvement, AdminModule.content, () => CollectionListPage(spec: Specs.mantras), group: 'Content'),
+  NavItem('quotes', 'Quotes', Icons.format_quote, AdminModule.content, () => CollectionListPage(spec: Specs.quotes, header: LibraryLoader(collection: Col.dailyQuotes, items: suvicharLibraryDocs, label: 'Suvichar library')), group: 'Content'),
+  NavItem('mantras', 'Mantras', Icons.self_improvement, AdminModule.content, () => CollectionListPage(spec: Specs.mantras, header: LibraryLoader(collection: Col.mantras, items: mantraLibraryDocs, label: 'Mantra library')), group: 'Content'),
   NavItem('festivals', 'Festival Calendar', Icons.celebration_outlined, AdminModule.content, () => const FestivalCalendarPage(), group: 'Content'),
   NavItem('tithi', 'Tithi / Panchang', Icons.calendar_month, AdminModule.content, () => const TithiPage(), group: 'Content'),
   NavItem('announcements', 'Announcements', Icons.campaign_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.announcements), group: 'Content'),
