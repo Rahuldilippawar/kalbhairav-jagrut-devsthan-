@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -51,11 +52,14 @@ Future<List<Override>> _bootstrap() async {
         checkoutServiceProvider.overrideWithValue(UpiOrFallbackCheckout(
           settings: () => ContentRepository(store).watchSettings().first,
           upi: UpiCheckoutService(FunctionsUpiGateway(), showUpiPayScreen),
-          fallback: RazorpayCheckoutService(),
+          // Razorpay Checkout is a native SDK; the web app pays by UPI only.
+          fallback: kIsWeb ? const UnavailableCheckout() : RazorpayCheckoutService(),
         )),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
         adminPanelUrlProvider.overrideWithValue(DefaultFirebaseOptions.adminPanelUrl),
-        pushServiceProvider.overrideWithValue(PushService(FirebasePushPlatform(), UserRepository(store))),
+        // Web push needs a VAPID key and service worker; the web app relies on
+        // the in-app notification list instead.
+        if (!kIsWeb) pushServiceProvider.overrideWithValue(PushService(FirebasePushPlatform(), UserRepository(store))),
       ];
     } catch (e) {
       debugPrint('Firebase unavailable, starting in demo mode: $e');

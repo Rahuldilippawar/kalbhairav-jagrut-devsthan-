@@ -1,6 +1,6 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pdf/pdf.dart';
@@ -45,7 +45,9 @@ Future<bool> openUrl(String url) =>
     launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
 
 /// Opens a page inside the app (Custom Tab / SFSafariViewController).
-Future<bool> openInApp(String url) => launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView);
+/// On the web it opens a new tab.
+Future<bool> openInApp(String url) =>
+    launchUrl(Uri.parse(url), mode: kIsWeb ? LaunchMode.platformDefault : LaunchMode.inAppBrowserView);
 
 Future<bool> callNumber(String phone) => launchUrl(Uri(scheme: 'tel', path: phone));
 

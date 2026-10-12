@@ -96,3 +96,16 @@ class RazorpayCheckoutService implements CheckoutService {
     return completer.future.whenComplete(razorpay.clear);
   }
 }
+
+/// Used where Razorpay Checkout cannot run (the web app) and the temple has
+/// not set a UPI ID.
+class UnavailableCheckout implements CheckoutService {
+  const UnavailableCheckout();
+  static const _message = 'ऑनलाइन पेमेंट सध्या मोबाईल ॲपमध्येच उपलब्ध आहे.';
+
+  @override
+  Future<CheckoutResult> donate(DonationRequest request) async => const CheckoutResult.failure(_message);
+
+  @override
+  Future<CheckoutResult> bookSeva(SevaBookingRequest request) async => const CheckoutResult.failure(_message);
+}

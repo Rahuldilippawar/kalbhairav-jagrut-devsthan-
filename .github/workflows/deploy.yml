@@ -18,7 +18,7 @@ on:
         description: What to deploy
         type: choice
         default: all
-        options: [all, functions, rules, admin]
+        options: [all, functions, rules, admin, app]
 
 concurrency:
   group: firebase-deploy
@@ -41,7 +41,7 @@ jobs:
           missing=""
           [ -n "$PROJECT" ] || missing="$missing FIREBASE_PROJECT_ID(variable)"
           [ "$HAS_SA" = "true" ] || missing="$missing FIREBASE_SERVICE_ACCOUNT(secret)"
-          if [ "$TARGET" = "all" ] || [ "$TARGET" = "admin" ]; then
+          if [ "$TARGET" = "all" ] || [ "$TARGET" = "admin" ] || [ "$TARGET" = "app" ]; then
             [ "$HAS_WEB" = "true" ] || missing="$missing FIREBASE_API_KEY/FIREBASE_SENDER_ID/FIREBASE_WEB_APP_ID(variables)"
           fi
           if [ -n "$missing" ]; then
@@ -56,7 +56,7 @@ jobs:
           cache-dependency-path: functions/package-lock.json
 
       - uses: subosito/flutter-action@v2
-        if: inputs.target == 'all' || inputs.target == 'admin'
+        if: inputs.target == 'all' || inputs.target == 'admin' || inputs.target == 'app'
         with:
           channel: stable
           cache: true
@@ -119,13 +119,52 @@ jobs:
             --dart-define=FIREBASE_AUTH_DOMAIN="${{ vars.FIREBASE_AUTH_DOMAIN }}" \
             --dart-define=FIREBASE_WEB_APP_ID="${{ vars.FIREBASE_WEB_APP_ID }}"
 
+      - name: Build devotee web app
+        if: inputs.target == 'all' || inputs.target == 'app'
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter build web --release \
+            --dart-define=FIREBASE_API_KEY="${{ vars.FIREBASE_API_KEY }}" \
+            --dart-define=FIREBASE_PROJECT_ID="$PROJECT" \
+            --dart-define=FIREBASE_SENDER_ID="${{ vars.FIREBASE_SENDER_ID }}" \
+            --dart-define=FIREBASE_STORAGE_BUCKET="${{ vars.FIREBASE_STORAGE_BUCKET }}" \
+            --dart-define=FIREBASE_AUTH_DOMAIN="${{ vars.FIREBASE_AUTH_DOMAIN }}" \
+            --dart-define=FIREBASE_WEB_APP_ID="${{ vars.FIREBASE_WEB_APP_ID }}"
+
+      # Admin panel on the default site (<project>.web.app); the devotee web
+      # app on its own site (<project>-app.web.app unless APP_SITE_ID is set).
+      - name: Hosting sites
+        if: inputs.target == 'all' || inputs.target == 'admin' || inputs.target == 'app'
+        env:
+          APP_SITE: ${{ vars.APP_SITE_ID }}
+        run: |
+          APP_SITE="${APP_SITE:-$PROJECT-app}"
+          echo "APP_SITE=$APP_SITE" >> "$GITHUB_ENV"
+          if [ "$TARGET" != "admin" ]; then
+            firebase hosting:sites:get "$APP_SITE" --project "$PROJECT" >/dev/null 2>&1 \
+              || firebase hosting:sites:create "$APP_SITE" --project "$PROJECT" --non-interactive
+          fi
+          firebase target:apply hosting admin "$PROJECT" --project "$PROJECT"
+          firebase target:apply hosting app "$APP_SITE" --project "$PROJECT"
+
+      # Lets the web apps load uploaded photos from Cloud Storage.
+      - name: Storage CORS
+        if: inputs.target == 'all' || inputs.target == 'admin' || inputs.target == 'app'
+        env:
+          BUCKET: ${{ vars.FIREBASE_STORAGE_BUCKET }}
+        run: |
+          gcloud storage buckets update "gs://${BUCKET:-$PROJECT.firebasestorage.app}" --cors-file=storage-cors.json \
+            || echo "::warning::Could not set Storage CORS – photos may not show in the web apps."
+
       - name: Deploy
         run: |
           case "$TARGET" in
             all)       only="firestore:rules,firestore:indexes,storage,functions,hosting" ;;
             functions) only="functions" ;;
             rules)     only="firestore:rules,firestore:indexes,storage" ;;
-            admin)     only="hosting" ;;
+            admin)     only="hosting:admin" ;;
+            app)       only="hosting:app" ;;
           esac
           firebase deploy --only "$only" --project "$PROJECT" --non-interactive --force
 
@@ -136,5 +175,6 @@ jobs:
             echo "## ✅ Deployed ($TARGET) to \`$PROJECT\`"
             echo ""
             echo "- Admin panel: https://$PROJECT.web.app"
+            if [ -n "$APP_SITE" ]; then echo "- Devotee web app: https://$APP_SITE.web.app"; fi
             echo "- Razorpay webhook URL: \`https://asia-south1-$PROJECT.cloudfunctions.net/razorpayWebhook\`"
           } >> "$GITHUB_STEP_SUMMARY"
