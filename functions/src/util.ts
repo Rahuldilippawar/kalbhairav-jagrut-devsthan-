@@ -56,6 +56,12 @@ export interface QuoteDoc {
   scheduledDate?: string | null;
 }
 
+/** Firestore quotes plus built-in ones whose id is not taken; mirrors ContentRepository.watchQuotes. */
+export function mergeQuoteLibrary(own: QuoteDoc[], library: QuoteDoc[]): QuoteDoc[] {
+  const ids = new Set(own.map((q) => q.id));
+  return [...own, ...library.filter((q) => !ids.has(q.id))];
+}
+
 /** Today's suvichar; mirrors DailyQuote.pickForDay in kjd_core. */
 export function pickQuoteForDay(quotes: QuoteDoc[], dayKey: string): QuoteDoc | null {
   const published = quotes.filter((q) => q.status === "published").sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));

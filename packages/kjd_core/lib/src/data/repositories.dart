@@ -10,6 +10,7 @@ import '../panchang/festivals.dart';
 import '../panchang/panchang.dart';
 import '../utils/convert.dart';
 import 'collections.dart';
+import 'devotion_library.dart';
 import 'data_store.dart';
 
 List<T> _map<T>(List<Doc> docs, T Function(String id, Map<String, dynamic> m) f) =>
@@ -50,18 +51,30 @@ class ContentRepository {
             .indexOf(a.category)
             .compareTo(DailyGreeting.categories.indexOf(b.category))));
 
-  Stream<List<Mantra>> watchMantras() => store
-      .watch(Col.mantras, const Query(where: [Where.eq('active', true)]))
-      .map((d) => _map(d, Mantra.fromMap)..sort((a, b) => a.order.compareTo(b.order)));
+  /// The temple's mantras plus the built-in [mantraLibrary]. A temple
+  /// document with a library id overrides that item (`active: false` hides it).
+  Stream<List<Mantra>> watchMantras() => store.watch(Col.mantras).map((d) {
+        final own = _map(d, Mantra.fromMap);
+        final ids = {for (final m in own) m.id};
+        return [...own, ...mantraLibrary.where((m) => !ids.contains(m.id))].where((m) => m.active).toList()
+          ..sort((a, b) => a.order.compareTo(b.order));
+      });
 
   /// Today's public birthday/anniversary wishes (see [PublicGreetings]).
   Stream<PublicGreetings> watchPublicGreetings(DateTime day) => store
       .watchDoc(Col.publicGreetings, dateKey(day))
       .map((d) => d == null ? PublicGreetings(date: dateKey(day)) : PublicGreetings.fromMap(d.id, d.data));
 
-  Stream<List<DailyQuote>> watchQuotes() => store
-      .watch(Col.dailyQuotes, const Query(where: [Where.eq('status', 'published')]))
-      .map((d) => _map(d, DailyQuote.fromMap));
+  /// Published suvichar: the temple's own plus the built-in
+  /// [suvicharLibrary]. A temple document with a library id overrides it
+  /// (status draft/archived hides it). Mirrored by dailyJobs on the server.
+  Stream<List<DailyQuote>> watchQuotes() => store.watch(Col.dailyQuotes).map((d) {
+        final own = _map(d, DailyQuote.fromMap);
+        final ids = {for (final q in own) q.id};
+        return [...own, ...suvicharLibrary.where((q) => !ids.contains(q.id))]
+            .where((q) => q.status == ContentStatus.published)
+            .toList();
+      });
 
   Stream<DailyQuote?> watchQuoteOfDay(DateTime day) =>
       watchQuotes().map((q) => DailyQuote.pickForDay(q, day));

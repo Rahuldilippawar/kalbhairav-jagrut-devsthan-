@@ -4,7 +4,8 @@ import { logger } from "firebase-functions";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 
-import { addDays, chunk, istDateKey, istMonthDay, pickQuoteForDay, type QuoteDoc } from "./util.js";
+import { SUVICHAR_LIBRARY } from "./suvichar_library.js";
+import { addDays, chunk, istDateKey, istMonthDay, mergeQuoteLibrary, pickQuoteForDay, type QuoteDoc } from "./util.js";
 
 const REGION = "asia-south1";
 const TZ = "Asia/Kolkata";
@@ -136,8 +137,10 @@ export const dailyJobs = onSchedule({ schedule: "30 6 * * *", timeZone: TZ, regi
   }
 
   // Daily suvichar (opens the greetings screen with today's quote).
-  const quotes = await db().collection("daily_quotes").where("status", "==", "published").get();
-  const quote = pickQuoteForDay(quotes.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<QuoteDoc, "id">) })), today);
+  // Same list as the app: Firestore docs plus the built-in library (a doc with a library id overrides it).
+  const quotes = await db().collection("daily_quotes").get();
+  const own = quotes.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<QuoteDoc, "id">) }));
+  const quote = pickQuoteForDay(mergeQuoteLibrary(own, SUVICHAR_LIBRARY), today);
   if (quote) {
     await notifications.doc(`quote-${today}`).create({
       title: "🌼 आजचा सुविचार",

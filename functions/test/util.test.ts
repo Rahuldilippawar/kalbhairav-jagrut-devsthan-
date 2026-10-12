@@ -65,3 +65,15 @@ test("daily suvichar matches the app's pick", async () => {
   assert.equal(pickQuoteForDay(quotes, "2026-10-11")?.id, "b");
   assert.equal(pickQuoteForDay([], "2026-10-12"), null);
 });
+
+test("mergeQuoteLibrary: Firestore docs override built-ins by id", async () => {
+  const { mergeQuoteLibrary } = await import("../src/util.js");
+  const { SUVICHAR_LIBRARY } = await import("../src/suvichar_library.js");
+  assert.ok(SUVICHAR_LIBRARY.length >= 100);
+  const merged = mergeQuoteLibrary(
+    [{ id: "sv001", text: "x", status: "draft" }, { id: "own", text: "y", status: "published" }],
+    SUVICHAR_LIBRARY,
+  );
+  assert.equal(merged.length, SUVICHAR_LIBRARY.length + 1);
+  assert.equal(merged.find((q) => q.id === "sv001")?.status, "draft");
+});
