@@ -1,3 +1,4 @@
+import '../payments/upi.dart';
 import '../utils/convert.dart';
 
 /// Singleton document `temple_info/main`.
@@ -287,7 +288,17 @@ class AppSettings {
     this.maintenanceMode = false,
     this.maintenanceMessage,
     this.bookingWindowDays = 60,
+    this.upiId,
+    this.upiPayeeName,
   });
+
+  /// Temple UPI ID (e.g. `kalbhairav@sbi`). When set, devotees pay by UPI
+  /// QR / UPI app and the office verifies the UTR.
+  final String? upiId;
+
+  /// Name shown in the devotee's UPI app; defaults to the temple name.
+  final String? upiPayeeName;
+  bool get upiEnabled => isValidUpiId(upiId);
 
   final List<int> donationPresetsRupees;
   final List<String> donationCategories;
@@ -315,6 +326,8 @@ class AppSettings {
       maintenanceMode: asBool(m['maintenanceMode']),
       maintenanceMessage: asStringOrNull(m['maintenanceMessage']),
       bookingWindowDays: asInt(m['bookingWindowDays'], d.bookingWindowDays),
+      upiId: asStringOrNull(m['upiId'])?.trim(),
+      upiPayeeName: asStringOrNull(m['upiPayeeName']),
     );
   }
 
@@ -327,5 +340,7 @@ class AppSettings {
         'maintenanceMode': maintenanceMode,
         'maintenanceMessage': maintenanceMessage,
         'bookingWindowDays': bookingWindowDays,
+        'upiId': upiId,
+        'upiPayeeName': upiPayeeName,
       };
 }

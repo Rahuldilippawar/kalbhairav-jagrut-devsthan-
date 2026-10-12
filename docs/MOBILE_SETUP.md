@@ -77,6 +77,17 @@ https://dashboard.razorpay.com → **Test Mode** चालू ठेवा → *
 
 Razorpay नसले तरी deploy होईल. फक्त ऑनलाइन पेमेंट "उपलब्ध नाही" दाखवेल. Keys नंतर जोडून पुन्हा deploy करता येते.
 
+## टप्पा 3B: थेट UPI QR पेमेंट (Razorpay ऐवजी, शुल्क नाही)
+
+1. ट्रस्टच्या बँक खात्याचा **UPI ID** मिळवा. शक्यतो बँकेचा merchant / business UPI (उदा. BHIM / SBI / PhonePe Business / Paytm for Business) वापरा.
+2. ॲडमिन पॅनेल → **App Settings** → **Temple UPI ID** (उदा. `kalbhairav@sbi`) आणि **UPI payee name** (इंग्रजीत, उदा. `Shri Kalbhairav Jagrut Devsthan`) भरा → **Save**.
+3. ॲपमध्ये देणगी किंवा सेवा बुकिंग केल्यावर भक्ताला QR, "UPI ॲपने पैसे भरा" बटण आणि 12 अंकी UTR भरण्याची जागा दिसते.
+4. ॲडमिन → **Finance → UPI Verification** मध्ये बँक / UPI ॲपच्या statement मध्ये तो UTR व रक्कम शोधा:
+   - सापडले तर **Approve** करा. पावती किंवा सेवा पास तयार होतो आणि भक्ताला सूचना जाते.
+   - सापडले नाही तर **Reject** करा. सेवेची राखून ठेवलेली जागा परत मोकळी होते.
+
+UPI ID रिकामा ठेवल्यास ॲप पुन्हा Razorpay वापरते.
+
 ## टप्पा 4: GitHub मध्ये माहिती भरणे
 
 Repository उघडा: https://github.com/Rahuldilippawar/kalbhairav-jagrut-devsthan-

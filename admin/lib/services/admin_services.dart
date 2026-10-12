@@ -10,6 +10,10 @@ abstract class AdminFunctions {
   Future<SevaBooking> checkIn({String? qr, String? bookingNo, bool complete = false});
   Future<void> cancelBooking(String bookingId, String reason);
 
+  /// UPI: approve (issues receipt / booking) or reject a submitted UTR.
+  /// Returns the receipt or booking number on approval.
+  Future<String?> reviewUpiPayment(String paymentId, {required bool approve, String? reason});
+
   /// First-time setup: the owner email listed in BOOTSTRAP_SUPER_ADMIN_EMAILS
   /// claims the Super Admin role when no super admin exists yet.
   Future<void> claimSuperAdmin();
@@ -44,6 +48,10 @@ class FirebaseAdminFunctions implements AdminFunctions {
 
   @override
   Future<void> claimSuperAdmin() => _call('claimSuperAdmin', {});
+
+  @override
+  Future<String?> reviewUpiPayment(String paymentId, {required bool approve, String? reason}) async =>
+      (await _call('reviewUpiPayment', {'paymentId': paymentId, 'approve': approve, 'reason': ?reason}))['number'] as String?;
 }
 
 /// Demo-mode equivalents operating directly on the in-memory store.
@@ -112,6 +120,25 @@ class DemoAdminFunctions implements AdminFunctions {
 
   @override
   Future<void> claimSuperAdmin() async => throw UnsupportedError('Use super_admin@demo.kjd in demo mode');
+
+  @override
+  Future<String?> reviewUpiPayment(String paymentId, {required bool approve, String? reason}) async {
+    final a = actor();
+    final name = a.displayName ?? a.email ?? a.uid;
+    final gateway = DemoUpiGateway(DemoCheckoutService(store, userId: () => a.uid, settings: () async => const AppSettings()));
+    try {
+      if (approve) {
+        final r = await gateway.approve(paymentId, reviewer: name);
+        await _admin.log(actorId: a.uid, actorName: name, action: 'upi_approve', collection: Col.payments, recordId: paymentId, summary: r.number ?? '');
+        return r.number;
+      }
+      await gateway.reject(paymentId, reason ?? '', reviewer: name);
+      await _admin.log(actorId: a.uid, actorName: name, action: 'upi_reject', collection: Col.payments, recordId: paymentId, summary: reason ?? '');
+      return null;
+    } on CheckoutException catch (e) {
+      throw Exception(e.message);
+    }
+  }
 }
 
 /// Uploads media to Firebase Storage under `public/` and returns its URL.

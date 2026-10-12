@@ -28,6 +28,17 @@ class DonationRequest {
   final String? pan;
   final String? note;
 
+  factory DonationRequest.fromJson(Map<String, dynamic> m) => DonationRequest(
+        category: asString(m['category']),
+        amountPaise: asInt(m['amountPaise']),
+        name: asString(m['name']),
+        mobile: asString(m['mobile']),
+        email: asStringOrNull(m['email']),
+        address: asStringOrNull(m['address']),
+        pan: asStringOrNull(m['pan']),
+        note: asStringOrNull(m['note']),
+      );
+
   Map<String, dynamic> toJson() => compact({
         'purpose': 'donation',
         'category': category,
@@ -60,6 +71,16 @@ class SevaBookingRequest {
   final String? gotra;
   final String? sankalp;
 
+  factory SevaBookingRequest.fromJson(Map<String, dynamic> m) => SevaBookingRequest(
+        sevaId: asString(m['sevaId']),
+        date: DateTime.parse(asString(m['date'])),
+        timeSlot: asString(m['timeSlot']),
+        devoteeName: asString(m['devoteeName']),
+        mobile: asString(m['mobile']),
+        gotra: asStringOrNull(m['gotra']),
+        sankalp: asStringOrNull(m['sankalp']),
+      );
+
   Map<String, dynamic> toJson() => compact({
         'purpose': 'seva',
         'sevaId': sevaId,
@@ -76,14 +97,28 @@ class CheckoutResult {
   const CheckoutResult.success({required this.refId, required this.receiptId, required this.number})
       : ok = true,
         cancelled = false,
+        pending = false,
         error = null;
   const CheckoutResult.failure(this.error, {this.cancelled = false})
       : ok = false,
+        pending = false,
         refId = null,
         receiptId = null,
         number = null;
 
+  /// UPI: paid and UTR submitted; the receipt follows once the office
+  /// verifies it. [refId] is the payment id.
+  const CheckoutResult.pending(String paymentId)
+      : ok = false,
+        pending = true,
+        cancelled = false,
+        error = null,
+        refId = paymentId,
+        receiptId = null,
+        number = null;
+
   final bool ok;
+  final bool pending;
   final bool cancelled;
   final String? error;
 
@@ -174,9 +209,15 @@ class DemoCheckoutService implements CheckoutService {
   Future<CheckoutResult> donate(DonationRequest r) async {
     final err = CheckoutValidator.donation(r, await settings());
     if (err != null) return CheckoutResult.failure(err);
-    final uid = userId();
+    return recordDonation(userId(), r);
+  }
+
+  /// Writes the donation, receipt and payment documents for a paid request.
+  /// With [upiPaymentId] the existing UPI payment document is completed.
+  Future<CheckoutResult> recordDonation(String uid, DonationRequest r, {String? upiPaymentId, String? utr}) async {
     final now = clock();
-    final orderId = _fakeId('order'), paymentId = _fakeId('pay');
+    final orderId = upiPaymentId ?? _fakeId('order');
+    final paymentId = upiPaymentId != null ? 'UPI-$utr' : _fakeId('pay');
     final receiptNo = formatSequence('KJD-RCPT', await _next('receipt'));
     final donationId = await store.add(Col.donations, {
       ...Donation(
@@ -211,19 +252,57 @@ class DemoCheckoutService implements CheckoutService {
       paymentId: paymentId,
       createdAt: now,
     ).toMap());
+    await _completePayment(
+      orderId,
+      upi: upiPaymentId != null,
+      purpose: PaymentPurpose.donation,
+      uid: uid,
+      amountPaise: r.amountPaise,
+      paymentId: paymentId,
+      refId: donationId,
+      receiptId: receiptId,
+      number: receiptNo,
+    );
+    return CheckoutResult.success(refId: donationId, receiptId: receiptId, number: receiptNo);
+  }
+
+  Future<void> _completePayment(
+    String orderId, {
+    required bool upi,
+    required PaymentPurpose purpose,
+    required String uid,
+    required int amountPaise,
+    required String paymentId,
+    required String refId,
+    required String receiptId,
+    required String number,
+  }) async {
+    final now = clock();
+    if (upi) {
+      await store.update(Col.payments, orderId, {
+        'status': PaymentStatus.success.code,
+        'razorpayPaymentId': paymentId,
+        'refId': refId,
+        'receiptId': receiptId,
+        'number': number,
+        'updatedAt': now,
+      });
+      return;
+    }
     await store.set(Col.payments, orderId, PaymentRecord(
       id: orderId,
       orderId: orderId,
-      purpose: PaymentPurpose.donation,
+      purpose: purpose,
       userId: uid,
-      amountPaise: r.amountPaise,
+      amountPaise: amountPaise,
       status: PaymentStatus.success,
       razorpayPaymentId: paymentId,
-      refId: donationId,
+      refId: refId,
+      receiptId: receiptId,
+      number: number,
       createdAt: now,
       updatedAt: now,
     ).toMap());
-    return CheckoutResult.success(refId: donationId, receiptId: receiptId, number: receiptNo);
   }
 
   @override
@@ -236,10 +315,17 @@ class DemoCheckoutService implements CheckoutService {
     final err = CheckoutValidator.booking(r, seva, await settings(), clock(), alreadyBooked: used);
     if (err != null) return CheckoutResult.failure(err);
 
-    final uid = userId();
+    return recordBooking(userId(), r, seva);
+  }
+
+  /// Writes booking, receipt and payment documents for a paid request. A
+  /// UPI booking ([upiPaymentId]) already holds its place in the slot.
+  Future<CheckoutResult> recordBooking(String uid, SevaBookingRequest r, Seva seva, {String? upiPaymentId, String? utr}) async {
+    final slotId = SevaRepository.slotDocId(seva.id, r.date, r.timeSlot);
     final now = clock();
     final mobile = normaliseIndianMobile(r.mobile)!;
-    final orderId = _fakeId('order'), paymentId = _fakeId('pay');
+    final orderId = upiPaymentId ?? _fakeId('order');
+    final paymentId = upiPaymentId != null ? 'UPI-$utr' : _fakeId('pay');
     final bookingNo = formatSequence('KJD-SEVA', await _next('seva_booking'));
     final receiptNo = formatSequence('KJD-RCPT', await _next('receipt'));
     final bookingId = await store.add(Col.sevaBookings, SevaBooking(
@@ -261,7 +347,10 @@ class DemoCheckoutService implements CheckoutService {
       receiptNo: receiptNo,
       createdAt: now,
     ).toMap());
-    await store.set(Col.sevaSlotCounts, slotId, {'count': used + 1});
+    if (upiPaymentId == null) {
+      final slot = await store.get(Col.sevaSlotCounts, slotId);
+      await store.set(Col.sevaSlotCounts, slotId, {'count': asInt(slot?.data['count']) + 1});
+    }
     final receiptId = await store.add(Col.receipts, Receipt(
       id: '',
       receiptNo: receiptNo,
@@ -276,18 +365,17 @@ class DemoCheckoutService implements CheckoutService {
       paymentId: paymentId,
       createdAt: now,
     ).toMap());
-    await store.set(Col.payments, orderId, PaymentRecord(
-      id: orderId,
-      orderId: orderId,
+    await _completePayment(
+      orderId,
+      upi: upiPaymentId != null,
       purpose: PaymentPurpose.seva,
-      userId: uid,
+      uid: uid,
       amountPaise: seva.pricePaise,
-      status: PaymentStatus.success,
-      razorpayPaymentId: paymentId,
+      paymentId: paymentId,
       refId: bookingId,
-      createdAt: now,
-      updatedAt: now,
-    ).toMap());
+      receiptId: receiptId,
+      number: bookingNo,
+    );
     return CheckoutResult.success(refId: bookingId, receiptId: receiptId, number: bookingNo);
   }
 }

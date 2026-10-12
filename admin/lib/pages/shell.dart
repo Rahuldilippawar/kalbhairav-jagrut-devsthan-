@@ -14,6 +14,7 @@ import 'finance_pages.dart';
 import 'notifications_page.dart';
 import 'reports_page.dart';
 import 'tithi_page.dart';
+import 'upi_page.dart';
 import 'users_page.dart';
 
 class NavItem {
@@ -34,6 +35,7 @@ final List<NavItem> navItems = [
   NavItem('events', 'Events & Archive', Icons.event_outlined, AdminModule.events, () => const EventsPage(), group: 'Utsav'),
   NavItem('categories', 'Event Categories', Icons.category_outlined, AdminModule.events, () => CollectionListPage(spec: Specs.categories), group: 'Utsav'),
   NavItem('donations', 'Donations', Icons.volunteer_activism_outlined, AdminModule.donations, () => const DonationsPage(), group: 'Finance'),
+  NavItem('upi', 'UPI Verification', Icons.qr_code_2, AdminModule.payments, () => const UpiVerificationPage(), group: 'Finance'),
   NavItem('payments', 'Payments', Icons.payments_outlined, AdminModule.payments, () => const PaymentsPage(), group: 'Finance'),
   NavItem('reports', 'Reports', Icons.bar_chart, AdminModule.reports, () => const ReportsPage(), group: 'Finance'),
   NavItem('greetings', 'Daily Subhechha', Icons.wb_sunny_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.greetings), group: 'Content'),

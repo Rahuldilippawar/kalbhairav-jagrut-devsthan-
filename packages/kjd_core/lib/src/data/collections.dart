@@ -17,6 +17,9 @@ abstract final class Col {
   static const payments = 'payments';
   static const receipts = 'receipts';
 
+  /// UPI transaction references already used (Cloud Functions only).
+  static const upiUtrs = 'upi_utrs';
+
   static const dailyQuotes = 'daily_quotes';
   static const dailyGreetings = 'daily_greetings';
   static const tithiContent = 'tithi_content';

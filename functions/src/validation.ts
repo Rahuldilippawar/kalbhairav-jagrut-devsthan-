@@ -6,6 +6,9 @@ export interface Settings {
   minDonationRupees: number;
   maxDonationRupees: number;
   bookingWindowDays: number;
+  /** Temple UPI ID; when set, devotees pay by UPI QR instead of Razorpay. */
+  upiId?: string;
+  upiPayeeName?: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {

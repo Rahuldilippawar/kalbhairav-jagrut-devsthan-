@@ -16,7 +16,7 @@ export const RAZORPAY_WEBHOOK_SECRET = defineSecret("RAZORPAY_WEBHOOK_SECRET");
 const REGION = "asia-south1";
 const db = () => getFirestore();
 
-async function loadSettings(): Promise<Settings> {
+export async function loadSettings(): Promise<Settings> {
   const snap = await db().doc("app_settings/main").get();
   return { ...DEFAULT_SETTINGS, ...(snap.data() ?? {}) } as Settings;
 }
@@ -43,6 +43,31 @@ type Intent =
   | { purpose: "donation"; input: DonationInput }
   | { purpose: "seva"; input: BookingInput; seva: SevaDoc };
 
+/** Validates a donation/seva request and prices it server-side. */
+export async function resolveIntent(raw: Record<string, unknown>, settings: Settings): Promise<{ intent: Intent; amountPaise: number }> {
+  if (raw.purpose === "donation") {
+    const r = parseDonation(raw, settings);
+    if (!r.ok) throw new HttpsError("invalid-argument", r.error);
+    return { intent: { purpose: "donation", input: r.value }, amountPaise: r.value.amountPaise };
+  }
+  if (raw.purpose === "seva") {
+    const sevaSnap = await db().doc(`sevas/${String(raw.sevaId ?? "")}`).get();
+    const seva = sevaSnap.data() as SevaDoc | undefined;
+    const slot = await db()
+      .doc(`seva_slot_counts/${slotDocId(sevaSnap.id, String(raw.date ?? ""), String(raw.timeSlot ?? ""))}`)
+      .get();
+    const r = parseBooking(raw, seva, settings, Number(slot.data()?.count ?? 0));
+    if (!r.ok) throw new HttpsError("invalid-argument", r.error);
+    // Never trust a client-side price.
+    return { intent: { purpose: "seva", input: r.value, seva: seva! }, amountPaise: seva!.pricePaise };
+  }
+  throw new HttpsError("invalid-argument", "Unknown purpose");
+}
+
+/** What is stored in `payments.intent`. */
+export const storedIntent = (intent: Intent) =>
+  intent.purpose === "seva" ? { ...intent.input, sevaName: intent.seva.name } : intent.input;
+
 /**
  * Step 1 – validates the request, prices it server-side and creates a
  * Razorpay order. Nothing is booked or receipted until verification.
@@ -55,26 +80,7 @@ export const createPaymentOrder = onCall(
     const raw = (req.data ?? {}) as Record<string, unknown>;
     const settings = await loadSettings();
 
-    let intent: Intent;
-    let amountPaise: number;
-    if (raw.purpose === "donation") {
-      const r = parseDonation(raw, settings);
-      if (!r.ok) throw new HttpsError("invalid-argument", r.error);
-      intent = { purpose: "donation", input: r.value };
-      amountPaise = r.value.amountPaise;
-    } else if (raw.purpose === "seva") {
-      const sevaSnap = await db().doc(`sevas/${String(raw.sevaId ?? "")}`).get();
-      const seva = sevaSnap.data() as SevaDoc | undefined;
-      const slot = await db()
-        .doc(`seva_slot_counts/${slotDocId(sevaSnap.id, String(raw.date ?? ""), String(raw.timeSlot ?? ""))}`)
-        .get();
-      const r = parseBooking(raw, seva, settings, Number(slot.data()?.count ?? 0));
-      if (!r.ok) throw new HttpsError("invalid-argument", r.error);
-      intent = { purpose: "seva", input: r.value, seva: seva! };
-      amountPaise = seva!.pricePaise; // never trust a client-side price
-    } else {
-      throw new HttpsError("invalid-argument", "Unknown purpose");
-    }
+    const { intent, amountPaise } = await resolveIntent(raw, settings);
 
     const order = await razorpay<{ id: string; amount: number }>("orders", {
       amount: amountPaise,
@@ -89,7 +95,8 @@ export const createPaymentOrder = onCall(
       userId: uid,
       amountPaise,
       status: "CREATED",
-      intent: intent.purpose === "seva" ? { ...intent.input, sevaName: intent.seva.name } : intent.input,
+      method: "razorpay",
+      intent: storedIntent(intent),
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -127,6 +134,7 @@ export async function finalizePayment(orderId: string, paymentId: string, source
     if (pay.status === "SUCCESS") {
       return { refId: pay.refId, receiptId: pay.receiptId, number: pay.number };
     }
+    if (pay.status === "REJECTED") throw new HttpsError("failed-precondition", "हे पेमेंट नाकारले गेले आहे");
     if (pay.status === "REFUND_REQUIRED") {
       throw new HttpsError("failed-precondition", "या वेळेसाठी जागा भरल्या. आपली रक्कम परत केली जाईल.");
     }
@@ -162,7 +170,9 @@ export async function finalizePayment(orderId: string, paymentId: string, source
     const slotSnap = await tx.get(slotRef);
     const used = Number(slotSnap.data()?.count ?? 0);
     const capacity = Number((sevaSnap.data() as SevaDoc | undefined)?.capacityPerSlot ?? 0);
-    if (used >= capacity) {
+    // A UPI payment reserved its place when the devotee submitted the UTR.
+    const held = pay.slotHeld === true;
+    if (!held && used >= capacity) {
       tx.update(paymentRef, {
         status: "REFUND_REQUIRED", razorpayPaymentId: paymentId, failureReason: "SLOT_FULL", updatedAt: now,
       });
@@ -175,7 +185,7 @@ export async function finalizePayment(orderId: string, paymentId: string, source
     const bookingRef = db().collection("seva_bookings").doc();
     tx.set(db().doc("counters/seva_booking"), { value: bookingSeq }, { merge: true });
     tx.set(db().doc("counters/receipt"), { value: receiptSeq }, { merge: true });
-    tx.set(slotRef, { count: used + 1, sevaId: input.sevaId, date: input.date, timeSlot: input.timeSlot }, { merge: true });
+    if (!held) tx.set(slotRef, { count: used + 1, sevaId: input.sevaId, date: input.date, timeSlot: input.timeSlot }, { merge: true });
     tx.set(bookingRef, {
       bookingNo, userId: pay.userId, sevaId: input.sevaId, sevaName: input.sevaName, date: istMidnight(input.date),
       dateKey: input.date, timeSlot: input.timeSlot, devoteeName: input.devoteeName, mobile: input.mobile,
@@ -195,6 +205,7 @@ export async function finalizePayment(orderId: string, paymentId: string, source
   });
 
   if (result.refundRequired) {
+    if (paymentId.startsWith("UPI-")) throw new HttpsError("failed-precondition", "या वेळेसाठी जागा भरल्या.");
     await refund(paymentId, orderId);
     throw new HttpsError("failed-precondition", "या वेळेसाठी जागा भरल्या. आपली रक्कम परत केली जाईल.");
   }
@@ -213,7 +224,7 @@ async function refund(paymentId: string, orderId: string): Promise<void> {
 }
 
 /** Confirmation push (sent by the notifications trigger). Only once per order. */
-async function notifyPaymentSuccess(orderId: string): Promise<void> {
+export async function notifyPaymentSuccess(orderId: string): Promise<void> {
   const ref = db().doc(`payments/${orderId}`);
   const sent = await db().runTransaction(async (tx) => {
     const p = (await tx.get(ref)).data();

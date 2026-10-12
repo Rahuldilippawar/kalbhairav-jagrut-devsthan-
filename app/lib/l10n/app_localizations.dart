@@ -1439,6 +1439,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Style'**
   String get bannerDesign;
+
+  /// No description provided for @payByUpi.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay by UPI'**
+  String get payByUpi;
+
+  /// No description provided for @upiPayTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay to'**
+  String get upiPayTo;
+
+  /// No description provided for @upiOpenApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with a UPI app'**
+  String get upiOpenApp;
+
+  /// No description provided for @upiScanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Or scan this QR with any UPI app (GPay, PhonePe, Paytm, BHIM)'**
+  String get upiScanQr;
+
+  /// No description provided for @upiShareQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Share / save QR'**
+  String get upiShareQr;
+
+  /// No description provided for @upiCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'UPI ID copied'**
+  String get upiCopied;
+
+  /// No description provided for @upiNoApp.
+  ///
+  /// In en, this message translates to:
+  /// **'No UPI app found on this phone. Scan the QR from another phone.'**
+  String get upiNoApp;
+
+  /// No description provided for @upiUtrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'UTR / UPI Ref No. (12 digits)'**
+  String get upiUtrLabel;
+
+  /// No description provided for @upiUtrHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'After paying, open the payment in your UPI app: GPay – \"UPI transaction ID\", PhonePe – \"UTR\", Paytm – \"UPI Ref No.\"'**
+  String get upiUtrHelp;
+
+  /// No description provided for @upiUtrInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 12-digit UTR number'**
+  String get upiUtrInvalid;
+
+  /// No description provided for @upiSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for verification'**
+  String get upiSubmit;
+
+  /// No description provided for @upiCheckAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Before paying, check the amount and the temple name in your UPI app.'**
+  String get upiCheckAmount;
+
+  /// No description provided for @upiLeaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave without the UTR?'**
+  String get upiLeaveTitle;
+
+  /// No description provided for @upiLeaveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have already paid, enter the UTR number. Without it the temple cannot match your payment.'**
+  String get upiLeaveBody;
+
+  /// No description provided for @upiLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get upiLeave;
+
+  /// No description provided for @upiStay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get upiStay;
+
+  /// No description provided for @upiSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment sent for verification'**
+  String get upiSubmittedTitle;
+
+  /// No description provided for @upiSubmittedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The temple office will check your payment in the bank statement and then issue the receipt. You will get a notification and it will appear in My receipts.'**
+  String get upiSubmittedBody;
+
+  /// No description provided for @upiPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Being verified'**
+  String get upiPending;
+
+  /// No description provided for @upiRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not accepted'**
+  String get upiRejected;
+
+  /// No description provided for @upiPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'UPI payments'**
+  String get upiPayments;
+
+  /// No description provided for @upiStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Pay'**
+  String get upiStep1;
+
+  /// No description provided for @upiStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Enter the UTR number'**
+  String get upiStep2;
+
+  /// No description provided for @upiReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get upiReference;
+
+  /// No description provided for @upiSecureNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)'**
+  String get upiSecureNote;
 }
 
 class _AppLocalizationsDelegate

@@ -133,6 +133,11 @@ final myReceiptsProvider = StreamProvider((ref) {
   if (uid == null) return Stream.value(<Receipt>[]);
   return ref.watch(donationRepoProvider).watchUserReceipts(uid);
 });
+final myUpiPaymentsProvider = StreamProvider((ref) {
+  final uid = ref.watch(uidProvider);
+  if (uid == null) return Stream.value(<PaymentRecord>[]);
+  return ref.watch(donationRepoProvider).watchUserUpiPayments(uid);
+});
 final receiptProvider = StreamProvider.family<Receipt?, String>(
     (ref, id) => ref.watch(donationRepoProvider).watchReceipt(id));
 final familyProvider = StreamProvider((ref) {

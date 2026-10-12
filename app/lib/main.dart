@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'services/photo_uploader.dart';
 import 'services/push_service.dart';
 import 'services/razorpay_checkout.dart';
+import 'services/upi_gateway.dart';
 import 'widgets/route_map.dart';
 
 /// Pass `--dart-define=KJD_DEMO=true` to force demo mode even when Firebase
@@ -46,7 +47,12 @@ Future<List<Override>> _bootstrap() async {
         demoModeProvider.overrideWithValue(false),
         dataStoreProvider.overrideWithValue(store),
         authServiceProvider.overrideWithValue(auth),
-        checkoutServiceProvider.overrideWithValue(RazorpayCheckoutService()),
+        // UPI QR when the temple has set a UPI ID in App Settings, else Razorpay.
+        checkoutServiceProvider.overrideWithValue(UpiOrFallbackCheckout(
+          settings: () => ContentRepository(store).watchSettings().first,
+          upi: UpiCheckoutService(FunctionsUpiGateway(), showUpiPayScreen),
+          fallback: RazorpayCheckoutService(),
+        )),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
         adminPanelUrlProvider.overrideWithValue(DefaultFirebaseOptions.adminPanelUrl),
         pushServiceProvider.overrideWithValue(PushService(FirebasePushPlatform(), UserRepository(store))),
@@ -59,7 +65,12 @@ Future<List<Override>> _bootstrap() async {
 }
 
 /// Offline, seeded configuration. Also used by widget tests.
-List<Override> demoOverrides({DateTime Function()? clock, AuthUser? user, bool mapTiles = true}) {
+List<Override> demoOverrides({
+  DateTime Function()? clock,
+  AuthUser? user,
+  bool mapTiles = true,
+  UpiPayUi upiPayUi = showUpiPayScreen,
+}) {
   final now = clock ?? DateTime.now;
   final store = MemoryDataStore(buildDemoSeed(now()))..clock = now;
   final auth = DemoAuthService(initial: user);
@@ -70,11 +81,22 @@ List<Override> demoOverrides({DateTime Function()? clock, AuthUser? user, bool m
     if (!mapTiles) mapTileUrlProvider.overrideWithValue(null),
     dataStoreProvider.overrideWithValue(store),
     authServiceProvider.overrideWithValue(auth),
-    checkoutServiceProvider.overrideWithValue(DemoCheckoutService(
-      store,
-      userId: () => auth.currentUser!.uid,
-      settings: () => content.watchSettings().first,
-      clock: now,
-    )),
+    checkoutServiceProvider.overrideWithValue(demoCheckout(store, auth, content, now, upiPayUi)),
   ];
+}
+
+/// Instant demo checkout, or the UPI flow when demo settings carry a UPI ID.
+CheckoutService demoCheckout(MemoryDataStore store, DemoAuthService auth, ContentRepository content,
+    DateTime Function() now, UpiPayUi upiPayUi) {
+  final demo = DemoCheckoutService(
+    store,
+    userId: () => auth.currentUser!.uid,
+    settings: () => content.watchSettings().first,
+    clock: now,
+  );
+  return UpiOrFallbackCheckout(
+    settings: demo.settings,
+    upi: UpiCheckoutService(DemoUpiGateway(demo), upiPayUi),
+    fallback: demo,
+  );
 }

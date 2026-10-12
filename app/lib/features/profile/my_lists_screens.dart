@@ -42,10 +42,14 @@ class MyDonationsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final receipts = ref.watch(myReceiptsProvider);
+    // Approved UPI payments already appear as receipts.
+    final upi = (ref.watch(myUpiPaymentsProvider).value ?? const <PaymentRecord>[])
+        .where((p) => p.status != PaymentStatus.success)
+        .toList();
     return Scaffold(
       appBar: AppBar(title: Text(l.myReceipts)),
       body: AsyncView(receipts, data: (list) {
-        if (list.isEmpty) {
+        if (list.isEmpty && upi.isEmpty) {
           return ListView(children: [
             EmptyState(message: l.nothingHereYet, icon: Icons.receipt_long),
             Center(child: FilledButton(onPressed: () => context.push('/donate'), child: Text(l.donateNow))),
@@ -63,6 +67,11 @@ class MyDonationsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
+          if (upi.isNotEmpty) ...[
+            SectionHeader(l.upiPayments),
+            for (final p in upi) _UpiPaymentTile(p),
+            const SizedBox(height: 8),
+          ],
           for (final r in list)
             Card(
               margin: const EdgeInsets.only(bottom: 8),
@@ -139,6 +148,35 @@ class MyBannersScreen extends ConsumerWidget {
             ),
         ]);
       }),
+    );
+  }
+}
+
+class _UpiPaymentTile extends StatelessWidget {
+  const _UpiPaymentTile(this.p);
+  final PaymentRecord p;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final rejected = p.status == PaymentStatus.rejected;
+    final color = rejected ? KjdColors.kumkum : KjdColors.saffron;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Icon(rejected ? Icons.error_outline : Icons.hourglass_top, color: color, size: 30),
+        title: Text(p.description ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
+        subtitle: Text([
+          'UTR ${p.utr ?? '-'} • ${formatDate(p.submittedAt ?? p.createdAt, locale: context.lang)}',
+          if (rejected && p.rejectReason != null) p.rejectReason!,
+        ].join('\n')),
+        isThreeLine: rejected,
+        trailing: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text(formatPaise(p.amountPaise), style: const TextStyle(fontWeight: FontWeight.w800)),
+          Text(rejected ? l.upiRejected : l.upiPending,
+              style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+        ]),
+      ),
     );
   }
 }

@@ -114,6 +114,48 @@ void main() {
     expect(find.text('अन्नदान'), findsOneWidget);
   });
 
+  testWidgets('UPI: pay by QR, submit UTR, receipt after office approval', (tester) async {
+    final c = await _start(tester, user: _devotee, to: '/donate');
+    final store = c.read(dataStoreProvider);
+    await store.update(Col.appSettings, Col.mainDoc, {'upiId': 'kalbhairav@sbi', 'upiPayeeName': 'Kalbhairav Devsthan'});
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('₹501'));
+    await tester.pump();
+    await tester.enterText(find.widgetWithText(TextFormField, 'पूर्ण नाव'), 'राम पाटील');
+    await tester.enterText(find.widgetWithText(TextFormField, 'मोबाईल नंबर'), '9876543210');
+    final pay = find.widgetWithText(FilledButton, '₹501 देणगी द्या');
+    await tester.scrollUntilVisible(pay, 200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(pay);
+    await tester.pumpAndSettle();
+
+    // UPI screen: QR + UPI ID, then the UTR.
+    expect(find.text('kalbhairav@sbi'), findsOneWidget);
+    final submit = find.text('पडताळणीसाठी पाठवा');
+    await tester.scrollUntilVisible(submit, 200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(submit);
+    await tester.pump();
+    expect(find.text('12 अंकी UTR क्रमांक भरा'), findsOneWidget); // empty UTR rejected
+    await tester.pump(const Duration(seconds: 4));
+    await tester.enterText(find.byType(TextField).last, '4123 4567 8901');
+    await tester.tap(submit);
+    await tester.pumpAndSettle();
+    expect(find.text('पेमेंट पडताळणीसाठी पाठवले'), findsOneWidget);
+    await tester.tap(find.descendant(of: find.byType(AlertDialog), matching: find.byType(FilledButton)));
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).state.matchedLocation, '/profile/donations');
+    expect(find.text('पडताळणी सुरू'), findsOneWidget);
+    expect(find.textContaining('UTR 412345678901'), findsOneWidget);
+
+    // Office approves → receipt replaces the pending entry.
+    final demo = DemoCheckoutService(store as MemoryDataStore,
+        userId: () => _devotee.uid, settings: () async => const AppSettings(), clock: () => _now);
+    final pending = await c.read(donationRepoProvider).watchPendingUpi().first;
+    await DemoUpiGateway(demo).approve(pending.single.id);
+    await tester.pumpAndSettle();
+    expect(find.text('पडताळणी सुरू'), findsNothing);
+    expect(find.textContaining('KJD-RCPT-000001'), findsOneWidget);
+  });
+
   testWidgets('seva booking issues a QR pass', (tester) async {
     final c = await _start(tester, user: _devotee, to: '/book/abhishek');
     // Pick a date: opens the picker, accept the default (today).

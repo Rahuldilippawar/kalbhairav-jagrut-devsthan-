@@ -114,6 +114,7 @@ service cloud.firestore {
       allow write: if false;
     }
     match /counters/{id} { allow read, write: if false; }
+    match /upi_utrs/{id} { allow read, write: if false; }
 
     // ---- notifications -------------------------------------------------
     match /notifications/{id} {

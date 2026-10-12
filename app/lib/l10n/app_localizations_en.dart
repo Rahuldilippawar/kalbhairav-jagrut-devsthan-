@@ -701,4 +701,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bannerDesign => 'Style';
+
+  @override
+  String get payByUpi => 'Pay by UPI';
+
+  @override
+  String get upiPayTo => 'Pay to';
+
+  @override
+  String get upiOpenApp => 'Pay with a UPI app';
+
+  @override
+  String get upiScanQr =>
+      'Or scan this QR with any UPI app (GPay, PhonePe, Paytm, BHIM)';
+
+  @override
+  String get upiShareQr => 'Share / save QR';
+
+  @override
+  String get upiCopied => 'UPI ID copied';
+
+  @override
+  String get upiNoApp =>
+      'No UPI app found on this phone. Scan the QR from another phone.';
+
+  @override
+  String get upiUtrLabel => 'UTR / UPI Ref No. (12 digits)';
+
+  @override
+  String get upiUtrHelp =>
+      'After paying, open the payment in your UPI app: GPay – \"UPI transaction ID\", PhonePe – \"UTR\", Paytm – \"UPI Ref No.\"';
+
+  @override
+  String get upiUtrInvalid => 'Enter the 12-digit UTR number';
+
+  @override
+  String get upiSubmit => 'Submit for verification';
+
+  @override
+  String get upiCheckAmount =>
+      'Before paying, check the amount and the temple name in your UPI app.';
+
+  @override
+  String get upiLeaveTitle => 'Leave without the UTR?';
+
+  @override
+  String get upiLeaveBody =>
+      'If you have already paid, enter the UTR number. Without it the temple cannot match your payment.';
+
+  @override
+  String get upiLeave => 'Leave';
+
+  @override
+  String get upiStay => 'Stay';
+
+  @override
+  String get upiSubmittedTitle => 'Payment sent for verification';
+
+  @override
+  String get upiSubmittedBody =>
+      'The temple office will check your payment in the bank statement and then issue the receipt. You will get a notification and it will appear in My receipts.';
+
+  @override
+  String get upiPending => 'Being verified';
+
+  @override
+  String get upiRejected => 'Not accepted';
+
+  @override
+  String get upiPayments => 'UPI payments';
+
+  @override
+  String get upiStep1 => '1. Pay';
+
+  @override
+  String get upiStep2 => '2. Enter the UTR number';
+
+  @override
+  String get upiReference => 'Reference';
+
+  @override
+  String get upiSecureNote =>
+      'Pay directly to the temple by UPI (GPay, PhonePe, Paytm, BHIM)';
 }

@@ -699,4 +699,85 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get bannerDesign => 'શૈલી';
+
+  @override
+  String get payByUpi => 'UPI થી ચુકવણી કરો';
+
+  @override
+  String get upiPayTo => 'આમને ચૂકવો';
+
+  @override
+  String get upiOpenApp => 'UPI એપથી ચુકવણી કરો';
+
+  @override
+  String get upiScanQr =>
+      'અથવા આ QR કોઈપણ UPI એપ (GPay, PhonePe, Paytm, BHIM) થી સ્કેન કરો';
+
+  @override
+  String get upiShareQr => 'QR શેર / સેવ કરો';
+
+  @override
+  String get upiCopied => 'UPI ID કૉપિ થયો';
+
+  @override
+  String get upiNoApp => 'આ ફોનમાં UPI એપ મળી નથી. બીજા ફોનથી QR સ્કેન કરો.';
+
+  @override
+  String get upiUtrLabel => 'UTR / UPI Ref No. (12 અંક)';
+
+  @override
+  String get upiUtrHelp =>
+      'ચુકવણી પછી UPI એપમાં તે વ્યવહાર ખોલો: GPay – \"UPI transaction ID\", PhonePe – \"UTR\", Paytm – \"UPI Ref No.\"';
+
+  @override
+  String get upiUtrInvalid => '12 અંકનો UTR નંબર ભરો';
+
+  @override
+  String get upiSubmit => 'ચકાસણી માટે મોકલો';
+
+  @override
+  String get upiCheckAmount =>
+      'ચુકવણી પહેલાં UPI એપમાં રકમ અને મંદિરનું નામ તપાસો.';
+
+  @override
+  String get upiLeaveTitle => 'UTR વગર બહાર જવું છે?';
+
+  @override
+  String get upiLeaveBody =>
+      'જો તમે ચુકવણી કરી હોય તો UTR નંબર જરૂર ભરો. તેના વગર મંદિર તમારી ચુકવણી ઓળખી શકશે નહીં.';
+
+  @override
+  String get upiLeave => 'બહાર જાઓ';
+
+  @override
+  String get upiStay => 'રોકાઓ';
+
+  @override
+  String get upiSubmittedTitle => 'ચુકવણી ચકાસણી માટે મોકલી';
+
+  @override
+  String get upiSubmittedBody =>
+      'મંદિર કાર્યાલય બેંક સ્ટેટમેન્ટમાં તમારી ચુકવણી તપાસીને પાવતી આપશે. તમને સૂચના મળશે અને પાવતી \"મારી પાવતીઓ\" માં દેખાશે.';
+
+  @override
+  String get upiPending => 'ચકાસણી ચાલુ';
+
+  @override
+  String get upiRejected => 'સ્વીકારાયું નથી';
+
+  @override
+  String get upiPayments => 'UPI ચુકવણી';
+
+  @override
+  String get upiStep1 => '1. ચુકવણી કરો';
+
+  @override
+  String get upiStep2 => '2. UTR નંબર ભરો';
+
+  @override
+  String get upiReference => 'સંદર્ભ';
+
+  @override
+  String get upiSecureNote =>
+      'UPI થી સીધા મંદિરના ખાતામાં (GPay, PhonePe, Paytm, BHIM)';
 }

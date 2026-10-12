@@ -244,6 +244,18 @@ class DonationRepository {
       .map((d) => _map(d, Receipt.fromMap)
         ..sort((a, b) => (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0))));
 
+  /// The devotee's UPI payments (waiting, approved or rejected), newest first.
+  Stream<List<PaymentRecord>> watchUserUpiPayments(String userId) => store
+      .watch(Col.payments, Query(where: [Where.eq('userId', userId)]))
+      .map((d) => _map(d, PaymentRecord.fromMap).where((p) => p.isUpi && p.status != PaymentStatus.created).toList()
+        ..sort((a, b) => (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0))));
+
+  /// UPI payments waiting for the office to check the UTR, oldest first.
+  Stream<List<PaymentRecord>> watchPendingUpi() => store
+      .watch(Col.payments, Query(where: [Where.eq('status', PaymentStatus.pendingVerification.code)]))
+      .map((d) => _map(d, PaymentRecord.fromMap)
+        ..sort((a, b) => (a.submittedAt ?? DateTime(0)).compareTo(b.submittedAt ?? DateTime(0))));
+
   Stream<Receipt?> watchReceipt(String id) => store
       .watchDoc(Col.receipts, id)
       .map((d) => d == null ? null : Receipt.fromMap(d.id, d.data));

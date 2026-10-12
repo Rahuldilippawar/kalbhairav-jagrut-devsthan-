@@ -5,7 +5,13 @@ enum PaymentPurpose { donation, seva }
 enum PaymentStatus {
   created('CREATED'),
   success('SUCCESS'),
-  failed('FAILED');
+  failed('FAILED'),
+
+  /// UPI: devotee submitted the UTR; the office has not checked it yet.
+  pendingVerification('PENDING_VERIFICATION'),
+
+  /// UPI: the office could not find the payment in the statement.
+  rejected('REJECTED');
 
   const PaymentStatus(this.code);
   final String code;
@@ -86,7 +92,8 @@ class Donation {
       };
 }
 
-/// `payments` – one per Razorpay order; the audit trail for every rupee.
+/// `payments` – one per Razorpay order or UPI attempt; the audit trail for
+/// every rupee.
 class PaymentRecord {
   const PaymentRecord({
     required this.id,
@@ -95,12 +102,46 @@ class PaymentRecord {
     required this.userId,
     required this.amountPaise,
     required this.status,
+    this.method = 'razorpay',
     this.razorpayPaymentId,
     this.refId,
+    this.receiptId,
+    this.number,
     this.failureReason,
+    this.reference,
+    this.utr,
+    this.name,
+    this.mobile,
+    this.description,
+    this.rejectReason,
+    this.reviewedByName,
+    this.submittedAt,
     this.createdAt,
     this.updatedAt,
   });
+
+  /// `razorpay` or `upi`.
+  final String method;
+  bool get isUpi => method == 'upi';
+
+  final String? receiptId;
+
+  /// Receipt number (donation) or booking number (seva) once successful.
+  final String? number;
+
+  /// UPI: short reference put in the payment note, e.g. `KJDAB12CD34`.
+  final String? reference;
+
+  /// UPI: 12-digit transaction reference submitted by the devotee.
+  final String? utr;
+  final String? name;
+  final String? mobile;
+
+  /// e.g. "अन्नदान" or "अभिषेक – 2026-10-12, 07:00".
+  final String? description;
+  final String? rejectReason;
+  final String? reviewedByName;
+  final DateTime? submittedAt;
 
   final String id;
   final String orderId;
@@ -123,9 +164,20 @@ class PaymentRecord {
         userId: asString(m['userId']),
         amountPaise: asInt(m['amountPaise']),
         status: PaymentStatus.fromCode(m['status']),
+        method: asString(m['method'], 'razorpay'),
         razorpayPaymentId: asStringOrNull(m['razorpayPaymentId']),
         refId: asStringOrNull(m['refId']),
+        receiptId: asStringOrNull(m['receiptId']),
+        number: asStringOrNull(m['number']),
         failureReason: asStringOrNull(m['failureReason']),
+        reference: asStringOrNull(m['reference']),
+        utr: asStringOrNull(m['utr']),
+        name: asStringOrNull(m['name']),
+        mobile: asStringOrNull(m['mobile']),
+        description: asStringOrNull(m['description']),
+        rejectReason: asStringOrNull(m['rejectReason']),
+        reviewedByName: asStringOrNull(m['reviewedByName']),
+        submittedAt: asDate(m['submittedAt']),
         createdAt: asDate(m['createdAt']),
         updatedAt: asDate(m['updatedAt']),
       );
@@ -136,9 +188,20 @@ class PaymentRecord {
         'userId': userId,
         'amountPaise': amountPaise,
         'status': status.code,
+        'method': method,
         'razorpayPaymentId': razorpayPaymentId,
         'refId': refId,
+        'receiptId': receiptId,
+        'number': number,
         'failureReason': failureReason,
+        'reference': reference,
+        'utr': utr,
+        'name': name,
+        'mobile': mobile,
+        'description': description,
+        'rejectReason': rejectReason,
+        'reviewedByName': reviewedByName,
+        'submittedAt': submittedAt,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
       };

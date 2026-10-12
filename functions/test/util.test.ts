@@ -58,3 +58,15 @@ test("booking validation", () => {
   assert.equal(parseBooking(req("2026-10-07", "10:00"), seva, DEFAULT_SETTINGS, 2, now).ok, false); // full
   assert.equal(parseBooking(req("2026-10-07", "10:00"), undefined, DEFAULT_SETTINGS, 0, now).ok, false);
 });
+
+test("upi helpers", async () => {
+  const { isValidUpiId, normaliseUtr, upiReference } = await import("../src/util.js");
+  assert.equal(normaliseUtr("4123 4567 8901"), "412345678901");
+  assert.equal(normaliseUtr("41234567890"), null);
+  assert.equal(normaliseUtr("ABC345678901"), null);
+  assert.equal(upiReference("aB3-dE5fGh9Z"), "KJDAB3DE5FG");
+  assert.equal(isValidUpiId("kalbhairav.devsthan@sbi"), true);
+  assert.equal(isValidUpiId("9876543210@ybl"), true);
+  assert.equal(isValidUpiId("no-at-sign"), false);
+  assert.equal(isValidUpiId(undefined), false);
+});

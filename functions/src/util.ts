@@ -54,3 +54,19 @@ export function chunk<T>(items: T[], size: number): T[][] {
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
   return out;
 }
+
+/** UPI transaction reference (UTR / "UPI Ref No."): 12 digits. */
+export function normaliseUtr(raw: unknown): string | null {
+  const utr = String(raw ?? "").replace(/\s+/g, "");
+  return /^\d{12}$/.test(utr) ? utr : null;
+}
+
+/** Short reference printed in the UPI note so the office can match payments. */
+export function upiReference(paymentId: string): string {
+  return `KJD${paymentId.replace(/[^A-Za-z0-9]/g, "").slice(0, 8).toUpperCase()}`;
+}
+
+/** A VPA such as `name@bank`. */
+export function isValidUpiId(v: unknown): v is string {
+  return typeof v === "string" && /^[A-Za-z0-9._-]{2,256}@[A-Za-z][A-Za-z0-9.-]{1,64}$/.test(v.trim());
+}

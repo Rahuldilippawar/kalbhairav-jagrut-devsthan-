@@ -7,6 +7,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../../app/providers.dart';
 import '../../app/shell.dart';
 import '../../widgets/common.dart';
+import '../payment/upi_pay_screen.dart';
 
 /// Select Seva → Date → Time → Devotee details → Confirm → Pay → QR Pass.
 class SevaBookingScreen extends ConsumerStatefulWidget {
@@ -79,7 +80,10 @@ class _SevaBookingScreenState extends ConsumerState<SevaBookingScreen> {
     final result = await ref.read(checkoutServiceProvider).bookSeva(request);
     if (!mounted) return;
     setState(() => _busy = false);
-    if (result.ok) {
+    if (result.pending) {
+      await showUpiSubmitted(context);
+      if (mounted) context.pushReplacement('/profile/donations');
+    } else if (result.ok) {
       context.toast(l.bookingConfirmed);
       context.pushReplacement('/pass/${result.refId}');
     } else {
@@ -168,7 +172,10 @@ class _SevaBookingScreenState extends ConsumerState<SevaBookingScreen> {
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 const Icon(Icons.lock, size: 14, color: KjdColors.inkMuted),
                 const SizedBox(width: 4),
-                Text(l.securePayment, style: const TextStyle(color: KjdColors.inkMuted, fontSize: 12)),
+                Flexible(
+                  child: Text(settings.upiEnabled ? l.upiSecureNote : l.securePayment,
+                      textAlign: TextAlign.center, style: const TextStyle(color: KjdColors.inkMuted, fontSize: 12)),
+                ),
               ]),
             ],
           ]),

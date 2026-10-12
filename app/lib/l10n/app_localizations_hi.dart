@@ -701,4 +701,86 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get bannerDesign => 'सजावट शैली';
+
+  @override
+  String get payByUpi => 'UPI से भुगतान करें';
+
+  @override
+  String get upiPayTo => 'इन्हें भुगतान करें';
+
+  @override
+  String get upiOpenApp => 'UPI ऐप से भुगतान करें';
+
+  @override
+  String get upiScanQr =>
+      'या यह QR किसी भी UPI ऐप (GPay, PhonePe, Paytm, BHIM) से स्कैन करें';
+
+  @override
+  String get upiShareQr => 'QR शेयर / सेव करें';
+
+  @override
+  String get upiCopied => 'UPI ID कॉपी हुआ';
+
+  @override
+  String get upiNoApp =>
+      'इस फ़ोन पर UPI ऐप नहीं मिला। दूसरे फ़ोन से QR स्कैन करें।';
+
+  @override
+  String get upiUtrLabel => 'UTR / UPI Ref No. (12 अंक)';
+
+  @override
+  String get upiUtrHelp =>
+      'भुगतान के बाद UPI ऐप में वह लेनदेन खोलें: GPay – \"UPI transaction ID\", PhonePe – \"UTR\", Paytm – \"UPI Ref No.\"';
+
+  @override
+  String get upiUtrInvalid => '12 अंकों का UTR नंबर भरें';
+
+  @override
+  String get upiSubmit => 'सत्यापन के लिए भेजें';
+
+  @override
+  String get upiCheckAmount =>
+      'भुगतान से पहले UPI ऐप में राशि और मंदिर का नाम जाँचें।';
+
+  @override
+  String get upiLeaveTitle => 'UTR के बिना बाहर जाएँ?';
+
+  @override
+  String get upiLeaveBody =>
+      'यदि आपने भुगतान कर दिया है तो UTR नंबर ज़रूर भरें। इसके बिना मंदिर आपका भुगतान पहचान नहीं पाएगा।';
+
+  @override
+  String get upiLeave => 'बाहर जाएँ';
+
+  @override
+  String get upiStay => 'रुकें';
+
+  @override
+  String get upiSubmittedTitle => 'भुगतान सत्यापन के लिए भेजा गया';
+
+  @override
+  String get upiSubmittedBody =>
+      'मंदिर कार्यालय बैंक स्टेटमेंट में आपका भुगतान जाँचकर रसीद देगा। आपको सूचना मिलेगी और रसीद \"मेरी रसीदें\" में दिखेगी।';
+
+  @override
+  String get upiPending => 'सत्यापन जारी';
+
+  @override
+  String get upiRejected => 'स्वीकार नहीं हुआ';
+
+  @override
+  String get upiPayments => 'UPI भुगतान';
+
+  @override
+  String get upiStep1 => '1. भुगतान करें';
+
+  @override
+  String get upiStep2 => '2. UTR नंबर भरें';
+
+  @override
+  String get upiReference => 'संदर्भ';
+
+  @override
+  String get upiSecureNote =>
+      'UPI से सीधे मंदिर के खाते में (GPay, PhonePe, Paytm, BHIM)';
 }

@@ -13,13 +13,13 @@ const db = () => getFirestore();
 /** Comma separated list of emails allowed to claim the first super admin seat. */
 const BOOTSTRAP_SUPER_ADMIN_EMAILS = defineString("BOOTSTRAP_SUPER_ADMIN_EMAILS", { default: "" });
 
-function requireModule(req: CallableRequest, module: Module) {
+export function requireModule(req: CallableRequest, module: Module) {
   const role = req.auth?.token.role;
   if (!req.auth || !can(role, module)) throw new HttpsError("permission-denied", "You do not have access to this action");
   return { uid: req.auth.uid, role: role as string, name: (req.auth.token.name as string) ?? req.auth.token.email ?? req.auth.uid };
 }
 
-async function audit(actorId: string, actorName: string, action: string, collection: string, recordId: string, summary: string) {
+export async function audit(actorId: string, actorName: string, action: string, collection: string, recordId: string, summary: string) {
   await db().collection("audit_logs").add({ actorId, actorName, action, collection, recordId, summary, at: FieldValue.serverTimestamp() });
 }
 

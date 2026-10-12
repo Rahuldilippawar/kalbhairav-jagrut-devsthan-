@@ -38,6 +38,7 @@ final dashboardProvider = FutureProvider<DashboardStats>((ref) async {
     cards.add(('Active Sevas', '${await store.count(Col.sevas, const Query(where: [Where.eq('active', true)]))}', Icons.spa, Colors.teal));
   }
   if (role.can(AdminModule.payments)) {
+    cards.add(('UPI to verify', '${await store.count(Col.payments, const Query(where: [Where.eq('status', 'PENDING_VERIFICATION')]))}', Icons.qr_code_2, Colors.deepOrange));
     cards.add(('Pending Payments', '${await store.count(Col.payments, const Query(where: [Where.eq('status', 'CREATED')]))}', Icons.hourglass_top, Colors.orange));
   }
   if (role.can(AdminModule.content)) {

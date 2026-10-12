@@ -27,12 +27,14 @@ import '../features/seva/seva_pass_screen.dart';
 import '../features/splash/onboarding_screen.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/temple/temple_info_screen.dart';
+import '../services/upi_gateway.dart';
 import 'shell.dart';
 
 /// Devotees never log in: the app signs each device in anonymously (see
 /// `ensureSignedIn`), so there are no login redirects.
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: '/splash',
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),

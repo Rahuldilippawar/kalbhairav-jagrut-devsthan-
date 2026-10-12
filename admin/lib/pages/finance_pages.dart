@@ -101,7 +101,7 @@ class _PaymentsPageState extends ConsumerState<PaymentsPage> {
     return ListView(padding: const EdgeInsets.all(16), children: [
       Wrap(spacing: 12, runSpacing: 12, crossAxisAlignment: WrapCrossAlignment.center, children: [
         RangeButton(range: _range, onChanged: (r) => setState(() => _range = r)),
-        for (final s in [null, 'SUCCESS', 'CREATED', 'FAILED'])
+        for (final s in [null, 'SUCCESS', 'CREATED', 'PENDING_VERIFICATION', 'REJECTED', 'FAILED'])
           ChoiceChip(
             label: Text(s == null ? 'All (${ranged.length})' : '${s == 'CREATED' ? 'PENDING' : s} (${counts[s] ?? 0})'),
             selected: _status == s,
@@ -111,8 +111,8 @@ class _PaymentsPageState extends ConsumerState<PaymentsPage> {
           icon: const Icon(Icons.download),
           label: const Text('CSV'),
           onPressed: () => downloadText('payments.csv', toCsv(
-            ['Order ID', 'Payment ID', 'Purpose', 'User', 'Amount (₹)', 'Status', 'Failure', 'Created', 'Updated'],
-            [for (final p in list) [p.orderId, p.razorpayPaymentId, p.purpose.name, p.userId, p.amountPaise / 100, p.status.code, p.failureReason, p.createdAt?.toIso8601String(), p.updatedAt?.toIso8601String()]],
+            ['Order ID', 'Method', 'Payment ID', 'UTR', 'Purpose', 'User', 'Amount (₹)', 'Status', 'Failure', 'Created', 'Updated'],
+            [for (final p in list) [p.orderId, p.method, p.razorpayPaymentId, p.utr, p.purpose.name, p.userId, p.amountPaise / 100, p.status.code, p.failureReason ?? p.rejectReason, p.createdAt?.toIso8601String(), p.updatedAt?.toIso8601String()]],
           )),
         ),
       ]),
@@ -122,10 +122,11 @@ class _PaymentsPageState extends ConsumerState<PaymentsPage> {
           style: TextStyle(color: KjdColors.inkMuted)),
       const SizedBox(height: 12),
       ReportTable(
-        headers: const ['Order ID', 'Payment ID', 'Purpose', 'Amount', 'Status', 'Created', 'Failure'],
+        headers: const ['Order ID', 'Method', 'Payment ID / UTR', 'Purpose', 'Amount', 'Status', 'Created', 'Failure'],
         rows: [
           for (final p in list)
-            [p.orderId, p.razorpayPaymentId, p.purpose.name, formatPaise(p.amountPaise), p.status.code, p.createdAt, p.failureReason],
+            [p.orderId, p.method, p.utr ?? p.razorpayPaymentId, p.purpose.name, formatPaise(p.amountPaise), p.status.code, p.createdAt,
+              p.failureReason ?? p.rejectReason],
         ],
       ),
     ]);
