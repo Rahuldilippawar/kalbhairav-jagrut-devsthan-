@@ -505,6 +505,15 @@ class BannerTemplate {
     'mukta': 'Mukta (आधुनिक)',
     'yatraOne': 'Yatra One (उत्सवी)',
     'tiroMarathi': 'Tiro Devanagari Marathi (पारंपरिक)',
+    'rozhaOne': 'Rozha One (भव्य शीर्षक)',
+    'palanquinDark': 'Palanquin Dark (ठळक)',
+    'khand': 'Khand (उंच ठळक)',
+    'modak': 'Modak (जाड उत्सवी)',
+    'martel': 'Martel (सुबक)',
+    'sahitya': 'Sahitya (साहित्यिक)',
+    'laila': 'Laila (मोहक)',
+    'kalam': 'Kalam (हस्ताक्षर)',
+    'amita': 'Amita (सुलेखन)',
   };
 
   final String id;

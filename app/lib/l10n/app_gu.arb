@@ -254,5 +254,8 @@
   "close": "બંધ કરો",
   "dailyQuotePopup": "રોજ સુવિચાર બતાવો",
   "dailyQuotePopupHint": "એપ ખોલતાં દિવસમાં એક વાર આજનો સુવિચાર બતાવો",
-  "makeBanner": "બેનર બનાવો"
+  "makeBanner": "બેનર બનાવો",
+  "headlineFontLabel": "શીર્ષકની અક્ષરશૈલી",
+  "bodyFontLabel": "સંદેશની અક્ષરશૈલી",
+  "textSize": "અક્ષરોનું કદ"
 }

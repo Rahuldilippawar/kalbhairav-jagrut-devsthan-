@@ -802,4 +802,13 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get makeBanner => 'બેનર બનાવો';
+
+  @override
+  String get headlineFontLabel => 'શીર્ષકની અક્ષરશૈલી';
+
+  @override
+  String get bodyFontLabel => 'સંદેશની અક્ષરશૈલી';
+
+  @override
+  String get textSize => 'અક્ષરોનું કદ';
 }

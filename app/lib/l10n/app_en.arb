@@ -303,5 +303,8 @@
   "close": "Close",
   "dailyQuotePopup": "Daily thought on opening",
   "dailyQuotePopupHint": "Show today's suvichar once a day when the app opens",
-  "makeBanner": "Make banner"
+  "makeBanner": "Make banner",
+  "headlineFontLabel": "Headline lettering",
+  "bodyFontLabel": "Message lettering",
+  "textSize": "Text size"
 }

@@ -116,5 +116,22 @@ class TempleLogo extends StatelessWidget {
 String bannerFontFamily(String key) => switch (key) {
       'yatraOne' => 'packages/kjd_core/YatraOne',
       'tiroMarathi' => 'packages/kjd_core/TiroDevanagariMarathi',
+      'palanquinDark' => 'packages/kjd_core/PalanquinDark',
+      'martel' => 'packages/kjd_core/Martel',
+      'sahitya' => 'packages/kjd_core/Sahitya',
+      'khand' => 'packages/kjd_core/Khand',
+      'kalam' => 'packages/kjd_core/Kalam',
+      'rozhaOne' => 'packages/kjd_core/RozhaOne',
+      'modak' => 'packages/kjd_core/Modak',
+      'laila' => 'packages/kjd_core/Laila',
+      'amita' => 'packages/kjd_core/Amita',
       _ => 'packages/kjd_core/Mukta',
     };
+
+/// Shaping language for banner text. Marathi (`mr`) is the content language,
+/// but several Devanagari fonts (Yatra One, Martel, Sahitya, Amita…) switch
+/// to old-style letterforms under their Marathi `locl` rules and split
+/// conjuncts with visible halants ("हार्‌दिक", "क्‌षमा"). The standard forms
+/// used in modern Marathi print come from the default Devanagari shaping,
+/// which Hindi selects.
+const bannerTextLocale = Locale('hi');

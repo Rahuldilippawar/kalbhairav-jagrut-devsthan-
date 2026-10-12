@@ -254,5 +254,8 @@
   "close": "बंद करा",
   "dailyQuotePopup": "रोज सुविचार दाखवा",
   "dailyQuotePopupHint": "ॲप उघडल्यावर दिवसातून एकदा आजचा सुविचार दाखवा",
-  "makeBanner": "बॅनर बनवा"
+  "makeBanner": "बॅनर बनवा",
+  "headlineFontLabel": "शीर्षकाची अक्षरशैली",
+  "bodyFontLabel": "मजकुराची अक्षरशैली",
+  "textSize": "अक्षरांचा आकार"
 }

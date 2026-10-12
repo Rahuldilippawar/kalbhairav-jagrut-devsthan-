@@ -1631,6 +1631,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Make banner'**
   String get makeBanner;
+
+  /// No description provided for @headlineFontLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Headline lettering'**
+  String get headlineFontLabel;
+
+  /// No description provided for @bodyFontLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message lettering'**
+  String get bodyFontLabel;
+
+  /// No description provided for @textSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Text size'**
+  String get textSize;
 }
 
 class _AppLocalizationsDelegate

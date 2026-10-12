@@ -38,3 +38,44 @@ flutter:
     - family: TiroDevanagariMarathi
       fonts:
         - asset: assets/fonts/TiroDevanagariMarathi-Regular.ttf
+    - family: PalanquinDark
+      fonts:
+        - asset: assets/fonts/PalanquinDark-Regular.ttf
+        - asset: assets/fonts/PalanquinDark-Bold.ttf
+          weight: 700
+    - family: Martel
+      fonts:
+        - asset: assets/fonts/Martel-Regular.ttf
+        - asset: assets/fonts/Martel-Bold.ttf
+          weight: 700
+    - family: Sahitya
+      fonts:
+        - asset: assets/fonts/Sahitya-Regular.ttf
+        - asset: assets/fonts/Sahitya-Bold.ttf
+          weight: 700
+    - family: Khand
+      fonts:
+        - asset: assets/fonts/Khand-Regular.ttf
+        - asset: assets/fonts/Khand-Bold.ttf
+          weight: 700
+    - family: Kalam
+      fonts:
+        - asset: assets/fonts/Kalam-Regular.ttf
+        - asset: assets/fonts/Kalam-Bold.ttf
+          weight: 700
+    - family: RozhaOne
+      fonts:
+        - asset: assets/fonts/RozhaOne-Regular.ttf
+    - family: Modak
+      fonts:
+        - asset: assets/fonts/Modak-Regular.ttf
+    - family: Laila
+      fonts:
+        - asset: assets/fonts/Laila-Regular.ttf
+        - asset: assets/fonts/Laila-Bold.ttf
+          weight: 700
+    - family: Amita
+      fonts:
+        - asset: assets/fonts/Amita-Regular.ttf
+        - asset: assets/fonts/Amita-Bold.ttf
+          weight: 700

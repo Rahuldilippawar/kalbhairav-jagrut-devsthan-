@@ -805,4 +805,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get makeBanner => 'Make banner';
+
+  @override
+  String get headlineFontLabel => 'Headline lettering';
+
+  @override
+  String get bodyFontLabel => 'Message lettering';
+
+  @override
+  String get textSize => 'Text size';
 }

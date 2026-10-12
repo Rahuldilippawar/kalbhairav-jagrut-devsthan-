@@ -36,6 +36,7 @@ class BannerCanvas extends StatelessWidget {
     this.format = BannerFormat.square,
     this.senderName,
     this.senderPhoto,
+    this.textScale = 1,
   });
 
   final BannerTemplate template;
@@ -47,15 +48,23 @@ class BannerCanvas extends StatelessWidget {
   final String? senderName;
   final Uint8List? senderPhoto;
 
+  /// Devotee's text-size choice for headline and message (0.8 – 1.3).
+  final double textScale;
+
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: format.aspect,
-      child: LayoutBuilder(
-        builder: (context, c) {
-          final w = c.maxWidth;
-          return _Layout(this, w, w / format.aspect).build();
-        },
+    // All banner text is shaped with standard Devanagari forms whatever the
+    // app language (see [bannerTextLocale]).
+    return DefaultTextStyle.merge(
+      style: const TextStyle(locale: bannerTextLocale),
+      child: AspectRatio(
+        aspectRatio: format.aspect,
+        child: LayoutBuilder(
+          builder: (context, c) {
+            final w = c.maxWidth;
+            return _Layout(this, w, w / format.aspect).build();
+          },
+        ),
       ),
     );
   }
@@ -314,8 +323,7 @@ class _Layout {
       fontFamily: bodyFont,
       color: hero ? _goldFrame : accent,
       fontWeight: FontWeight.w700,
-      fontSize: 12 * u,
-      letterSpacing: 1.5 * u,
+      fontSize: 12.5 * u,
       shadows: shadows,
     );
     final centred = !hero && layout != 'classic';
@@ -439,13 +447,13 @@ class _Layout {
       style: TextStyle(
         fontFamily: bodyFont,
         color: text,
-        fontSize: (photo != null ? 15.5 : 18) * u,
+        fontSize: (photo != null ? 15.5 : 18) * u * b.textScale,
         height: 1.45,
         fontWeight: FontWeight.w700,
         shadows: shadows,
       ),
     );
-    final headSize = (story ? 30 : 26) * u;
+    final headSize = (story ? 30 : 26) * u * b.textScale;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

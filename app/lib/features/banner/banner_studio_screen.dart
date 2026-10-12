@@ -32,8 +32,11 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
   Uint8List? _senderPhoto;
   BannerFormat _format = BannerFormat.square;
 
-  /// Design picked by the devotee; null keeps the template's own layout.
+  /// Design and lettering picked by the devotee; null keeps the template's own.
   String? _layout;
+  String? _headFont;
+  String? _bodyFont;
+  double _textScale = 1;
   bool _senderPrefilled = false;
   bool _includeDate = true;
   bool _busy = false;
@@ -67,8 +70,14 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
     return list.isEmpty ? [fallbackTemplate(_category)] : list;
   }
 
-  BannerTemplate _withLayout(BannerTemplate t) =>
-      _layout == null || _layout == t.layout ? t : BannerTemplate.fromMap(t.id, {...t.toMap(), 'layout': _layout});
+  BannerTemplate _withLayout(BannerTemplate t) => _layout == null && _headFont == null && _bodyFont == null
+      ? t
+      : BannerTemplate.fromMap(t.id, {
+          ...t.toMap(),
+          'layout': ?_layout,
+          'headlineFont': ?_headFont,
+          'bodyFont': ?_bodyFont,
+        });
 
   Future<Uint8List?> _pick({double maxWidth = 1080}) async {
     final file = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: maxWidth, imageQuality: 85);
@@ -159,6 +168,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
                   format: _format,
                   senderName: _sender.text,
                   senderPhoto: _senderPhoto,
+                  textScale: _textScale,
                 ),
               ),
             ),
@@ -221,7 +231,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
                     label: t.name,
                     selected: t.id == _template?.id,
                     onTap: () => setState(() {
-                      _layout = null;
+                      _layout = _headFont = _bodyFont = null;
                       _applyTemplate(t);
                     }),
                     child: BannerCanvas(template: _withLayout(t), headline: t.headline ?? '', message: ''),
@@ -249,7 +259,37 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          SectionHeader(l.headlineFontLabel),
+          _FontPicker(
+            sample: 'शुभेच्छा',
+            selected: template.headlineFont,
+            onPick: (k) => setState(() => _headFont = k),
+          ),
+          SectionHeader(l.bodyFontLabel),
+          _FontPicker(
+            sample: 'मनःपूर्वक',
+            selected: template.bodyFont,
+            keys: const ['mukta', 'tiroMarathi', 'palanquinDark', 'martel', 'sahitya', 'laila', 'khand', 'kalam'],
+            onPick: (k) => setState(() => _bodyFont = k),
+          ),
+          Row(
+            children: [
+              const Icon(Icons.format_size, color: KjdColors.inkMuted),
+              const SizedBox(width: 8),
+              Text(l.textSize),
+              Expanded(
+                child: Slider(
+                  value: _textScale,
+                  min: .8,
+                  max: 1.3,
+                  divisions: 10,
+                  label: '${(_textScale * 100).round()}%',
+                  onChanged: (v) => setState(() => _textScale = v),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
           if (personal) ...[
             TextField(
               controller: _name,
@@ -365,6 +405,67 @@ class _Thumb extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Horizontal list of bundled Marathi fonts, each previewed with [sample].
+class _FontPicker extends StatelessWidget {
+  const _FontPicker({required this.sample, required this.selected, required this.onPick, this.keys});
+  final String sample;
+  final String selected;
+  final ValueChanged<String> onPick;
+  final List<String>? keys;
+
+  @override
+  Widget build(BuildContext context) {
+    final options = keys ?? BannerTemplate.fonts.keys.toList();
+    return SizedBox(
+      height: 76,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          for (final k in options)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => onPick(k),
+                child: Container(
+                  width: 104,
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: k == selected ? KjdColors.goldLight : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: k == selected ? KjdColors.gold : Colors.black12, width: k == selected ? 2.5 : 1),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        sample,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontFamily: bannerFontFamily(k),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: KjdColors.kumkumDark,
+                          locale: bannerTextLocale,
+                        ),
+                      ),
+                      Text(
+                        BannerTemplate.fonts[k]!.split(' (').first,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 10.5, color: KjdColors.inkMuted),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

@@ -805,4 +805,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get makeBanner => 'बैनर बनाएँ';
+
+  @override
+  String get headlineFontLabel => 'शीर्षक की अक्षरशैली';
+
+  @override
+  String get bodyFontLabel => 'संदेश की अक्षरशैली';
+
+  @override
+  String get textSize => 'अक्षरों का आकार';
 }

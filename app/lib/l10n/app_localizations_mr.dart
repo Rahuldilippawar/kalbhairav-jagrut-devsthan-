@@ -804,4 +804,13 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get makeBanner => 'बॅनर बनवा';
+
+  @override
+  String get headlineFontLabel => 'शीर्षकाची अक्षरशैली';
+
+  @override
+  String get bodyFontLabel => 'मजकुराची अक्षरशैली';
+
+  @override
+  String get textSize => 'अक्षरांचा आकार';
 }
