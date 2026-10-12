@@ -177,6 +177,30 @@ void main() {
         .where((m) => m['album'] == 'दिवस 3' && m['eventId'] == 'navratri-2026');
     expect(media.length, 5);
   });
+
+  testWidgets('content manager corrects and hides festival dates', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.contentManager));
+    await tester.tap(find.text('Festival Calendar'));
+    await tester.pumpAndSettle();
+    // Computed: गुढीपाडवा on Thu, 19 Mar 2026.
+    final row = find.ancestor(of: find.text('गुढीपाडवा'), matching: find.byType(ListTile));
+    await tester.scrollUntilVisible(row, 200, scrollable: find.byType(Scrollable).last);
+    expect(find.descendant(of: row, matching: find.text('Thu, 19 Mar 2026')), findsOneWidget);
+    await tester.tap(find.descendant(of: row, matching: find.byTooltip('Change date')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('20'));
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    final store = c.read(dataStoreProvider) as MemoryDataStore;
+    expect(store.dump(Col.festivalDates)['gudhipadwa_2026']?['date'], '2026-03-20');
+    expect(find.descendant(of: row, matching: find.textContaining('corrected (computed Thu, 19 Mar 2026)')), findsOneWidget);
+
+    await tester.tap(find.descendant(of: row, matching: find.byTooltip('Hide')));
+    await tester.pumpAndSettle();
+    expect(store.dump(Col.festivalDates)['gudhipadwa_2026']?['hidden'], isTrue);
+    expect(festivalsOn(DateTime(2026, 3, 19), await ContentRepository(store).watchFestivalOverrides().first)
+        .map((f) => f.festival.id), isNot(contains('gudhipadwa')));
+  });
 }
 
 class _FakeUploader implements MediaUploader {

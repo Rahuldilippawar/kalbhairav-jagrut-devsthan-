@@ -257,5 +257,18 @@
   "makeBanner": "બેનર બનાવો",
   "headlineFontLabel": "શીર્ષકની અક્ષરશૈલી",
   "bodyFontLabel": "સંદેશની અક્ષરશૈલી",
-  "textSize": "અક્ષરોનું કદ"
+  "textSize": "અક્ષરોનું કદ",
+  "festivalsAndTithis": "તહેવાર અને તિથિ",
+  "today": "આજે",
+  "tomorrow": "આવતીકાલે",
+  "kindFestival": "તહેવાર",
+  "kindJayanti": "જયંતી",
+  "kindVrat": "વ્રત / તિથિ",
+  "kindNational": "રાષ્ટ્રીય દિવસ",
+  "makeFestivalBanner": "શુભેચ્છા બેનર બનાવો",
+  "todayIs": "આજે",
+  "upcomingFestival": "આગામી તહેવાર",
+  "inDays": "{n} દિવસમાં",
+  "festivalCalendar": "તહેવાર કેલેન્ડર",
+  "festivalDateNote": "તારીખો રુંધાટી માટે પંચાંગના નિયમોથી ગણી છે; મંદિર કાર્યાલય કોઈપણ તારીખ સુધારી શકે છે."
 }

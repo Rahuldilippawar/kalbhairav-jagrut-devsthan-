@@ -813,4 +813,46 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get textSize => 'अक्षरांचा आकार';
+
+  @override
+  String get festivalsAndTithis => 'सण, उत्सव व तिथी';
+
+  @override
+  String get today => 'आज';
+
+  @override
+  String get tomorrow => 'उद्या';
+
+  @override
+  String get kindFestival => 'सण-उत्सव';
+
+  @override
+  String get kindJayanti => 'जयंती';
+
+  @override
+  String get kindVrat => 'व्रत / तिथी';
+
+  @override
+  String get kindNational => 'राष्ट्रीय दिन';
+
+  @override
+  String get makeFestivalBanner => 'शुभेच्छा बॅनर बनवा';
+
+  @override
+  String get todayIs => 'आज';
+
+  @override
+  String get upcomingFestival => 'पुढील सण';
+
+  @override
+  String inDays(int n) {
+    return '$n दिवसांनी';
+  }
+
+  @override
+  String get festivalCalendar => 'सण-उत्सव दिनदर्शिका';
+
+  @override
+  String get festivalDateNote =>
+      'तारखा रुंधाटीसाठी पंचांगाच्या नियमांनुसार काढल्या आहेत; मंदिर कार्यालय कोणतीही तारीख दुरुस्त करू शकते.';
 }

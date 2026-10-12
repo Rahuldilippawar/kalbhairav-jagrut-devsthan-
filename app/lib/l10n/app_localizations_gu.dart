@@ -811,4 +811,46 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get textSize => 'અક્ષરોનું કદ';
+
+  @override
+  String get festivalsAndTithis => 'તહેવાર અને તિથિ';
+
+  @override
+  String get today => 'આજે';
+
+  @override
+  String get tomorrow => 'આવતીકાલે';
+
+  @override
+  String get kindFestival => 'તહેવાર';
+
+  @override
+  String get kindJayanti => 'જયંતી';
+
+  @override
+  String get kindVrat => 'વ્રત / તિથિ';
+
+  @override
+  String get kindNational => 'રાષ્ટ્રીય દિવસ';
+
+  @override
+  String get makeFestivalBanner => 'શુભેચ્છા બેનર બનાવો';
+
+  @override
+  String get todayIs => 'આજે';
+
+  @override
+  String get upcomingFestival => 'આગામી તહેવાર';
+
+  @override
+  String inDays(int n) {
+    return '$n દિવસમાં';
+  }
+
+  @override
+  String get festivalCalendar => 'તહેવાર કેલેન્ડર';
+
+  @override
+  String get festivalDateNote =>
+      'તારીખો રુંધાટી માટે પંચાંગના નિયમોથી ગણી છે; મંદિર કાર્યાલય કોઈપણ તારીખ સુધારી શકે છે.';
 }

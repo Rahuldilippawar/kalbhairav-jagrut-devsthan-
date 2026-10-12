@@ -19,7 +19,7 @@ void main() {
       expect(t.tithi, tithi);
       expect(t.paksha, paksha);
       expect(t.masa, masa);
-      expect(t.specialDay, special);
+      expect(t.specialDay?.split(' • ').first, special);
       expect(t.source, 'computed');
     });
   }

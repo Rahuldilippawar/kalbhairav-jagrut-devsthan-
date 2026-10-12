@@ -75,6 +75,21 @@ final tithiProvider = StreamProvider.family<TithiInfo?, DateTime>(
     (ref, day) => ref.watch(contentRepoProvider).watchTithi(day));
 final announcementsProvider = StreamProvider(
     (ref) => ref.watch(contentRepoProvider).watchActiveAnnouncements(ref.watch(clockProvider)()));
+final festivalOverridesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchFestivalOverrides());
+
+/// The year's festivals and vrats with the temple's date corrections.
+final festivalYearProvider = Provider.family<List<FestivalDay>, int>(
+    (ref, year) => festivalYear(year, ref.watch(festivalOverridesProvider).value ?? const {}));
+
+/// Today and the next 45 days.
+final upcomingFestivalsProvider = Provider((ref) {
+  final now = dateOnly(ref.watch(clockProvider)());
+  final end = now.add(const Duration(days: 45));
+  return [
+    for (var y = now.year; y <= end.year; y++)
+      ...ref.watch(festivalYearProvider(y)).where((f) => !f.date.isBefore(now) && f.date.isBefore(end)),
+  ];
+});
 final latestDarshanProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchLatestDarshan());
 final galleryProvider = StreamProvider.family<List<GalleryItem>, String?>(
     (ref, cat) => ref.watch(contentRepoProvider).watchGallery(category: cat));

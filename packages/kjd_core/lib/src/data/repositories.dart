@@ -5,6 +5,7 @@ import '../models/event.dart';
 import '../models/seva.dart';
 import '../models/temple.dart';
 import '../models/user.dart';
+import '../panchang/festivals.dart';
 import '../panchang/panchang.dart';
 import '../utils/convert.dart';
 import 'collections.dart';
@@ -77,6 +78,11 @@ class ContentRepository {
           if (a.urgent != b.urgent) return a.urgent ? -1 : 1;
           return (b.publishAt ?? b.createdAt ?? now).compareTo(a.publishAt ?? a.createdAt ?? now);
         }));
+
+  /// Admin date corrections for computed festivals, keyed by doc id.
+  Stream<Map<String, FestivalOverride>> watchFestivalOverrides() => store
+      .watch(Col.festivalDates)
+      .map((d) => {for (final x in d) x.id: FestivalOverride.fromMap(x.data)});
 
   /// Photos/videos of the most recent darshan day (today during a utsav).
   Stream<List<DarshanPhoto>> watchLatestDarshan() => store

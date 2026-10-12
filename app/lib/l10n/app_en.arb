@@ -306,5 +306,25 @@
   "makeBanner": "Make banner",
   "headlineFontLabel": "Headline lettering",
   "bodyFontLabel": "Message lettering",
-  "textSize": "Text size"
+  "textSize": "Text size",
+  "festivalsAndTithis": "Festivals & tithis",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "kindFestival": "Festivals",
+  "kindJayanti": "Jayanti",
+  "kindVrat": "Vrat / tithi",
+  "kindNational": "National days",
+  "makeFestivalBanner": "Make greeting banner",
+  "todayIs": "Today",
+  "upcomingFestival": "Coming up",
+  "inDays": "in {n} days",
+  "festivalCalendar": "Festival calendar",
+  "festivalDateNote": "Dates are computed for Rundhati by Panchang rules; the temple office can correct any date.",
+  "@inDays": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

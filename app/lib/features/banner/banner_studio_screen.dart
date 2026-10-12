@@ -9,13 +9,25 @@ import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
 import 'banner_canvas.dart';
+import 'festival_picker.dart';
 
 /// Banner Studio → Category → Template → Details → Photo → Preview → Share.
 class BannerStudioScreen extends ConsumerStatefulWidget {
-  const BannerStudioScreen({super.key, this.initialCategory, this.initialMessage, this.initialName});
+  const BannerStudioScreen({
+    super.key,
+    this.initialCategory,
+    this.initialMessage,
+    this.initialName,
+    this.initialFestivalId,
+    this.initialFestivalDate,
+  });
   final BannerCategory? initialCategory;
   final String? initialMessage;
   final String? initialName;
+
+  /// Opens with a festival / vrat banner (from Home or a notification).
+  final String? initialFestivalId;
+  final DateTime? initialFestivalDate;
   @override
   ConsumerState<BannerStudioScreen> createState() => _BannerStudioScreenState();
 }
@@ -31,6 +43,10 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
   Uint8List? _photo;
   Uint8List? _senderPhoto;
   BannerFormat _format = BannerFormat.square;
+
+  /// Festival or vrat whose banner is being made, if any.
+  FestivalDay? _festival;
+  bool _festivalResolved = false;
 
   /// Design and lettering picked by the devotee; null keeps the template's own.
   String? _layout;
@@ -57,14 +73,45 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
       final def = t.defaultMessage;
       _message.text = initial != null && t.category == widget.initialCategory
           ? initial
-          : BannerTemplate.fill(def ?? '', {'name': _name.text.isEmpty ? '______' : _name.text});
+          : def == null && t.category == BannerCategory.tithi
+              ? tithiBannerMessage(_todayTithi())
+              : BannerTemplate.fill(def ?? '', {'name': _name.text.isEmpty ? '______' : _name.text});
     }
+  }
+
+  /// Today's Panchang: the temple's entry if published, else computed.
+  TithiInfo _todayTithi() {
+    final now = ref.read(clockProvider)();
+    return ref.read(tithiProvider(dateOnly(now))).value ?? computeTithi(now);
+  }
+
+  void _selectFestival(FestivalDay fd) {
+    _festival = fd;
+    _category = fd.festival.category;
+    _layout = _headFont = _bodyFont = null;
+    _applyTemplate(fd.festival.toTemplate());
+  }
+
+  /// Resolves the festival passed in the route once the calendar is ready.
+  void _resolveInitialFestival() {
+    if (_festivalResolved || widget.initialFestivalId == null) return;
+    _festivalResolved = true;
+    final date = widget.initialFestivalDate ?? ref.read(clockProvider)();
+    final year = ref.read(festivalYearProvider(date.year));
+    final fd = year.where((f) => f.festival.id == widget.initialFestivalId).firstOrNull ??
+        switch (festivalById(widget.initialFestivalId!, near: date)) {
+          final Festival f => FestivalDay(f, dateOnly(date)),
+          null => null,
+        };
+    if (fd != null) WidgetsBinding.instance.addPostFrameCallback((_) => mounted ? setState(() => _selectFestival(fd)) : null);
   }
 
   /// Temple templates first, then the built-in designs the temple has not
   /// already loaded, so every category always has several designs.
   List<BannerTemplate> _templatesFor(List<BannerTemplate> all) {
     final list = all.where((t) => t.category == _category).toList();
+    final fest = _festival?.festival;
+    if (fest != null && fest.category == _category) list.insert(0, fest.toTemplate());
     final ids = {for (final t in list) t.id};
     list.addAll(builtinBannerTemplates.where((t) => t.category == _category && !ids.contains(t.id)));
     return list.isEmpty ? [fallbackTemplate(_category)] : list;
@@ -126,6 +173,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    _resolveInitialFestival();
     final all = ref.watch(bannerTemplatesProvider).value ?? const [];
     final templates = _templatesFor(all);
     // Template list changes (category switch, admin data arriving) are
@@ -145,7 +193,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
       _sender.text = profileName;
     }
     final template = _withLayout(_template ?? templates.first);
-    final date = _includeDate ? formatDate(ref.read(clockProvider)()) : null;
+    final date = _includeDate ? formatDate(_festival?.date ?? ref.read(clockProvider)()) : null;
     final personal = _category == BannerCategory.birthday || _category == BannerCategory.anniversary;
 
     return Scaffold(
@@ -203,6 +251,16 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
             icon: const Icon(Icons.share),
             label: Text('${l.share} / ${l.download}'),
           ),
+          SectionHeader(
+            l.festivalsAndTithis,
+            icon: '📅',
+            action: l.viewAll,
+            onAction: () async {
+              final fd = await showFestivalCalendar(context);
+              if (fd != null && mounted) setState(() => _selectFestival(fd));
+            },
+          ),
+          FestivalStrip(selectedId: _festival?.id, onPick: (fd) => setState(() => _selectFestival(fd))),
           SectionHeader(l.selectCategory),
           Wrap(
             spacing: 8,
@@ -216,13 +274,14 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
                   onSelected: (_) => setState(() {
                     _category = c;
                     _template = null;
+                    _festival = null;
                   }),
                 ),
             ],
           ),
           SectionHeader(l.selectTemplate),
           SizedBox(
-            height: 128,
+            height: 140,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
@@ -232,6 +291,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
                     selected: t.id == _template?.id,
                     onTap: () => setState(() {
                       _layout = _headFont = _bodyFont = null;
+                      if (!t.id.startsWith('fest-')) _festival = null;
                       _applyTemplate(t);
                     }),
                     child: BannerCanvas(template: _withLayout(t), headline: t.headline ?? '', message: ''),
@@ -241,7 +301,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
           ),
           SectionHeader(l.bannerDesign),
           SizedBox(
-            height: 128,
+            height: 140,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [

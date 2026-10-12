@@ -31,6 +31,13 @@ jobs:
           channel: stable
           cache: true
 
+      # Headroom for Gradle/R8 + Dart AOT on the small private-repo runner.
+      - name: Add swap
+        run: |
+          sudo fallocate -l 6G /swapfile2 && sudo chmod 600 /swapfile2
+          sudo mkswap /swapfile2 && sudo swapon /swapfile2
+          free -h
+
       - name: Build APK
         working-directory: app
         env:
@@ -41,7 +48,9 @@ jobs:
           FIREBASE_ANDROID_APP_ID: ${{ vars.FIREBASE_ANDROID_APP_ID }}
         run: |
           flutter pub get
+          # Phones only (arm, arm64); x86_64 is just for emulators.
           flutter build apk --release \
+            --target-platform android-arm,android-arm64 \
             --build-number=${{ github.run_number }} \
             --dart-define=FIREBASE_API_KEY="$FIREBASE_API_KEY" \
             --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \

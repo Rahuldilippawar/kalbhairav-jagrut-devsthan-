@@ -1649,6 +1649,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Text size'**
   String get textSize;
+
+  /// No description provided for @festivalsAndTithis.
+  ///
+  /// In en, this message translates to:
+  /// **'Festivals & tithis'**
+  String get festivalsAndTithis;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrow;
+
+  /// No description provided for @kindFestival.
+  ///
+  /// In en, this message translates to:
+  /// **'Festivals'**
+  String get kindFestival;
+
+  /// No description provided for @kindJayanti.
+  ///
+  /// In en, this message translates to:
+  /// **'Jayanti'**
+  String get kindJayanti;
+
+  /// No description provided for @kindVrat.
+  ///
+  /// In en, this message translates to:
+  /// **'Vrat / tithi'**
+  String get kindVrat;
+
+  /// No description provided for @kindNational.
+  ///
+  /// In en, this message translates to:
+  /// **'National days'**
+  String get kindNational;
+
+  /// No description provided for @makeFestivalBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Make greeting banner'**
+  String get makeFestivalBanner;
+
+  /// No description provided for @todayIs.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayIs;
+
+  /// No description provided for @upcomingFestival.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get upcomingFestival;
+
+  /// No description provided for @inDays.
+  ///
+  /// In en, this message translates to:
+  /// **'in {n} days'**
+  String inDays(int n);
+
+  /// No description provided for @festivalCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Festival calendar'**
+  String get festivalCalendar;
+
+  /// No description provided for @festivalDateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates are computed for Rundhati by Panchang rules; the temple office can correct any date.'**
+  String get festivalDateNote;
 }
 
 class _AppLocalizationsDelegate

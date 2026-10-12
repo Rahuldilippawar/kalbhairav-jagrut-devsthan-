@@ -16,6 +16,8 @@ export 'src/models/seva.dart';
 export 'src/models/temple.dart';
 export 'src/models/user.dart';
 export 'src/payments/upi.dart';
+export 'src/panchang/festival_catalog.dart';
+export 'src/panchang/festivals.dart';
 export 'src/panchang/panchang.dart';
 export 'src/rbac.dart';
 export 'src/services/auth_service.dart';

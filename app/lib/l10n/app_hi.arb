@@ -257,5 +257,18 @@
   "makeBanner": "बैनर बनाएँ",
   "headlineFontLabel": "शीर्षक की अक्षरशैली",
   "bodyFontLabel": "संदेश की अक्षरशैली",
-  "textSize": "अक्षरों का आकार"
+  "textSize": "अक्षरों का आकार",
+  "festivalsAndTithis": "त्योहार व तिथि",
+  "today": "आज",
+  "tomorrow": "कल",
+  "kindFestival": "त्योहार",
+  "kindJayanti": "जयंती",
+  "kindVrat": "व्रत / तिथि",
+  "kindNational": "राष्ट्रीय दिवस",
+  "makeFestivalBanner": "शुभकामना बैनर बनाएँ",
+  "todayIs": "आज",
+  "upcomingFestival": "आगामी त्योहार",
+  "inDays": "{n} दिनों में",
+  "festivalCalendar": "त्योहार कैलेंडर",
+  "festivalDateNote": "तिथियाँ रुंधाटी के लिए पंचांग नियमों से निकाली गई हैं; मंदिर कार्यालय कोई भी तिथि सुधार सकता है।"
 }

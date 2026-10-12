@@ -814,4 +814,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get textSize => 'Text size';
+
+  @override
+  String get festivalsAndTithis => 'Festivals & tithis';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get tomorrow => 'Tomorrow';
+
+  @override
+  String get kindFestival => 'Festivals';
+
+  @override
+  String get kindJayanti => 'Jayanti';
+
+  @override
+  String get kindVrat => 'Vrat / tithi';
+
+  @override
+  String get kindNational => 'National days';
+
+  @override
+  String get makeFestivalBanner => 'Make greeting banner';
+
+  @override
+  String get todayIs => 'Today';
+
+  @override
+  String get upcomingFestival => 'Coming up';
+
+  @override
+  String inDays(int n) {
+    return 'in $n days';
+  }
+
+  @override
+  String get festivalCalendar => 'Festival calendar';
+
+  @override
+  String get festivalDateNote =>
+      'Dates are computed for Rundhati by Panchang rules; the temple office can correct any date.';
 }

@@ -1,6 +1,7 @@
 import '../models/content.dart';
 import '../utils/convert.dart';
 import 'astronomy.dart';
+import 'festivals.dart';
 
 /// Default location: Rundhati, Tal. Amalner, Dist. Jalgaon.
 const rundhatiLat = 21.04;
@@ -164,7 +165,10 @@ TithiInfo computeTithi(DateTime date, {double lat = rundhatiLat, double lng = ru
     masa: '${p.adhik ? 'अधिक ' : ''}${masaNamesMr[p.masa]}',
     sunrise: sun == null ? '' : _hhmm(sun.rise),
     sunset: sun == null ? '' : _hhmm(sun.set),
-    specialDay: specialDayFor(p),
+    specialDay: () {
+      final names = festivalsOn(date).map((f) => f.festival.name).toList();
+      return names.isEmpty ? null : names.join(' • ');
+    }(),
     source: 'computed',
     manualOverride: false,
   );

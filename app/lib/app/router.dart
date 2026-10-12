@@ -70,6 +70,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           initialCategory: BannerCategory.values.asNameMap()[s.uri.queryParameters['category']],
           initialMessage: s.uri.queryParameters['message'],
           initialName: s.uri.queryParameters['name'],
+          initialFestivalId: s.uri.queryParameters['festival'],
+          initialFestivalDate: DateTime.tryParse(s.uri.queryParameters['date'] ?? ''),
         ),
       ),
       GoRoute(

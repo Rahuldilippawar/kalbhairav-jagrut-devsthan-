@@ -6,6 +6,8 @@ import 'package:kjd_app/app/app.dart';
 import 'package:kjd_app/app/providers.dart';
 import 'package:kjd_app/app/router.dart';
 import 'package:kjd_app/main.dart';
+import 'package:kjd_app/features/banner/festival_picker.dart';
+import 'package:kjd_app/widgets/common.dart';
 import 'package:kjd_app/widgets/media_viewer.dart';
 import 'package:kjd_app/widgets/route_map.dart';
 import 'package:kjd_core/kjd_core.dart';
@@ -197,6 +199,48 @@ void main() {
     c.read(routerProvider).go('/home');
     await tester.pumpAndSettle();
     expect(find.text('आजचे दर्शन 🙏'), findsOneWidget);
+  });
+
+  testWidgets("festival calendar: today's vrat on Home opens its banner; Navratri from the strip", (tester) async {
+    final c = await _start(tester);
+    // 6 Oct 2026 is इंदिरा एकादशी.
+    await tester.scrollUntilVisible(find.text('शुभेच्छा बॅनर बनवा'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.text('इंदिरा एकादशी'), findsOneWidget);
+    await tester.tap(find.text('शुभेच्छा बॅनर बनवा'));
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).state.uri.queryParameters['festival'], startsWith('ekadashi-'));
+    // The banner preview shows the vrat's headline.
+    expect(find.text('🙏 इंदिरा एकादशी'), findsWidgets);
+
+    // Pick घटस्थापना (11 Oct) from the upcoming strip.
+    final ghat = find.text('घटस्थापना – नवरात्र आरंभ');
+    await tester.dragUntilVisible(ghat, find.byType(FestivalStrip), const Offset(-200, 0));
+    await tester.tap(ghat);
+    await tester.pumpAndSettle();
+    expect(find.text('🪔 नवरात्र उत्सवाच्या हार्दिक शुभेच्छा'), findsWidgets);
+
+    // Full calendar sheet lists Diwali.
+    final header = find.ancestor(
+      of: find.text('सण, उत्सव व तिथी', skipOffstage: false),
+      matching: find.byType(SectionHeader, skipOffstage: false),
+    );
+    await tester.ensureVisible(header);
+    await tester.pumpAndSettle();
+    await tester.tap(find.descendant(of: header, matching: find.byType(TextButton)));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.descendant(of: find.byType(BottomSheet), matching: find.byType(TextField)), 'लक्ष्मीपूजन');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('लक्ष्मीपूजन (दिवाळी)').first); // 2026 (2027 is listed too)
+    await tester.pumpAndSettle();
+    expect(find.text('🪔 शुभ दीपावली – लक्ष्मीपूजन'), findsWidgets);
+
+    // The message field carries the festival greeting.
+    final studioList = find
+        .ancestor(of: find.byType(FestivalStrip, skipOffstage: false), matching: find.byType(Scrollable, skipOffstage: false))
+        .first;
+    final messageField = find.widgetWithText(TextField, 'संदेश');
+    await tester.scrollUntilVisible(messageField, 300, scrollable: studioList);
+    expect(tester.widget<TextField>(messageField).controller!.text, contains('दीपावलीचा प्रकाश'));
   });
 
   testWidgets('seva booking issues a QR pass', (tester) async {

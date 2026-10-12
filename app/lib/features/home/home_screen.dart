@@ -10,6 +10,7 @@ import '../darshan/darshan_slider.dart';
 import '../devotion/tithi_screen.dart';
 import '../events/events_screen.dart';
 import 'daily_quote_popup.dart';
+import 'festival_today_card.dart';
 
 /// Home: everything on it is driven by admin-managed content.
 class HomeScreen extends ConsumerWidget {
@@ -35,6 +36,7 @@ class HomeScreen extends ConsumerWidget {
           const SliverToBoxAdapter(child: DailyQuoteGate()),
           const SliverToBoxAdapter(child: _HeroCarousel()),
           const SliverToBoxAdapter(child: DarshanSlider(height: 240, padding: EdgeInsets.symmetric(horizontal: 16), maxAgeDays: 1)),
+          const SliverToBoxAdapter(child: FestivalTodayCard()),
           const SliverToBoxAdapter(child: _CelebrationCard()),
           const SliverToBoxAdapter(child: _QuickActions()),
           const SliverToBoxAdapter(child: _LiveStrip()),
