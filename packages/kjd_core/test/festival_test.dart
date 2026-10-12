@@ -92,4 +92,19 @@ void main() {
       expect(BannerTemplate.fonts.keys, contains(f.headlineFont), reason: f.id);
     }
   });
+
+  test("a deity's next special days come from the festival calendar", () {
+    final kalbhairav = deityPresets.firstWhere((d) => d.id == 'kalbhairav');
+    final next = nextObservances(kalbhairav.festivalIds, DateTime(2026, 10, 12));
+    expect(next.map((f) => f.festival.id.split('-').first), containsAll(['kalbhairavjayanti', 'kalashtami', 'mahashivratri']));
+    expect(dateKey(next.firstWhere((f) => f.festival.id == 'kalbhairavjayanti').date), '2026-12-01');
+    expect(next.first.date.isBefore(next.last.date), isTrue);
+    // Every preset links only to known festivals or vrat prefixes.
+    const vrats = ['kalashtami', 'sankashti', 'ekadashi', 'pradosh', 'amavasya', 'purnima', 'shivratri', 'vinayaki'];
+    for (final d in deityPresets) {
+      for (final id in d.festivalIds) {
+        expect(festivalCatalog.any((f) => f.id == id) || vrats.contains(id), isTrue, reason: '${d.id}: $id');
+      }
+    }
+  });
 }

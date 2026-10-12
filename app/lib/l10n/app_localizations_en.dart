@@ -856,4 +856,70 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get festivalDateNote =>
       'Dates are computed for Rundhati by Panchang rules; the temple office can correct any date.';
+
+  @override
+  String get templeDeities => 'Deities in the temple';
+
+  @override
+  String get aboutDeity => 'About';
+
+  @override
+  String get deityHistory => 'History & legend';
+
+  @override
+  String get mantraLabel => 'Mantra';
+
+  @override
+  String get aartiLabel => 'Aarti / stotra';
+
+  @override
+  String get worshipDay => 'Day of worship';
+
+  @override
+  String get placeInTemple => 'Place in the temple';
+
+  @override
+  String get nextSpecialDays => 'Next special days';
+
+  @override
+  String get gadhipatiParampara => 'Gadhipati parampara';
+
+  @override
+  String get currentGadhipati => 'Present gadhipati';
+
+  @override
+  String get periodLabel => 'Period';
+
+  @override
+  String get birthLabel => 'Birth';
+
+  @override
+  String get samadhiLabel => 'Samadhi / punyatithi';
+
+  @override
+  String get bioLabel => 'Life';
+
+  @override
+  String get workLabel => 'Work';
+
+  @override
+  String get vachanLabel => 'Teaching';
+
+  @override
+  String get quickDeities => 'Deities';
+
+  @override
+  String get quickParampara => 'Parampara';
+
+  @override
+  String get quickTithi => 'Tithi';
+
+  @override
+  String get quickMantras => 'Mantras';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get mainDeity => 'Main deity';
 }

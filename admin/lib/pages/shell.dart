@@ -8,6 +8,7 @@ import '../widgets/crud.dart';
 import 'audit_page.dart';
 import 'bookings_page.dart';
 import 'dashboard_page.dart';
+import 'deities_page.dart';
 import 'devotees_page.dart';
 import 'events_page.dart';
 import 'festival_page.dart';
@@ -50,6 +51,9 @@ final List<NavItem> navItems = [
   NavItem('banner_templates', 'Banner Studio Templates', Icons.palette_outlined, AdminModule.banners, () => CollectionListPage(spec: Specs.bannerTemplates), group: 'Content'),
   NavItem('notifications', 'Notifications', Icons.notifications_outlined, AdminModule.notifications, () => const NotificationsPage(), group: 'Content'),
   NavItem('temple', 'Temple Info', Icons.temple_hindu_outlined, AdminModule.temple, () => SingletonPage(spec: Specs.templeInfo), group: 'Temple'),
+  NavItem('deities', 'Deities (देवता)', Icons.self_improvement_outlined, AdminModule.temple, () => const DeitiesPage(), group: 'Temple'),
+  NavItem('parampara', 'Gadhipati Parampara', Icons.account_tree_outlined, AdminModule.temple,
+      () => CollectionListPage(spec: Specs.parampara, subtitle: 'One row per gadhipati, in order. Mark the present one as current.'), group: 'Temple'),
   NavItem('darshan', 'Darshan Timings', Icons.access_time, AdminModule.darshan, () => CollectionListPage(spec: Specs.darshan), group: 'Temple'),
   NavItem('live', 'Live Darshan', Icons.live_tv, AdminModule.live, () => SingletonPage(spec: Specs.live), group: 'Temple'),
   NavItem('darshan_photos', "Today's Darshan", Icons.add_photo_alternate_outlined, AdminModule.live, () => const DarshanPhotosPage(), group: 'Temple'),

@@ -5,6 +5,7 @@ import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
+import '../temple/deity_screens.dart';
 import 'darshan_slider.dart';
 
 class DarshanScreen extends ConsumerWidget {
@@ -34,6 +35,7 @@ class DarshanScreen extends ConsumerWidget {
           const DarshanSummaryCard(),
           const SizedBox(height: 12),
           _LiveCard(),
+          const DeityStrip(),
           _Group(title: l.darshanTimings, icon: '🙏', slots: of({DarshanType.morning, DarshanType.evening})),
           _Group(title: l.aartiTimings, icon: '🪔', slots: of({DarshanType.aarti})),
           _Group(title: l.specialDarshan, icon: '🌸', slots: of({DarshanType.special})),

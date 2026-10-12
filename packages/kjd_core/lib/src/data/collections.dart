@@ -37,6 +37,8 @@ abstract final class Col {
   static const notifications = 'notifications';
 
   static const gallery = 'gallery';
+  static const deities = 'deities';
+  static const parampara = 'gadhipati_parampara';
   static const darshanPhotos = 'darshan_photos';
   static const videos = 'videos';
 

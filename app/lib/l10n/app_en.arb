@@ -326,5 +326,27 @@
         "type": "int"
       }
     }
-  }
+  },
+  "templeDeities": "Deities in the temple",
+  "aboutDeity": "About",
+  "deityHistory": "History & legend",
+  "mantraLabel": "Mantra",
+  "aartiLabel": "Aarti / stotra",
+  "worshipDay": "Day of worship",
+  "placeInTemple": "Place in the temple",
+  "nextSpecialDays": "Next special days",
+  "gadhipatiParampara": "Gadhipati parampara",
+  "currentGadhipati": "Present gadhipati",
+  "periodLabel": "Period",
+  "birthLabel": "Birth",
+  "samadhiLabel": "Samadhi / punyatithi",
+  "bioLabel": "Life",
+  "workLabel": "Work",
+  "vachanLabel": "Teaching",
+  "quickDeities": "Deities",
+  "quickParampara": "Parampara",
+  "quickTithi": "Tithi",
+  "quickMantras": "Mantras",
+  "copied": "Copied",
+  "mainDeity": "Main deity"
 }

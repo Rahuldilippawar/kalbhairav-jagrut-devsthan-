@@ -10,6 +10,7 @@ export 'src/data/memory_data_store.dart';
 export 'src/data/repositories.dart';
 export 'src/models/admin.dart';
 export 'src/models/content.dart';
+export 'src/models/deity.dart';
 export 'src/models/donation.dart';
 export 'src/models/event.dart';
 export 'src/models/seva.dart';

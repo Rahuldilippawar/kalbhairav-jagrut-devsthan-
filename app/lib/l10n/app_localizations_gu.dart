@@ -853,4 +853,70 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get festivalDateNote =>
       'તારીખો રુંધાટી માટે પંચાંગના નિયમોથી ગણી છે; મંદિર કાર્યાલય કોઈપણ તારીખ સુધારી શકે છે.';
+
+  @override
+  String get templeDeities => 'મંદિરના દેવતા';
+
+  @override
+  String get aboutDeity => 'માહિતી';
+
+  @override
+  String get deityHistory => 'ઇતિહાસ અને કથા';
+
+  @override
+  String get mantraLabel => 'મંત્ર';
+
+  @override
+  String get aartiLabel => 'આરતી / સ્તોત્ર';
+
+  @override
+  String get worshipDay => 'ઉપાસનાનો દિવસ';
+
+  @override
+  String get placeInTemple => 'મંદિરમાં સ્થાન';
+
+  @override
+  String get nextSpecialDays => 'આગામી વિશેષ દિવસો';
+
+  @override
+  String get gadhipatiParampara => 'ગાદીપતિ પરંપરા';
+
+  @override
+  String get currentGadhipati => 'વર્તમાન ગાદીપતિ';
+
+  @override
+  String get periodLabel => 'કાળખંડ';
+
+  @override
+  String get birthLabel => 'જન્મ';
+
+  @override
+  String get samadhiLabel => 'સમાધિ / પુણ્યતિથિ';
+
+  @override
+  String get bioLabel => 'જીવન પરિચય';
+
+  @override
+  String get workLabel => 'કાર્ય';
+
+  @override
+  String get vachanLabel => 'વચન';
+
+  @override
+  String get quickDeities => 'દેવતા';
+
+  @override
+  String get quickParampara => 'પરંપરા';
+
+  @override
+  String get quickTithi => 'તિથિ';
+
+  @override
+  String get quickMantras => 'મંત્ર';
+
+  @override
+  String get copied => 'કૉપિ થયું';
+
+  @override
+  String get mainDeity => 'મુખ્ય દેવતા';
 }

@@ -259,6 +259,10 @@ class _QuickActions extends StatelessWidget {
       ('🛕', l.quickTemple, () => context.push('/temple')),
       ('🖼️', l.quickGallery, () => context.push('/gallery')),
       ('🎨', l.quickBanner, () => context.push('/banner')),
+      ('🔱', l.quickDeities, () => context.push('/deities')),
+      ('🚩', l.quickParampara, () => context.push('/parampara')),
+      ('📅', l.quickTithi, () => context.push('/tithi')),
+      ('🕉️', l.quickMantras, () => context.push('/mantras')),
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),

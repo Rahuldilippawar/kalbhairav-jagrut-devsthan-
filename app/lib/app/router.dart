@@ -26,6 +26,8 @@ import '../features/seva/seva_list_screen.dart';
 import '../features/seva/seva_pass_screen.dart';
 import '../features/splash/onboarding_screen.dart';
 import '../features/splash/splash_screen.dart';
+import '../features/temple/deity_screens.dart';
+import '../features/temple/parampara_screens.dart';
 import '../features/temple/temple_info_screen.dart';
 import '../services/upi_gateway.dart';
 import 'shell.dart';
@@ -57,6 +59,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/event/:id', builder: (_, s) => EventDetailScreen(eventId: s.pathParameters['id']!)),
       GoRoute(path: '/live', builder: (_, _) => const LiveDarshanScreen()),
       GoRoute(path: '/temple', builder: (_, _) => const TempleInfoScreen()),
+      GoRoute(path: '/deities', builder: (_, _) => const DeitiesScreen()),
+      GoRoute(path: '/deity/:id', builder: (_, s) => DeityDetailScreen(deityId: s.pathParameters['id']!)),
+      GoRoute(path: '/parampara', builder: (_, _) => const ParamparaScreen()),
+      GoRoute(path: '/parampara/:id', builder: (_, s) => GadhipatiScreen(id: s.pathParameters['id']!)),
       GoRoute(path: '/gallery', builder: (_, _) => const GalleryScreen()),
       GoRoute(path: '/tithi', builder: (_, _) => const TithiScreen()),
       GoRoute(path: '/greetings', builder: (_, _) => const GreetingsScreen()),

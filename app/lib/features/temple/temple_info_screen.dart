@@ -6,6 +6,8 @@ import 'package:kjd_core/kjd_core.dart';
 import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
+import 'deity_screens.dart';
+import 'parampara_screens.dart';
 
 /// Temple information, history, tradition, contact and location.
 class TempleInfoScreen extends ConsumerWidget {
@@ -41,6 +43,8 @@ class TempleInfoScreen extends ConsumerWidget {
               Text(t.tagline, style: const TextStyle(color: Colors.white70, fontSize: 12)),
             ]),
           ),
+          const DeityStrip(),
+          const ParamparaSummary(),
           for (final (icon, title, body) in sections) ...[
             SectionHeader(title, icon: icon),
             Card(child: Padding(padding: const EdgeInsets.all(16), child: Text(body, style: const TextStyle(fontSize: 15.5, height: 1.7)))),

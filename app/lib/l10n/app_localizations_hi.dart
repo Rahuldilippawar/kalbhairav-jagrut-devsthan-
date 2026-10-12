@@ -856,4 +856,70 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get festivalDateNote =>
       'तिथियाँ रुंधाटी के लिए पंचांग नियमों से निकाली गई हैं; मंदिर कार्यालय कोई भी तिथि सुधार सकता है।';
+
+  @override
+  String get templeDeities => 'मंदिर के देवता';
+
+  @override
+  String get aboutDeity => 'जानकारी';
+
+  @override
+  String get deityHistory => 'इतिहास व कथा';
+
+  @override
+  String get mantraLabel => 'मंत्र';
+
+  @override
+  String get aartiLabel => 'आरती / स्तोत्र';
+
+  @override
+  String get worshipDay => 'उपासना का दिन';
+
+  @override
+  String get placeInTemple => 'मंदिर में स्थान';
+
+  @override
+  String get nextSpecialDays => 'आगामी विशेष दिन';
+
+  @override
+  String get gadhipatiParampara => 'गादीपति परंपरा';
+
+  @override
+  String get currentGadhipati => 'वर्तमान गादीपति';
+
+  @override
+  String get periodLabel => 'कालखंड';
+
+  @override
+  String get birthLabel => 'जन्म';
+
+  @override
+  String get samadhiLabel => 'समाधि / पुण्यतिथि';
+
+  @override
+  String get bioLabel => 'जीवन परिचय';
+
+  @override
+  String get workLabel => 'कार्य';
+
+  @override
+  String get vachanLabel => 'वचन';
+
+  @override
+  String get quickDeities => 'देवता';
+
+  @override
+  String get quickParampara => 'परंपरा';
+
+  @override
+  String get quickTithi => 'तिथि';
+
+  @override
+  String get quickMantras => 'मंत्र';
+
+  @override
+  String get copied => 'कॉपी हुआ';
+
+  @override
+  String get mainDeity => 'मुख्य देवता';
 }

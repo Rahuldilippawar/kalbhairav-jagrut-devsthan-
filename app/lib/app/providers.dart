@@ -75,6 +75,11 @@ final tithiProvider = StreamProvider.family<TithiInfo?, DateTime>(
     (ref, day) => ref.watch(contentRepoProvider).watchTithi(day));
 final announcementsProvider = StreamProvider(
     (ref) => ref.watch(contentRepoProvider).watchActiveAnnouncements(ref.watch(clockProvider)()));
+final deitiesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchDeities());
+final deityProvider = StreamProvider.family<Deity?, String>((ref, id) => ref.watch(contentRepoProvider).watchDeity(id));
+final paramparaProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchParampara());
+final gadhipatiProvider =
+    StreamProvider.family<Gadhipati?, String>((ref, id) => ref.watch(contentRepoProvider).watchGadhipati(id));
 final festivalOverridesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchFestivalOverrides());
 
 /// The year's festivals and vrats with the temple's date corrections.

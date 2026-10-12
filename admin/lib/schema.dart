@@ -1,6 +1,7 @@
 import 'package:kjd_core/kjd_core.dart';
 
-enum FieldType { text, multiline, integer, decimal, money, boolean, date, dateTime, time, select, tags, intList, colors, image, url }
+/// [imageList] is a list of photo URLs (bulk upload, remove one by one).
+enum FieldType { text, multiline, integer, decimal, money, boolean, date, dateTime, time, select, tags, intList, colors, image, url, imageList }
 
 /// One editable field of a document. [key] may be a dotted path into a
 /// nested map (e.g. `dindi.startPoint`).
@@ -409,6 +410,57 @@ abstract final class Specs {
       const FieldSpec('logoUrl', 'Custom logo (optional)', type: FieldType.image, help: 'Leave empty to use the temple logo'),
       const FieldSpec('order', 'Order', type: FieldType.integer, defaultValue: 0),
       const FieldSpec('active', 'Active', type: FieldType.boolean, defaultValue: true),
+    ],
+  );
+
+  static final deities = CollectionSpec(
+    collection: Col.deities,
+    title: 'Temple Deities (देवता)',
+    module: AdminModule.temple,
+    orderBy: 'order',
+    columns: const ['photoUrl', 'name', 'subtitle', 'order'],
+    searchFields: const ['name'],
+    fields: const [
+      FieldSpec('name', 'Name (e.g. श्री काळभैरव)', required: true),
+      FieldSpec('subtitle', 'Subtitle (e.g. मुख्य देवता)'),
+      FieldSpec('photoUrl', 'Main photo', type: FieldType.image),
+      FieldSpec('photos', 'More photos', type: FieldType.imageList),
+      FieldSpec('about', 'Information (माहिती)', type: FieldType.multiline),
+      FieldSpec('history', 'History / legend of this murti (इतिहास)', type: FieldType.multiline,
+          help: 'The temple\'s own story: when and how the murti was installed, traditions, miracles…'),
+      FieldSpec('place', 'Place in the temple (e.g. मुख्य गाभारा)'),
+      FieldSpec('vaar', 'Worship day(s) (e.g. रविवार, मंगळवार)'),
+      FieldSpec('mantra', 'Mantra'),
+      FieldSpec('aarti', 'Aarti / stotra', type: FieldType.multiline),
+      FieldSpec('festivalIds', 'Special days (festival ids)', type: FieldType.tags,
+          help: 'e.g. kalbhairavjayanti, kalashtami, mahashivratri – see Content → Festival Calendar'),
+      FieldSpec('isMain', 'Main deity of the temple', type: FieldType.boolean),
+      FieldSpec('order', 'Order', type: FieldType.integer, defaultValue: 0),
+      FieldSpec('active', 'Show in app', type: FieldType.boolean, defaultValue: true),
+    ],
+  );
+
+  static final parampara = CollectionSpec(
+    collection: Col.parampara,
+    title: 'Gadhipati Parampara (गादीपती परंपरा)',
+    module: AdminModule.temple,
+    orderBy: 'order',
+    columns: const ['photoUrl', 'order', 'name', 'period'],
+    searchFields: const ['name'],
+    fields: const [
+      FieldSpec('name', 'Name', required: true),
+      FieldSpec('title', 'Title (e.g. पहिले गादीपती)'),
+      FieldSpec('order', 'Position in parampara (1 = first)', type: FieldType.integer, defaultValue: 1),
+      FieldSpec('isCurrent', 'Current gadhipati', type: FieldType.boolean),
+      FieldSpec('photoUrl', 'Photo', type: FieldType.image),
+      FieldSpec('photos', 'More photos', type: FieldType.imageList),
+      FieldSpec('period', 'Period on the gadi (e.g. इ.स. 1952 – 1987)'),
+      FieldSpec('birth', 'Birth (date / place)'),
+      FieldSpec('samadhi', 'Samadhi / punyatithi'),
+      FieldSpec('bio', 'Biography (जीवन परिचय)', type: FieldType.multiline),
+      FieldSpec('work', 'Work for the temple and society (कार्य)', type: FieldType.multiline),
+      FieldSpec('vachan', 'Saying / teaching (वचन)', type: FieldType.multiline),
+      FieldSpec('active', 'Show in app', type: FieldType.boolean, defaultValue: true),
     ],
   );
 

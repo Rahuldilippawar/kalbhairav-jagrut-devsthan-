@@ -201,6 +201,38 @@ void main() {
     expect(festivalsOn(DateTime(2026, 3, 19), await ContentRepository(store).watchFestivalOverrides().first)
         .map((f) => f.festival.id), isNot(contains('gudhipadwa')));
   });
+
+  testWidgets('temple admin adds a deity from the list and uploads several photos', (tester) async {
+    final uploaded = <String>[];
+    final c = await _start(tester, _admin(AdminRole.templeAdmin), overrides: [
+      uploaderProvider.overrideWithValue(_FakeUploader(uploaded)),
+      mediaPickerProvider.overrideWithValue(({bool allowVideo = true}) async => [
+            for (var i = 0; i < 3; i++) PickedMedia(name: 'murti$i.jpg', bytes: Uint8List(1), isVideo: false),
+          ]),
+    ]);
+    final store = c.read(dataStoreProvider) as MemoryDataStore;
+    // Demo seed has 7 deities; श्री विठ्ठल-रुक्मिणी is not one of them.
+    await tester.tap(find.text('Deities (देवता)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ActionChip, 'श्री विठ्ठल-रुक्मिणी'));
+    await tester.pumpAndSettle();
+    final v = store.dump(Col.deities)['vitthal']!;
+    expect(v['mantra'], 'जय जय राम कृष्ण हरी');
+    expect(v['festivalIds'], contains('ashadhi'));
+    expect(find.widgetWithText(ActionChip, 'श्री विठ्ठल-रुक्मिणी'), findsNothing);
+
+    // Edit it: add three photos at once, save.
+    await tester.tap(find.text('श्री विठ्ठल-रुक्मिणी'));
+    await tester.pumpAndSettle();
+    final add = find.text('Add photos');
+    await tester.scrollUntilVisible(add, 200, scrollable: find.byType(Scrollable).last);
+    await tester.tap(add);
+    await tester.pumpAndSettle();
+    expect(find.text('More photos (3)'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Save'));
+    await tester.pumpAndSettle();
+    expect(store.dump(Col.deities)['vitthal']!['photos'], hasLength(3));
+  });
 }
 
 class _FakeUploader implements MediaUploader {

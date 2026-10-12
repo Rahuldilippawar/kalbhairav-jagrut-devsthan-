@@ -410,3 +410,19 @@ class MonthlyVrat {
   final Karmakal karmakal;
   final Festival Function(PanchangMoment p, DateTime date) build;
 }
+
+/// Next occurrence of each of [ids] within a year from [from]: catalog
+/// festival ids, or vrat prefixes such as `kalashtami` / `ekadashi`.
+List<FestivalDay> nextObservances(
+  Iterable<String> ids,
+  DateTime from, {
+  Map<String, FestivalOverride> overrides = const {},
+}) {
+  final upcoming = upcomingFestivals(from, days: 366, overrides: overrides);
+  final out = <FestivalDay>[];
+  for (final id in ids) {
+    final hit = upcoming.where((f) => f.festival.id == id || f.festival.id.startsWith('$id-')).firstOrNull;
+    if (hit != null) out.add(hit);
+  }
+  return out..sort((a, b) => a.date.compareTo(b.date));
+}

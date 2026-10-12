@@ -1727,6 +1727,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dates are computed for Rundhati by Panchang rules; the temple office can correct any date.'**
   String get festivalDateNote;
+
+  /// No description provided for @templeDeities.
+  ///
+  /// In en, this message translates to:
+  /// **'Deities in the temple'**
+  String get templeDeities;
+
+  /// No description provided for @aboutDeity.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutDeity;
+
+  /// No description provided for @deityHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History & legend'**
+  String get deityHistory;
+
+  /// No description provided for @mantraLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra'**
+  String get mantraLabel;
+
+  /// No description provided for @aartiLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Aarti / stotra'**
+  String get aartiLabel;
+
+  /// No description provided for @worshipDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day of worship'**
+  String get worshipDay;
+
+  /// No description provided for @placeInTemple.
+  ///
+  /// In en, this message translates to:
+  /// **'Place in the temple'**
+  String get placeInTemple;
+
+  /// No description provided for @nextSpecialDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Next special days'**
+  String get nextSpecialDays;
+
+  /// No description provided for @gadhipatiParampara.
+  ///
+  /// In en, this message translates to:
+  /// **'Gadhipati parampara'**
+  String get gadhipatiParampara;
+
+  /// No description provided for @currentGadhipati.
+  ///
+  /// In en, this message translates to:
+  /// **'Present gadhipati'**
+  String get currentGadhipati;
+
+  /// No description provided for @periodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get periodLabel;
+
+  /// No description provided for @birthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth'**
+  String get birthLabel;
+
+  /// No description provided for @samadhiLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Samadhi / punyatithi'**
+  String get samadhiLabel;
+
+  /// No description provided for @bioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Life'**
+  String get bioLabel;
+
+  /// No description provided for @workLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get workLabel;
+
+  /// No description provided for @vachanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching'**
+  String get vachanLabel;
+
+  /// No description provided for @quickDeities.
+  ///
+  /// In en, this message translates to:
+  /// **'Deities'**
+  String get quickDeities;
+
+  /// No description provided for @quickParampara.
+  ///
+  /// In en, this message translates to:
+  /// **'Parampara'**
+  String get quickParampara;
+
+  /// No description provided for @quickTithi.
+  ///
+  /// In en, this message translates to:
+  /// **'Tithi'**
+  String get quickTithi;
+
+  /// No description provided for @quickMantras.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantras'**
+  String get quickMantras;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copied;
+
+  /// No description provided for @mainDeity.
+  ///
+  /// In en, this message translates to:
+  /// **'Main deity'**
+  String get mainDeity;
 }
 
 class _AppLocalizationsDelegate

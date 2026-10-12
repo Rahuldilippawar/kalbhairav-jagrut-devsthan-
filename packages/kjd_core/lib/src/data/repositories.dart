@@ -1,5 +1,6 @@
 import '../models/admin.dart';
 import '../models/content.dart';
+import '../models/deity.dart';
 import '../models/donation.dart';
 import '../models/event.dart';
 import '../models/seva.dart';
@@ -78,6 +79,23 @@ class ContentRepository {
           if (a.urgent != b.urgent) return a.urgent ? -1 : 1;
           return (b.publishAt ?? b.createdAt ?? now).compareTo(a.publishAt ?? a.createdAt ?? now);
         }));
+
+  /// Temple deities, the main deity first.
+  Stream<List<Deity>> watchDeities() => store.watch(Col.deities).map((d) => _map(d, Deity.fromMap)
+      .where((x) => x.active)
+      .toList()
+    ..sort((a, b) => a.isMain != b.isMain ? (a.isMain ? -1 : 1) : a.order.compareTo(b.order)));
+
+  Stream<Deity?> watchDeity(String id) =>
+      store.watchDoc(Col.deities, id).map((d) => d == null ? null : Deity.fromMap(d.id, d.data));
+
+  /// Gadhipati parampara, first holder first.
+  Stream<List<Gadhipati>> watchParampara() => store
+      .watch(Col.parampara)
+      .map((d) => _map(d, Gadhipati.fromMap).where((x) => x.active).toList()..sort((a, b) => a.order.compareTo(b.order)));
+
+  Stream<Gadhipati?> watchGadhipati(String id) =>
+      store.watchDoc(Col.parampara, id).map((d) => d == null ? null : Gadhipati.fromMap(d.id, d.data));
 
   /// Admin date corrections for computed festivals, keyed by doc id.
   Stream<Map<String, FestivalOverride>> watchFestivalOverrides() => store

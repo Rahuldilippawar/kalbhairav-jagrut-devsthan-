@@ -1,4 +1,5 @@
 import '../models/content.dart';
+import '../models/deity.dart';
 import '../models/event.dart';
 import '../models/seva.dart';
 import '../models/temple.dart';
@@ -267,6 +268,18 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
       'm2': EventMedia(id: 'm2', eventId: 'navratri-${y - 1}', type: MediaType.photo, url: 'asset:logo', caption: 'महाआरती', album: 'Final Day').toMap(),
     },
     Col.sevas: byId(sevas, (s) => s.id, (s) => s.toMap()),
+    // Demo only: the live temple adds its own deities and parampara.
+    Col.deities: {
+      for (final (i, d) in deityPresets.take(7).indexed)
+        d.id: {...d.toMap(), 'photoUrl': 'asset:logo', 'order': i},
+    },
+    Col.parampara: {
+      'g1': const Gadhipati(id: 'g1', name: 'नमुना – पहिले गादीपती', title: 'पहिले गादीपती', period: 'इ.स. ____ – ____',
+          bio: 'ही नमुना नोंद आहे. खरी माहिती मंदिर व्यवस्थापन ॲडमिन पॅनेलमधून भरेल.', order: 1, photoUrl: 'asset:logo').toMap(),
+      'g2': const Gadhipati(id: 'g2', name: 'नमुना – सध्याचे गादीपती', title: 'सध्याचे गादीपती', period: 'इ.स. ____ पासून',
+          bio: 'ही नमुना नोंद आहे. खरी माहिती मंदिर व्यवस्थापन ॲडमिन पॅनेलमधून भरेल.', isCurrent: true, order: 2,
+          photoUrl: 'asset:logo').toMap(),
+    },
     Col.darshanSchedule: byId(darshan, (s) => s.id, (s) => s.toMap()),
     Col.dailyQuotes: byId(quotes, (q) => q.id, (q) => q.toMap()),
     Col.mantras: byId(mantras, (m) => m.id, (m) => m.toMap()),

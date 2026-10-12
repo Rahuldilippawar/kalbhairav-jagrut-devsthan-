@@ -5,6 +5,7 @@ import 'package:kjd_core/kjd_core.dart';
 
 import '../providers.dart';
 import '../schema.dart';
+import 'bulk_upload.dart';
 
 // ---- dotted-path helpers ---------------------------------------------------
 
@@ -54,6 +55,8 @@ String displayValue(FieldSpec? f, Object? v) {
       return v is List ? v.join(', ') : '$v';
     case FieldType.colors:
       return v is List ? v.map((c) => _hex(asInt(c))).join(' ') : _hex(asInt(v));
+    case FieldType.imageList:
+      return v is List ? '${v.length} photos' : '';
     default:
       final d = v is! String && v is! num ? asDate(v) : null;
       if (d != null) return formatDateTime(d, locale: 'en');
@@ -487,6 +490,15 @@ class _RecordFormState extends ConsumerState<RecordForm> {
             if (d != null) IconButton(icon: const Icon(Icons.clear), onPressed: () => setState(() => _values[f.key] = null)),
           ]),
         );
+      case FieldType.imageList:
+        final urls = [for (final u in (_values[f.key] as List?) ?? const []) '$u'];
+        return _ImageListField(
+          label: label,
+          help: f.help,
+          folder: spec.collection,
+          urls: urls,
+          onChanged: (list) => setState(() => _values[f.key] = list),
+        );
       case FieldType.image:
         return _ImageField(controller: _text[f.key]!, label: label, help: f.help, folder: spec.collection, validator: (v) => _validate(f, v));
       default:
@@ -595,3 +607,52 @@ class SingletonPage extends ConsumerWidget {
 
 final _singletonProvider = StreamProvider.family<Doc?, (String, String)>(
     (ref, a) => ref.watch(dataStoreProvider).watchDoc(a.$1, a.$2));
+
+/// Several photos: bulk upload, preview, remove.
+class _ImageListField extends ConsumerWidget {
+  const _ImageListField({required this.label, required this.folder, required this.urls, required this.onChanged, this.help});
+  final String label;
+  final String? help;
+  final String folder;
+  final List<String> urls;
+  final ValueChanged<List<String>> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return InputDecorator(
+      decoration: InputDecoration(labelText: '$label (${urls.length})', helperText: help),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (urls.isNotEmpty)
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            for (final u in urls)
+              Stack(clipBehavior: Clip.none, children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(u, width: 72, height: 72, fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const SizedBox(width: 72, height: 72, child: Icon(Icons.image_outlined))),
+                ),
+                Positioned(
+                  right: -8,
+                  top: -8,
+                  child: IconButton.filled(
+                    iconSize: 14,
+                    visualDensity: VisualDensity.compact,
+                    tooltip: 'Remove',
+                    style: IconButton.styleFrom(backgroundColor: KjdColors.kumkum),
+                    onPressed: () => onChanged([...urls]..remove(u)),
+                    icon: const Icon(Icons.close),
+                  ),
+                ),
+              ]),
+          ]),
+        const SizedBox(height: 8),
+        BulkUploadButton(
+          folder: folder,
+          allowVideo: false,
+          label: 'Add photos',
+          onUploaded: (files) async => onChanged([...urls, for (final f in files) f.url]),
+        ),
+      ]),
+    );
+  }
+}

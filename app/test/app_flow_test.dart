@@ -45,6 +45,7 @@ void main() {
   testWidgets('home shows admin-driven sections', (tester) async {
     await _start(tester);
     expect(find.text('श्री काळभैरव जागृत देवस्थान'), findsWidgets);
+    await tester.scrollUntilVisible(find.textContaining('शुभ प्रभात'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.textContaining('शुभ प्रभात'), findsWidgets);
     // Today's tithi is computed (no admin entry in demo): Bhadrapada Krishna Ekadashi.
     await tester.scrollUntilVisible(find.text('आश्लेषा'), 300, scrollable: find.byType(Scrollable).first);
@@ -243,6 +244,27 @@ void main() {
     expect(tester.widget<TextField>(messageField).controller!.text, contains('दीपावलीचा प्रकाश'));
   });
 
+  testWidgets('temple deities and gadhipati parampara', (tester) async {
+    final c = await _start(tester, to: '/deities');
+    expect(find.text('श्री काळभैरव'), findsOneWidget);
+    expect(find.text('मुख्य देवता'), findsWidgets);
+    await tester.tap(find.text('श्री काळभैरव'));
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).state.uri.path, '/deity/kalbhairav');
+    expect(find.text('ॐ कालभैरवाय नमः'), findsOneWidget);
+    // Next special days come from the festival calendar (now = 6 Oct 2026).
+    await tester.scrollUntilVisible(find.text('श्री काळभैरव जयंती'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.text('कालाष्टमी'), findsOneWidget);
+
+    c.read(routerProvider).go('/parampara');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('सध्याचे गादीपती'), findsWidgets);
+    await tester.tap(find.text('नमुना – पहिले गादीपती'));
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).state.uri.path, '/parampara/g1');
+    expect(find.text('जीवन परिचय'), findsOneWidget);
+  });
+
   testWidgets('seva booking issues a QR pass', (tester) async {
     final c = await _start(tester, user: _devotee, to: '/book/abhishek');
     // Pick a date: opens the picker, accept the default (today).
@@ -273,6 +295,7 @@ void main() {
     expect(find.text('સેટિંગ્સ'), findsOneWidget);
     c.read(routerProvider).go('/home');
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('આજની શુભેચ્છા'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('આજની શુભેચ્છા'), findsOneWidget);
   });
 
