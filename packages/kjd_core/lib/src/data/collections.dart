@@ -40,6 +40,12 @@ abstract final class Col {
   static const deities = 'deities';
   static const parampara = 'gadhipati_parampara';
   static const darshanPhotos = 'darshan_photos';
+
+  /// Shishya parivar access requests, keyed by uid.
+  static const shishyas = 'shishyas';
+
+  /// Guru Gyan lessons (approved shishyas only).
+  static const guruGyan = 'guru_gyan';
   static const videos = 'videos';
 
   static const templeInfo = 'temple_info';

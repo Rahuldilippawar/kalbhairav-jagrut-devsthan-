@@ -361,5 +361,61 @@
         "type": "String"
       }
     }
+  },
+  "navGuru": "Guru Gyan",
+  "guruGyanIntro": "Deity information, kathas, stotras and puja vidhi for the temple's shishya parivar. Register as a shishya; once the temple management approves, all lessons open for you.",
+  "shishyaRegister": "Shishya registration",
+  "shishyaLogin": "Shishya login",
+  "haveAccountLogin": "Already registered? Log in",
+  "newShishyaRegister": "New shishya? Register",
+  "password": "Password",
+  "passwordHint": "At least 6 characters – remember it to log in on a new phone",
+  "guruNameLabel": "Guru / introduced by (optional)",
+  "noteToTemple": "Message to the temple (optional)",
+  "submitRequest": "Send request",
+  "requestPendingTitle": "Your request has been sent to the temple management",
+  "requestPendingBody": "You will get a notification as soon as it is approved, and Guru Gyan will open. 🙏",
+  "requestRejectedTitle": "Your request was not approved",
+  "applyAgain": "Request again",
+  "accessBlocked": "Your access is currently closed. Please contact the temple management.",
+  "mobileAlreadyRegistered": "This mobile number is already registered. Use \"Log in\".",
+  "wrongLogin": "Wrong mobile number or password",
+  "weakPassword": "Password must be at least 6 characters",
+  "forgotPasswordNote": "Forgot the password? The temple management can set a new one for you.",
+  "lessonsLocked": "Lessons for shishyas (open after approval)",
+  "markRead": "Mark as read",
+  "markedRead": "Read",
+  "allLessons": "All",
+  "otherLessons": "General",
+  "shishyaLogout": "Log out of shishya account",
+  "openDeityPage": "Deity information",
+  "nextLesson": "Next lesson",
+  "requestSent": "Request sent 🙏",
+  "lessonsProgress": "Read {done} of {total} lessons",
+  "@lessonsProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "readMinutes": "{n} min read",
+  "@readMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "welcomeShishya": "Welcome to Guru Gyan, {name} 🙏",
+  "@welcomeShishya": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

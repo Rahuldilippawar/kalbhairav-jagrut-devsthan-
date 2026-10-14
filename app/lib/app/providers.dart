@@ -80,6 +80,22 @@ final deityProvider = StreamProvider.family<Deity?, String>((ref, id) => ref.wat
 final paramparaProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchParampara());
 final gadhipatiProvider =
     StreamProvider.family<Gadhipati?, String>((ref, id) => ref.watch(contentRepoProvider).watchGadhipati(id));
+// ---- Guru Gyan (shishya parivar) ----
+final guruRepoProvider = Provider((ref) => GuruGyanRepository(ref.watch(dataStoreProvider)));
+
+/// This account's shishya request, or null if it never asked.
+final myShishyaProvider = StreamProvider<Shishya?>((ref) {
+  final uid = ref.watch(uidProvider);
+  if (uid == null) return Stream.value(null);
+  return ref.watch(guruRepoProvider).watchShishya(uid);
+});
+
+/// Lessons; empty until the shishya is approved (rules deny the read).
+final guruLessonsProvider = StreamProvider<List<GuruLesson>>((ref) {
+  final approved = ref.watch(myShishyaProvider.select((s) => s.value?.isApproved ?? false));
+  if (!approved) return Stream.value(const []);
+  return ref.watch(guruRepoProvider).watchLessons();
+});
 final festivalOverridesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchFestivalOverrides());
 
 /// The year's festivals and vrats with the temple's date corrections.

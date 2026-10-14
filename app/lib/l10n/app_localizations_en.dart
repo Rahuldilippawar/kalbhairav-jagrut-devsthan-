@@ -944,4 +944,113 @@ class AppLocalizationsEn extends AppLocalizations {
   String templeQrNote(String amount) {
     return 'After scanning this QR, enter the amount $amount yourself.';
   }
+
+  @override
+  String get navGuru => 'Guru Gyan';
+
+  @override
+  String get guruGyanIntro =>
+      'Deity information, kathas, stotras and puja vidhi for the temple\'s shishya parivar. Register as a shishya; once the temple management approves, all lessons open for you.';
+
+  @override
+  String get shishyaRegister => 'Shishya registration';
+
+  @override
+  String get shishyaLogin => 'Shishya login';
+
+  @override
+  String get haveAccountLogin => 'Already registered? Log in';
+
+  @override
+  String get newShishyaRegister => 'New shishya? Register';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get passwordHint =>
+      'At least 6 characters – remember it to log in on a new phone';
+
+  @override
+  String get guruNameLabel => 'Guru / introduced by (optional)';
+
+  @override
+  String get noteToTemple => 'Message to the temple (optional)';
+
+  @override
+  String get submitRequest => 'Send request';
+
+  @override
+  String get requestPendingTitle =>
+      'Your request has been sent to the temple management';
+
+  @override
+  String get requestPendingBody =>
+      'You will get a notification as soon as it is approved, and Guru Gyan will open. 🙏';
+
+  @override
+  String get requestRejectedTitle => 'Your request was not approved';
+
+  @override
+  String get applyAgain => 'Request again';
+
+  @override
+  String get accessBlocked =>
+      'Your access is currently closed. Please contact the temple management.';
+
+  @override
+  String get mobileAlreadyRegistered =>
+      'This mobile number is already registered. Use \"Log in\".';
+
+  @override
+  String get wrongLogin => 'Wrong mobile number or password';
+
+  @override
+  String get weakPassword => 'Password must be at least 6 characters';
+
+  @override
+  String get forgotPasswordNote =>
+      'Forgot the password? The temple management can set a new one for you.';
+
+  @override
+  String get lessonsLocked => 'Lessons for shishyas (open after approval)';
+
+  @override
+  String get markRead => 'Mark as read';
+
+  @override
+  String get markedRead => 'Read';
+
+  @override
+  String get allLessons => 'All';
+
+  @override
+  String get otherLessons => 'General';
+
+  @override
+  String get shishyaLogout => 'Log out of shishya account';
+
+  @override
+  String get openDeityPage => 'Deity information';
+
+  @override
+  String get nextLesson => 'Next lesson';
+
+  @override
+  String get requestSent => 'Request sent 🙏';
+
+  @override
+  String lessonsProgress(int done, int total) {
+    return 'Read $done of $total lessons';
+  }
+
+  @override
+  String readMinutes(int n) {
+    return '$n min read';
+  }
+
+  @override
+  String welcomeShishya(String name) {
+    return 'Welcome to Guru Gyan, $name 🙏';
+  }
 }

@@ -14,6 +14,12 @@ abstract class AdminFunctions {
   /// Returns the receipt or booking number on approval.
   Future<String?> reviewUpiPayment(String paymentId, {required bool approve, String? reason});
 
+  /// Guru Gyan: approve / reject / block a shishya (notifies them).
+  Future<void> reviewShishya(String uid, ShishyaStatus status, {String? reason});
+
+  /// Sets a new password for a shishya's mobile login.
+  Future<void> resetShishyaPassword(String uid, String password);
+
   /// First-time setup: the owner email listed in BOOTSTRAP_SUPER_ADMIN_EMAILS
   /// claims the Super Admin role when no super admin exists yet.
   Future<void> claimSuperAdmin();
@@ -48,6 +54,14 @@ class FirebaseAdminFunctions implements AdminFunctions {
 
   @override
   Future<void> claimSuperAdmin() => _call('claimSuperAdmin', {});
+
+  @override
+  Future<void> reviewShishya(String uid, ShishyaStatus status, {String? reason}) =>
+      _call('reviewShishya', {'uid': uid, 'status': status.name, 'reason': ?reason});
+
+  @override
+  Future<void> resetShishyaPassword(String uid, String password) =>
+      _call('resetShishyaPassword', {'uid': uid, 'password': password});
 
   @override
   Future<String?> reviewUpiPayment(String paymentId, {required bool approve, String? reason}) async =>
@@ -116,6 +130,25 @@ class DemoAdminFunctions implements AdminFunctions {
     await store.set(Col.sevaSlotCounts, slotId, {'count': (asInt(slot?.data['count']) - 1).clamp(0, 1 << 30)});
     final a = actor();
     await _admin.log(actorId: a.uid, actorName: a.displayName ?? a.uid, action: 'cancel', collection: Col.sevaBookings, recordId: bookingId, summary: reason);
+  }
+
+  @override
+  Future<void> reviewShishya(String uid, ShishyaStatus status, {String? reason}) async {
+    final a = actor();
+    final name = a.displayName ?? a.email ?? a.uid;
+    await store.update(Col.shishyas, uid, {
+      'status': status.name,
+      'rejectReason': status == ShishyaStatus.approved ? null : reason,
+      'reviewedByName': name,
+      'reviewedAt': store.serverTimestamp,
+    });
+    await _admin.log(actorId: a.uid, actorName: name, action: 'shishya_${status.name}', collection: Col.shishyas, recordId: uid, summary: reason ?? '');
+  }
+
+  @override
+  Future<void> resetShishyaPassword(String uid, String password) async {
+    final a = actor();
+    await _admin.log(actorId: a.uid, actorName: a.displayName ?? a.uid, action: 'shishya_password_reset', collection: Col.shishyas, recordId: uid);
   }
 
   @override

@@ -65,6 +65,37 @@ service cloud.firestore {
     match /sevas/{id} { allow read: if true; allow write: if can('seva'); }
     match /seva_slot_counts/{id} { allow read: if true; allow write: if false; }
 
+    // ---- Guru Gyan (shishya parivar) ------------------------------------
+    // A shishya asks for access (status 'pending'); temple management
+    // approves through the reviewShishya function. Lessons are readable only
+    // by approved shishyas and staff.
+    function shishyaRequestKeys() { return ['name','mobile','village','guruName','note','status','requestedAt']; }
+    match /shishyas/{userId} {
+      allow read: if (signedIn() && uid() == userId) || can('devotees');
+      allow create: if signedIn() && uid() == userId
+        && request.resource.data.status == 'pending'
+        && request.resource.data.keys().hasOnly(shishyaRequestKeys())
+        && request.resource.data.name is string && request.resource.data.name.size() > 0
+        && request.resource.data.mobile is string;
+      allow update: if can('devotees')
+        || (signedIn() && uid() == userId && (
+          // Ask again after a rejection (or edit a waiting request).
+          (resource.data.status in ['pending', 'rejected'] && request.resource.data.status == 'pending'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(shishyaRequestKeys()))
+          // Reading progress.
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['completed'])
+            && request.resource.data.completed is list && request.resource.data.completed.size() <= 1000)));
+      allow delete: if can('devotees');
+    }
+    function approvedShishya() {
+      return signedIn() && exists(/databases/$(database)/documents/shishyas/$(uid()))
+        && get(/databases/$(database)/documents/shishyas/$(uid())).data.status == 'approved';
+    }
+    match /guru_gyan/{id} {
+      allow read: if approvedShishya() || can('content') || can('devotees');
+      allow write: if can('content');
+    }
+
     // ---- devotee data --------------------------------------------------
     match /users/{userId} {
       // Devotee PII: self, or staff who manage devotees. (Notifications are

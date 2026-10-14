@@ -133,3 +133,32 @@ test("admin_users are function-managed", async () => {
   await assertSucceeds(getDocs(collection(admin("temple_admin"), "admin_users"))); // auditLogs module
   await assertFails(getDocs(collection(admin("seva_manager"), "admin_users")));
 });
+
+test("guru gyan: shishya requests and lessons need approval", async () => {
+  const req = { name: "गणेश", mobile: "+919876543210", village: "रुंधाटी", status: "pending", requestedAt: new Date() };
+  await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), "guru_gyan/l1"), { title: "कथा", body: "..." }));
+  // Only for yourself, only as pending.
+  await assertFails(setDoc(doc(devotee(), "shishyas/u2"), req));
+  await assertFails(setDoc(doc(devotee(), "shishyas/u1"), { ...req, status: "approved" }));
+  await assertSucceeds(setDoc(doc(devotee(), "shishyas/u1"), req));
+  await assertFails(getDoc(doc(other(), "shishyas/u1")));
+  // Waiting shishya: no lessons, cannot approve themselves.
+  await assertFails(getDoc(doc(devotee(), "guru_gyan/l1")));
+  await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { status: "approved" }));
+  await assertFails(getDocs(collection(guest(), "guru_gyan")));
+  // Staff approve; then lessons open and progress can be saved.
+  await assertFails(updateDoc(doc(admin("gallery_manager"), "shishyas/u1"), { status: "approved" }));
+  await assertSucceeds(getDocs(collection(admin("seva_manager"), "shishyas")));
+  await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), "shishyas/u1"), { status: "approved" }));
+  await assertSucceeds(getDocs(collection(devotee(), "guru_gyan")));
+  await assertSucceeds(updateDoc(doc(devotee(), "shishyas/u1"), { completed: ["l1"] }));
+  await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { completed: ["l1"], name: "x" }));
+  await assertFails(setDoc(doc(devotee(), "guru_gyan/l2"), { title: "x" }));
+  await assertSucceeds(setDoc(doc(admin("content_manager"), "guru_gyan/l2"), { title: "x", body: "y" }));
+  // Blocked: lessons close again; a rejected shishya may ask again.
+  await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), "shishyas/u1"), { status: "blocked" }));
+  await assertFails(getDoc(doc(devotee(), "guru_gyan/l1")));
+  await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { status: "pending" }));
+  await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), "shishyas/u1"), { status: "rejected" }));
+  await assertSucceeds(setDoc(doc(devotee(), "shishyas/u1"), { ...req, note: "पुन्हा" }, { merge: true }));
+});

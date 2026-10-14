@@ -351,4 +351,68 @@ void main() {
     expect(find.textContaining('नमुना'), findsWidgets); // demo trust name / note
   });
 
+
+  testWidgets('guru gyan: shishya registers, temple approves, lessons open', (tester) async {
+    final c = await _start(tester, to: '/guru');
+    expect(find.text('शिष्य नोंदणी'), findsOneWidget);
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(0), 'गणेश जाधव');
+    await tester.enterText(fields.at(1), '9822012345');
+    await tester.enterText(fields.at(2), 'secret1');
+    await tester.enterText(fields.at(3), 'रुंधाटी');
+    await tester.ensureVisible(find.text('विनंती पाठवा'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('विनंती पाठवा'));
+    await tester.pumpAndSettle();
+    expect(find.text('तुमची विनंती मंदिर व्यवस्थापनाकडे पाठवली आहे'), findsOneWidget);
+
+    final store = c.read(dataStoreProvider);
+    final uid = c.read(uidProvider)!;
+    final req = await store.get(Col.shishyas, uid);
+    expect(req!.data['status'], 'pending');
+    expect(req.data['mobile'], '+919822012345');
+
+    // Temple management approves → lessons open.
+    await store.update(Col.shishyas, uid, {'status': 'approved'});
+    await tester.pumpAndSettle();
+    expect(find.textContaining('गुरु ज्ञानात आपले स्वागत'), findsOneWidget);
+    expect(find.textContaining('0 पाठ वाचले'), findsOneWidget);
+    await tester.tap(find.text('श्री काळभैरव प्रकट कथा'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('कपालमोचन'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('वाचले ✓'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('वाचले ✓'));
+    await tester.pumpAndSettle();
+    expect((await store.get(Col.shishyas, uid))!.data['completed'], ['gg-kalbhairav-utpatti']);
+
+    // Same mobile + password logs in again after logging out.
+    c.read(routerProvider).go('/guru');
+    await tester.pumpAndSettle();
+    await c.read(authServiceProvider).signOut();
+    await c.read(authServiceProvider).ensureSignedIn();
+    await tester.pumpAndSettle();
+    expect(find.text('शिष्य नोंदणी'), findsOneWidget);
+    await tester.ensureVisible(find.text('आधीच नोंदणी केली आहे? लॉगिन करा'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('आधीच नोंदणी केली आहे? लॉगिन करा'));
+    await tester.pumpAndSettle();
+    await tester.fling(find.byType(Scrollable).first, const Offset(0, 2000), 3000);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).at(0), '9822012345');
+    await tester.enterText(find.byType(TextFormField).at(1), 'wrong12');
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'शिष्य लॉगिन'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'शिष्य लॉगिन'));
+    await tester.pumpAndSettle();
+    expect(find.text('मोबाईल नंबर किंवा पासवर्ड चुकीचा आहे'), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).at(1), 'secret1');
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'शिष्य लॉगिन'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'शिष्य लॉगिन'));
+    await tester.pumpAndSettle();
+    expect(c.read(uidProvider), uid);
+    expect(find.textContaining('1 पाठ वाचले'), findsOneWidget);
+  });
 }

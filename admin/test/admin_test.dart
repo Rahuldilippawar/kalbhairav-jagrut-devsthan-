@@ -251,6 +251,29 @@ void main() {
     expect(docs['sv002']!['text'], 'मंदिराने बदललेला सुविचार'); // edits kept
     expect(find.textContaining('ready to add'), findsNothing);
   });
+  testWidgets('temple admin approves a shishya request; lessons page lists starter kathas', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.templeAdmin));
+    await tester.tap(find.text('Shishya Requests'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('नमुना शिष्य'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Approve'));
+    await tester.pumpAndSettle();
+    final doc = await c.read(dataStoreProvider).get(Col.shishyas, 'demo-shishya-1');
+    expect(doc!.data['status'], 'approved');
+    expect(find.widgetWithText(FilledButton, 'Approve'), findsNothing); // left the "Waiting" list
+    final logs = await c.read(dataStoreProvider).list(Col.auditLogs);
+    expect(logs.any((l) => l.data['action'] == 'shishya_approved'), isTrue);
+
+    await tester.tap(find.text('Lessons (पाठ)'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Starter lessons: ${guruLessonLibrary.length} ready to add'), findsOneWidget);
+  });
+
+  testWidgets('event manager cannot see Guru Gyan', (tester) async {
+    await _start(tester, _admin(AdminRole.eventManager));
+    expect(find.text('Shishya Requests'), findsNothing);
+    expect(find.text('Lessons (पाठ)'), findsNothing);
+  });
 }
 
 class _FakeUploader implements MediaUploader {

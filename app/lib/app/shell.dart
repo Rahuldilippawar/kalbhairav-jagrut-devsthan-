@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/common.dart';
 import 'providers.dart';
 
-/// Bottom navigation: Home • Darshan • Events • Seva • Profile.
+/// Bottom navigation: Home • Darshan • Events • Seva • Guru Gyan • Profile.
 class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.shell});
   final StatefulNavigationShell shell;
@@ -33,6 +33,7 @@ class AppShell extends ConsumerWidget {
           NavigationDestination(icon: const Text('🙏', style: TextStyle(fontSize: 20)), label: l.navDarshan),
           NavigationDestination(icon: const Icon(Icons.event_outlined), selectedIcon: const Icon(Icons.event), label: l.navEvents),
           NavigationDestination(icon: const Text('🪔', style: TextStyle(fontSize: 20)), label: l.navSeva),
+          NavigationDestination(icon: const Text('📿', style: TextStyle(fontSize: 20)), label: l.navGuru),
           NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: l.navProfile),
         ],
       ),

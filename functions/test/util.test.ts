@@ -77,3 +77,10 @@ test("mergeQuoteLibrary: Firestore docs override built-ins by id", async () => {
   assert.equal(merged.length, SUVICHAR_LIBRARY.length + 1);
   assert.equal(merged.find((q) => q.id === "sv001")?.status, "draft");
 });
+
+test("shishyaReviewMessage names the shishya and the reason", async () => {
+  const { shishyaReviewMessage } = await import("../src/util.js");
+  assert.match(shishyaReviewMessage("approved", "गणेश", "").body, /^गणेश, .*मान्य/);
+  assert.match(shishyaReviewMessage("rejected", "", "माहिती अपूर्ण").body, /कारण: माहिती अपूर्ण/);
+  assert.doesNotMatch(shishyaReviewMessage("blocked", "", "").body, /कारण/);
+});

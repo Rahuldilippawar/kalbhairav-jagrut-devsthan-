@@ -23,8 +23,11 @@ class AuthUser {
 }
 
 class AuthException implements Exception {
-  AuthException(this.message);
+  AuthException(this.message, {this.code});
   final String message;
+
+  /// Firebase error code, e.g. `email-already-in-use`, `invalid-credential`.
+  final String? code;
   @override
   String toString() => message;
 }
@@ -41,8 +44,12 @@ abstract class AuthService {
   /// Signs this device in anonymously if nobody is signed in yet.
   Future<AuthUser> ensureSignedIn();
 
-  /// Email/password sign-in used by the admin panel.
+  /// Email/password sign-in used by the admin panel (and shishya login).
   Future<AuthUser> signInWithEmail(String email, String password);
+
+  /// Adds an email/password login to this device's anonymous account (same
+  /// uid, so its bookings and receipts stay), or creates a new account.
+  Future<AuthUser> createLogin(String email, String password);
   Future<void> signOut();
 
   /// Forces a token refresh so new role claims take effect.
@@ -126,7 +133,20 @@ class FirebaseAuthService implements AuthService {
       final r = await _auth.signInWithEmailAndPassword(email: email, password: password);
       return (_current = await _toUser(r.user, force: true))!;
     } on fa.FirebaseAuthException catch (e) {
-      throw AuthException(e.message ?? e.code);
+      throw AuthException(e.message ?? e.code, code: e.code);
+    }
+  }
+
+  @override
+  Future<AuthUser> createLogin(String email, String password) async {
+    try {
+      final cur = _auth.currentUser;
+      final r = cur != null && cur.isAnonymous
+          ? await cur.linkWithCredential(fa.EmailAuthProvider.credential(email: email, password: password))
+          : await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      return (_current = await _toUser(r.user, force: true))!;
+    } on fa.FirebaseAuthException catch (e) {
+      throw AuthException(e.message ?? e.code, code: e.code);
     }
   }
 
@@ -184,12 +204,33 @@ class DemoAuthService implements AuthService {
 
   @override
   Future<AuthUser> signInWithEmail(String email, String password) async {
+    final login = _logins[email];
+    if (login != null) {
+      if (login.$1 != password) throw AuthException('Wrong password', code: 'invalid-credential');
+      final u = AuthUser(uid: login.$2, email: email);
+      _set(u);
+      return u;
+    }
     final key = email.split('@').first;
     final role = AdminRole.fromKey(key);
     if (!email.endsWith('@demo.kjd') || role == null || password != demoPassword) {
-      throw AuthException('Invalid credentials. Try super_admin@demo.kjd / $demoPassword');
+      throw AuthException('Invalid credentials. Try super_admin@demo.kjd / $demoPassword', code: 'invalid-credential');
     }
     final u = AuthUser(uid: 'admin-$key', email: email, displayName: role.label, role: role);
+    _set(u);
+    return u;
+  }
+
+  /// Demo logins created with [createLogin]: email → (password, uid).
+  final _logins = <String, (String, String)>{};
+
+  @override
+  Future<AuthUser> createLogin(String email, String password) async {
+    if (_logins.containsKey(email)) throw AuthException('Already registered', code: 'email-already-in-use');
+    if (password.length < 6) throw AuthException('Weak password', code: 'weak-password');
+    final uid = _current?.uid ?? 'demo-${DateTime.now().millisecondsSinceEpoch}';
+    _logins[email] = (password, uid);
+    final u = AuthUser(uid: uid, email: email);
     _set(u);
     return u;
   }

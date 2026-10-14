@@ -73,3 +73,18 @@ export function pickQuoteForDay(quotes: QuoteDoc[], dayKey: string): QuoteDoc | 
   const dayNumber = Math.floor(Date.parse(`${dayKey}T00:00:00Z`) / 86400000);
   return pool[dayNumber % pool.length];
 }
+
+export type ShishyaDecision = "approved" | "rejected" | "blocked";
+
+/** Push text for a Guru Gyan access decision. */
+export function shishyaReviewMessage(status: ShishyaDecision, name: string, reason: string): { title: string; body: string } {
+  const who = name.trim() ? `${name.trim()}, ` : "";
+  switch (status) {
+    case "approved":
+      return { title: "🙏 गुरु ज्ञान प्रवेश मान्य", body: `${who}मंदिर व्यवस्थापनाने तुमची शिष्य नोंदणी मान्य केली आहे. आता सर्व पाठ वाचा.` };
+    case "rejected":
+      return { title: "गुरु ज्ञान विनंती", body: `${who}तुमची विनंती सध्या मान्य झाली नाही.${reason ? ` कारण: ${reason}` : ""}` };
+    case "blocked":
+      return { title: "गुरु ज्ञान", body: `${who}तुमचा गुरु ज्ञान प्रवेश बंद करण्यात आला आहे.${reason ? ` कारण: ${reason}` : ""}` };
+  }
+}

@@ -1,6 +1,7 @@
 import '../models/content.dart';
 import '../models/deity.dart';
 import '../models/event.dart';
+import '../models/guru_gyan.dart';
 import '../models/seva.dart';
 import '../models/temple.dart';
 import '../utils/convert.dart';
@@ -280,6 +281,14 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
       'g2': const Gadhipati(id: 'g2', name: 'नमुना – सध्याचे गादीपती', title: 'सध्याचे गादीपती', period: 'इ.स. ____ पासून',
           bio: 'ही नमुना नोंद आहे. खरी माहिती मंदिर व्यवस्थापन ॲडमिन पॅनेलमधून भरेल.', isCurrent: true, order: 2,
           photoUrl: 'asset:logo').toMap(),
+    },
+    Col.shishyas: {
+      'demo-shishya-1': {
+        ...const Shishya(uid: 'demo-shishya-1', name: 'नमुना शिष्य – श्री. गणेश जाधव', mobile: '+919800000001',
+                village: 'रुंधाटी', guruName: 'गादीपती महाराज', note: 'मला देवांची माहिती शिकायची आहे.')
+            .toRequestMap(),
+        'requestedAt': today,
+      },
     },
     Col.darshanSchedule: byId(darshan, (s) => s.id, (s) => s.toMap()),
     Col.dailyQuotes: byId([...quotes, ...suvicharLibrary], (q) => q.id, (q) => q.toMap()),

@@ -943,4 +943,113 @@ class AppLocalizationsMr extends AppLocalizations {
   String templeQrNote(String amount) {
     return 'हा QR स्कॅन केल्यावर रक्कम $amount स्वतः टाका.';
   }
+
+  @override
+  String get navGuru => 'गुरु ज्ञान';
+
+  @override
+  String get guruGyanIntro =>
+      'मंदिराच्या शिष्य परिवारासाठी देवांची माहिती, कथा, स्तोत्रे व पूजा विधी. शिष्य म्हणून नोंदणी करा; मंदिर व्यवस्थापनाने मान्यता दिल्यावर सर्व पाठ तुमच्यासाठी उघडतील.';
+
+  @override
+  String get shishyaRegister => 'शिष्य नोंदणी';
+
+  @override
+  String get shishyaLogin => 'शिष्य लॉगिन';
+
+  @override
+  String get haveAccountLogin => 'आधीच नोंदणी केली आहे? लॉगिन करा';
+
+  @override
+  String get newShishyaRegister => 'नवीन शिष्य? नोंदणी करा';
+
+  @override
+  String get password => 'पासवर्ड';
+
+  @override
+  String get passwordHint =>
+      'किमान 6 अक्षरे – नवीन फोनवर लॉगिनसाठी लक्षात ठेवा';
+
+  @override
+  String get guruNameLabel => 'गुरू / ओळख करून देणारे (ऐच्छिक)';
+
+  @override
+  String get noteToTemple => 'मंदिराला संदेश (ऐच्छिक)';
+
+  @override
+  String get submitRequest => 'विनंती पाठवा';
+
+  @override
+  String get requestPendingTitle =>
+      'तुमची विनंती मंदिर व्यवस्थापनाकडे पाठवली आहे';
+
+  @override
+  String get requestPendingBody =>
+      'मान्यता मिळताच तुम्हाला सूचना येईल आणि गुरु ज्ञान उघडेल. 🙏';
+
+  @override
+  String get requestRejectedTitle => 'विनंती मान्य झाली नाही';
+
+  @override
+  String get applyAgain => 'पुन्हा विनंती करा';
+
+  @override
+  String get accessBlocked =>
+      'तुमचा प्रवेश सध्या बंद आहे. कृपया मंदिर व्यवस्थापनाशी संपर्क करा.';
+
+  @override
+  String get mobileAlreadyRegistered =>
+      'हा मोबाईल नंबर आधीच नोंदलेला आहे. \"लॉगिन\" वापरा.';
+
+  @override
+  String get wrongLogin => 'मोबाईल नंबर किंवा पासवर्ड चुकीचा आहे';
+
+  @override
+  String get weakPassword => 'पासवर्ड किमान 6 अक्षरांचा असावा';
+
+  @override
+  String get forgotPasswordNote =>
+      'पासवर्ड विसरलात? मंदिर व्यवस्थापन तुम्हाला नवीन पासवर्ड देऊ शकते.';
+
+  @override
+  String get lessonsLocked => 'शिष्यांसाठी पाठ (मान्यतेनंतर उघडतील)';
+
+  @override
+  String get markRead => 'वाचले ✓';
+
+  @override
+  String get markedRead => 'वाचलेला पाठ';
+
+  @override
+  String get allLessons => 'सर्व';
+
+  @override
+  String get otherLessons => 'इतर';
+
+  @override
+  String get shishyaLogout => 'शिष्य खात्यातून बाहेर पडा';
+
+  @override
+  String get openDeityPage => 'देवतेची माहिती पहा';
+
+  @override
+  String get nextLesson => 'पुढील पाठ';
+
+  @override
+  String get requestSent => 'विनंती पाठवली 🙏';
+
+  @override
+  String lessonsProgress(int done, int total) {
+    return '$total पैकी $done पाठ वाचले';
+  }
+
+  @override
+  String readMinutes(int n) {
+    return '$n मिनिटे वाचन';
+  }
+
+  @override
+  String welcomeShishya(String name) {
+    return '$name, गुरु ज्ञानात आपले स्वागत 🙏';
+  }
 }

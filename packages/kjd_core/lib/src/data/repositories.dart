@@ -3,6 +3,7 @@ import '../models/content.dart';
 import '../models/deity.dart';
 import '../models/donation.dart';
 import '../models/event.dart';
+import '../models/guru_gyan.dart';
 import '../models/seva.dart';
 import '../models/temple.dart';
 import '../models/user.dart';
@@ -11,6 +12,7 @@ import '../panchang/panchang.dart';
 import '../utils/convert.dart';
 import 'collections.dart';
 import 'devotion_library.dart';
+import 'guru_gyan_library.dart';
 import 'data_store.dart';
 
 List<T> _map<T>(List<Doc> docs, T Function(String id, Map<String, dynamic> m) f) =>
@@ -355,6 +357,36 @@ class UserRepository {
       store.set('${Col.users}/$uid/tokens', token, {'token': token, 'at': store.serverTimestamp});
 
   Future<void> deleteFcmToken(String uid, String token) => store.delete('${Col.users}/$uid/tokens', token);
+}
+
+/// Guru Gyan: shishya access requests and lessons.
+class GuruGyanRepository {
+  GuruGyanRepository(this.store);
+  final DataStore store;
+
+  Stream<Shishya?> watchShishya(String uid) =>
+      store.watchDoc(Col.shishyas, uid).map((d) => d == null ? null : Shishya.fromMap(d.id, d.data));
+
+  /// New request, or a fresh one after a rejection.
+  Future<void> request(Shishya s) =>
+      store.set(Col.shishyas, s.uid, {...s.toRequestMap(), 'requestedAt': store.serverTimestamp}, merge: true);
+
+  Future<void> setCompleted(Shishya s, String lessonId, bool done) => store.update(Col.shishyas, s.uid, {
+        'completed': done ? {...s.completed, lessonId}.toList() : s.completed.where((id) => id != lessonId).toList(),
+      });
+
+  /// The temple's lessons plus the built-in library (same id = override).
+  Stream<List<GuruLesson>> watchLessons() => store.watch(Col.guruGyan).map((d) {
+        final own = [for (final x in d) GuruLesson.fromMap(x.id, x.data)];
+        final ids = {for (final l in own) l.id};
+        return [...own, ...guruLessonLibrary.where((l) => !ids.contains(l.id))].where((l) => l.active).toList()
+          ..sort((a, b) => a.order.compareTo(b.order));
+      });
+
+  /// Admin: every request, newest first.
+  Stream<List<Shishya>> watchShishyas() => store
+      .watch(Col.shishyas, const Query(orderBy: 'requestedAt', descending: true))
+      .map((d) => [for (final x in d) Shishya.fromMap(x.id, x.data)]);
 }
 
 /// Admin-side writes go through here so every change is audit-logged.

@@ -14,6 +14,7 @@ import 'devotees_page.dart';
 import 'events_page.dart';
 import 'festival_page.dart';
 import 'finance_pages.dart';
+import 'guru_gyan_page.dart';
 import 'media_pages.dart';
 import 'notifications_page.dart';
 import 'reports_page.dart';
@@ -60,6 +61,8 @@ final List<NavItem> navItems = [
   NavItem('darshan_photos', "Today's Darshan", Icons.add_photo_alternate_outlined, AdminModule.live, () => const DarshanPhotosPage(), group: 'Temple'),
   NavItem('gallery', 'Gallery', Icons.photo_library_outlined, AdminModule.gallery, () => CollectionListPage(spec: Specs.gallery, header: const GalleryUpload()), group: 'Temple'),
   NavItem('videos', 'Videos', Icons.video_library_outlined, AdminModule.gallery, () => CollectionListPage(spec: Specs.videos), group: 'Temple'),
+  NavItem('shishyas', 'Shishya Requests', Icons.how_to_reg_outlined, AdminModule.devotees, () => const ShishyasPage(), group: 'Guru Gyan'),
+  NavItem('guru_lessons', 'Lessons (पाठ)', Icons.menu_book_outlined, AdminModule.content, () => const GuruLessonsPage(), group: 'Guru Gyan'),
   NavItem('devotees', 'Devotees', Icons.people_outline, AdminModule.devotees, () => const DevoteesPage(), group: 'Admin'),
   NavItem('users', 'Admin Users & Roles', Icons.admin_panel_settings_outlined, AdminModule.users, () => const UsersPage(), group: 'Admin'),
   NavItem('audit', 'Audit Logs', Icons.history, AdminModule.auditLogs, () => const AuditPage(), group: 'Admin'),

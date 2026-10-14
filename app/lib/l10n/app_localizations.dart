@@ -1895,6 +1895,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'After scanning this QR, enter the amount {amount} yourself.'**
   String templeQrNote(String amount);
+
+  /// No description provided for @navGuru.
+  ///
+  /// In en, this message translates to:
+  /// **'Guru Gyan'**
+  String get navGuru;
+
+  /// No description provided for @guruGyanIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Deity information, kathas, stotras and puja vidhi for the temple\'s shishya parivar. Register as a shishya; once the temple management approves, all lessons open for you.'**
+  String get guruGyanIntro;
+
+  /// No description provided for @shishyaRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Shishya registration'**
+  String get shishyaRegister;
+
+  /// No description provided for @shishyaLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Shishya login'**
+  String get shishyaLogin;
+
+  /// No description provided for @haveAccountLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Already registered? Log in'**
+  String get haveAccountLogin;
+
+  /// No description provided for @newShishyaRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'New shishya? Register'**
+  String get newShishyaRegister;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @passwordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 6 characters – remember it to log in on a new phone'**
+  String get passwordHint;
+
+  /// No description provided for @guruNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Guru / introduced by (optional)'**
+  String get guruNameLabel;
+
+  /// No description provided for @noteToTemple.
+  ///
+  /// In en, this message translates to:
+  /// **'Message to the temple (optional)'**
+  String get noteToTemple;
+
+  /// No description provided for @submitRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get submitRequest;
+
+  /// No description provided for @requestPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request has been sent to the temple management'**
+  String get requestPendingTitle;
+
+  /// No description provided for @requestPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will get a notification as soon as it is approved, and Guru Gyan will open. 🙏'**
+  String get requestPendingBody;
+
+  /// No description provided for @requestRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request was not approved'**
+  String get requestRejectedTitle;
+
+  /// No description provided for @applyAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Request again'**
+  String get applyAgain;
+
+  /// No description provided for @accessBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Your access is currently closed. Please contact the temple management.'**
+  String get accessBlocked;
+
+  /// No description provided for @mobileAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'This mobile number is already registered. Use \"Log in\".'**
+  String get mobileAlreadyRegistered;
+
+  /// No description provided for @wrongLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong mobile number or password'**
+  String get wrongLogin;
+
+  /// No description provided for @weakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get weakPassword;
+
+  /// No description provided for @forgotPasswordNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot the password? The temple management can set a new one for you.'**
+  String get forgotPasswordNote;
+
+  /// No description provided for @lessonsLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons for shishyas (open after approval)'**
+  String get lessonsLocked;
+
+  /// No description provided for @markRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as read'**
+  String get markRead;
+
+  /// No description provided for @markedRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get markedRead;
+
+  /// No description provided for @allLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allLessons;
+
+  /// No description provided for @otherLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get otherLessons;
+
+  /// No description provided for @shishyaLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out of shishya account'**
+  String get shishyaLogout;
+
+  /// No description provided for @openDeityPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Deity information'**
+  String get openDeityPage;
+
+  /// No description provided for @nextLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Next lesson'**
+  String get nextLesson;
+
+  /// No description provided for @requestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent 🙏'**
+  String get requestSent;
+
+  /// No description provided for @lessonsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Read {done} of {total} lessons'**
+  String lessonsProgress(int done, int total);
+
+  /// No description provided for @readMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} min read'**
+  String readMinutes(int n);
+
+  /// No description provided for @welcomeShishya.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Guru Gyan, {name} 🙏'**
+  String welcomeShishya(String name);
 }
 
 class _AppLocalizationsDelegate
