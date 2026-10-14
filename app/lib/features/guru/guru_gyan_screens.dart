@@ -5,6 +5,7 @@ import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
+import '../../widgets/secure_screen.dart';
 import '../../widgets/youtube_view.dart';
 import '../gallery/gallery_screen.dart';
 
@@ -17,7 +18,8 @@ class GuruGyanScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final me = ref.watch(myShishyaProvider);
-    return Scaffold(
+    return SecureScreen(
+        child: Scaffold(
       appBar: AppBar(
         title: Text('🕉️ ${l.navGuru}'),
         actions: [
@@ -25,7 +27,7 @@ class GuruGyanScreen extends ConsumerWidget {
         ],
       ),
       body: AsyncView(me, data: (s) => s != null && s.isApproved ? _LessonsHome(shishya: s) : _Gate(shishya: s)),
-    );
+    ));
   }
 }
 
@@ -512,7 +514,8 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
     final photos = lesson.allPhotos;
     final done = s.completed.contains(lesson.id);
     final poem = lesson.category == LessonCategory.stotra;
-    return Scaffold(
+    return SecureScreen(
+        child: Scaffold(
       body: CustomScrollView(slivers: [
         SliverAppBar(
           pinned: true,
@@ -585,7 +588,7 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
               ),
             ],
             const SizedBox(height: 16),
-            SelectableText(
+            Text(
               lesson.body,
               textAlign: poem ? TextAlign.center : TextAlign.start,
               style: TextStyle(
@@ -630,6 +633,6 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
           ]),
         ),
       ]),
-    );
+    ));
   }
 }

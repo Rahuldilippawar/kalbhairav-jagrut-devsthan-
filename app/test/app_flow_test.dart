@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -10,6 +11,7 @@ import 'package:kjd_app/features/banner/festival_picker.dart';
 import 'package:kjd_app/widgets/common.dart';
 import 'package:kjd_app/widgets/media_viewer.dart';
 import 'package:kjd_app/widgets/route_map.dart';
+import 'package:kjd_app/widgets/secure_screen.dart';
 import 'package:kjd_core/kjd_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -414,5 +416,27 @@ void main() {
     await tester.pumpAndSettle();
     expect(c.read(uidProvider), uid);
     expect(find.textContaining('1 पाठ वाचले'), findsOneWidget);
+  });
+
+  testWidgets('guru gyan blocks screenshots only while it is on screen', (tester) async {
+    final calls = <Object?>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(const MethodChannel('kjd/secure_screen'), (c) async {
+      calls.add(c.arguments);
+      return null;
+    });
+    final c = await _start(tester);
+    expect(SecureScreen.visibleCount, 0);
+    await tester.tap(find.text('गुरु ज्ञान').last);
+    await tester.pumpAndSettle();
+    expect(SecureScreen.visibleCount, 1);
+    expect(calls, [true]);
+    // Other tabs (Guru Gyan stays alive in the background) are not secure.
+    await tester.tap(find.text('मुख्यपृष्ठ'));
+    await tester.pumpAndSettle();
+    expect(SecureScreen.visibleCount, 0);
+    expect(calls, [true, false]);
+    c.read(routerProvider).go('/guru');
+    await tester.pumpAndSettle();
+    expect(calls, [true, false, true]);
   });
 }
