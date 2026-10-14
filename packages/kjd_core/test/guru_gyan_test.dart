@@ -4,7 +4,19 @@ import 'package:kjd_core/kjd_core.dart';
 void main() {
   test('starter lessons have unique ids and link to preset deities', () {
     final presetIds = {for (final d in deityPresets) d.id};
-    expect(guruLessonLibrary.length, greaterThanOrEqualTo(15));
+    expect(guruLessonLibrary.length, greaterThanOrEqualTo(40));
+    // Every preset deity has a full charitra.
+    for (final d in deityPresets) {
+      expect(guruLessonLibrary.any((l) => l.deityId == d.id && l.category == LessonCategory.charitra), isTrue, reason: d.id);
+    }
+    for (final l in guruLessonLibrary.where((l) => l.category == LessonCategory.vanshavali)) {
+      final nodes = l.body.split('\n').where((x) => RegExp(r'^( *)- ').hasMatch(x));
+      expect(nodes.length, greaterThan(5), reason: l.id);
+      // Indent is whole generations (two spaces each).
+      for (final n in nodes) {
+        expect(RegExp(r'^ *').firstMatch(n)!.group(0)!.length.isEven, isTrue, reason: '${l.id}: $n');
+      }
+    }
     expect(guruLessonLibrary.map((l) => l.id).toSet().length, guruLessonLibrary.length);
     for (final l in guruLessonLibrary) {
       expect(l.body.length, greaterThan(200), reason: l.id);
@@ -17,7 +29,7 @@ void main() {
     final repo = GuruGyanRepository(store);
     await store.set(Col.guruGyan, 'gg-shani', {'title': 'x', 'body': 'y', 'active': false});
     await store.set(Col.guruGyan, 'gg-kalbhairav-utpatti', {'title': 'मंदिराची कथा', 'body': 'b', 'order': 1});
-    await store.set(Col.guruGyan, 'own', {'title': 'आमच्या मंदिराचा इतिहास', 'body': 'b', 'order': 0});
+    await store.set(Col.guruGyan, 'own', {'title': 'आमच्या मंदिराचा इतिहास', 'body': 'b', 'order': -5});
     final lessons = await repo.watchLessons().first;
     expect(lessons.length, guruLessonLibrary.length); // +1 own, -1 hidden
     expect(lessons.first.id, 'own');

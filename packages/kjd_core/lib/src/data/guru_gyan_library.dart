@@ -1,10 +1,18 @@
 import '../models/guru_gyan.dart';
+import 'guru_gyan_charitra.dart';
+import 'guru_gyan_vanshavali.dart';
 
 /// Starter Guru Gyan lessons: well-known puranic kathas and general
 /// information, shown to approved shishyas together with the temple's own
 /// `guru_gyan` documents. A document with the same id replaces (or, with
 /// `active: false`, hides) a lesson here. Deity ids match [deityPresets].
 const guruLessonLibrary = <GuruLesson>[
+  ...charitraLessons,
+  ...vanshavaliLessons,
+  ..._shortLessons,
+];
+
+const _shortLessons = <GuruLesson>[
   GuruLesson(
     id: 'gg-kalbhairav-utpatti',
     title: 'श्री काळभैरव प्रकट कथा',

@@ -78,11 +78,15 @@ class Shishya {
   }
 }
 
-enum LessonCategory { katha, mahiti, stotra, puja, sadhana, parampara }
+/// [charitra] is a deity's full life story; [vanshavali] a family tree
+/// written as `- name` lines, two spaces of indent per generation.
+enum LessonCategory { charitra, katha, vanshavali, mahiti, stotra, puja, sadhana, parampara }
 
 extension LessonCategoryLabel on LessonCategory {
   String get labelMr => switch (this) {
+        LessonCategory.charitra => 'संपूर्ण चरित्र',
         LessonCategory.katha => 'कथा',
+        LessonCategory.vanshavali => 'वंशावळ',
         LessonCategory.mahiti => 'माहिती',
         LessonCategory.stotra => 'स्तोत्र',
         LessonCategory.puja => 'पूजा विधी',
@@ -91,7 +95,9 @@ extension LessonCategoryLabel on LessonCategory {
       };
 
   String get emoji => switch (this) {
+        LessonCategory.charitra => '📜',
         LessonCategory.katha => '📖',
+        LessonCategory.vanshavali => '🌳',
         LessonCategory.mahiti => '🛕',
         LessonCategory.stotra => '🕉️',
         LessonCategory.puja => '🪔',

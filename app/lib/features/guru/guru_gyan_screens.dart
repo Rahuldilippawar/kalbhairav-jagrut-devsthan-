@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/secure_screen.dart';
 import '../../widgets/youtube_view.dart';
 import '../gallery/gallery_screen.dart';
+import 'lesson_body.dart';
 
 /// Guru Gyan tab: lessons for the shishya parivar. Anyone can ask for
 /// access; the temple management approves it from the admin panel.
@@ -588,16 +589,7 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
               ),
             ],
             const SizedBox(height: 16),
-            Text(
-              lesson.body,
-              textAlign: poem ? TextAlign.center : TextAlign.start,
-              style: TextStyle(
-                fontSize: _textSize,
-                height: 1.8,
-                fontFamily: poem ? bannerFontFamily('tiroMarathi') : null,
-                locale: poem ? bannerTextLocale : null,
-              ),
-            ),
+            LessonBody(text: lesson.body, fontSize: _textSize, poem: poem),
             if (youtubeId(lesson.videoUrl) != null) ...[
               const SizedBox(height: 16),
               YoutubeView(url: lesson.videoUrl!),

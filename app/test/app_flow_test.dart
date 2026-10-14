@@ -8,6 +8,7 @@ import 'package:kjd_app/app/providers.dart';
 import 'package:kjd_app/app/router.dart';
 import 'package:kjd_app/main.dart';
 import 'package:kjd_app/features/banner/festival_picker.dart';
+import 'package:kjd_app/features/guru/lesson_body.dart';
 import 'package:kjd_app/widgets/common.dart';
 import 'package:kjd_app/widgets/media_viewer.dart';
 import 'package:kjd_app/widgets/route_map.dart';
@@ -379,15 +380,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('गुरु ज्ञानात आपले स्वागत'), findsOneWidget);
     expect(find.textContaining('0 पाठ वाचले'), findsOneWidget);
-    await tester.tap(find.text('श्री काळभैरव प्रकट कथा'));
+    await tester.scrollUntilVisible(find.text('श्री काळभैरव – संपूर्ण चरित्र'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.text('श्री काळभैरव – संपूर्ण चरित्र'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('कपालमोचन'), findsOneWidget);
+    expect(find.text('५. काशी – कपालमोचन'), findsOneWidget); // section heading
     await tester.scrollUntilVisible(find.text('वाचले ✓'), 300, scrollable: find.byType(Scrollable).first);
     await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
     await tester.pumpAndSettle();
     await tester.tap(find.text('वाचले ✓'));
     await tester.pumpAndSettle();
-    expect((await store.get(Col.shishyas, uid))!.data['completed'], ['gg-kalbhairav-utpatti']);
+    expect((await store.get(Col.shishyas, uid))!.data['completed'], ['gg-charitra-kalbhairav']);
 
     // Same mobile + password logs in again after logging out.
     c.read(routerProvider).go('/guru');
@@ -438,5 +440,15 @@ void main() {
     c.read(routerProvider).go('/guru');
     await tester.pumpAndSettle();
     expect(calls, [true, false, true]);
+  });
+
+  testWidgets('vanshavali lessons draw headings and a family tree', (tester) async {
+    final lesson = guruLessonLibrary.firstWhere((l) => l.id == 'gg-vansh-shiv');
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(body: SingleChildScrollView(child: LessonBody(text: lesson.body, fontSize: 16))),
+    ));
+    expect(find.text('पार्वतीचे माहेर'), findsOneWidget);
+    expect(find.textContaining('काळभैरव – ब्रह्मदेवांचा अहंकार हरण', findRichText: true), findsOneWidget);
+    expect(find.textContaining('- ', findRichText: true), findsNothing); // markers are not shown
   });
 }
