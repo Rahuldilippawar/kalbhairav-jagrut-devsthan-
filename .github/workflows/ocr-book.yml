@@ -1,6 +1,8 @@
 # Downloads a public-domain scanned book (e.g. from Wikimedia Commons),
 # runs Marathi OCR on every page and publishes the text as a pre-release
-# (tag ocr-<run number>), so Guru Gyan lessons can be prepared from it.
+# (tag ocr-<run number>, one text file per part), so Guru Gyan lessons can
+# be prepared from it. The book is split into parts that run in parallel;
+# each part is published as soon as it is done (also when it times out).
 name: OCR a scanned book
 
 on:
@@ -10,20 +12,44 @@ on:
         description: Wikimedia Commons file name (without "File:")
         required: true
         default: "कथा-कल्पतरु पूर्वार्ध स्तबक १-७ संपूर्ण.pdf"
-      first_page:
-        description: First page to OCR
-        default: "1"
-      last_page:
-        description: Last page to OCR (0 = all)
-        default: "0"
+      pages:
+        description: Number of pages in the book
+        default: "805"
+      parts:
+        description: Parallel parts (max 20)
+        default: "12"
 
 permissions:
   contents: write
 
 jobs:
-  ocr:
+  plan:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    outputs:
+      parts: ${{ steps.plan.outputs.parts }}
+      tag: ${{ steps.plan.outputs.tag }}
+    steps:
+      - id: plan
+        env:
+          PARTS: ${{ inputs.parts }}
+          GH_TOKEN: ${{ github.token }}
+          FILE: ${{ inputs.file }}
+        run: |
+          echo "parts=$(python3 -c "import json,os; print(json.dumps(list(range(min(20, int(os.environ['PARTS']))))))")" >> "$GITHUB_OUTPUT"
+          tag="ocr-${{ github.run_number }}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          gh release create "$tag" --repo "${{ github.repository }}" --target "${{ github.sha }}" --prerelease \
+            --title "OCR: $FILE" \
+            --notes "Marathi OCR (tesseract mar+san) of the public-domain scan \"$FILE\" from Wikimedia Commons, one file per part. Raw OCR – contains errors."
+
+  ocr:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        part: ${{ fromJSON(needs.plan.outputs.parts) }}
     steps:
       - name: Install OCR tools
         run: |
@@ -37,49 +63,47 @@ jobs:
           name=$(python3 -c 'import os,urllib.parse; print(urllib.parse.quote(os.environ["FILE"].replace(" ", "_")))')
           curl -fL --retry 4 -A "KalbhairavDevsthanOCR/1.0 (temple app; github actions)" \
             -o "$RUNNER_TEMP/book.pdf" "https://commons.wikimedia.org/wiki/Special:FilePath/$name"
-          ls -lh "$RUNNER_TEMP/book.pdf"
-          pdfinfo "$RUNNER_TEMP/book.pdf" | tee "$RUNNER_TEMP/pdfinfo.txt"
 
-      - name: OCR every page
+      - name: OCR this part
+        timeout-minutes: 100
         env:
-          FIRST: ${{ inputs.first_page }}
-          LAST: ${{ inputs.last_page }}
+          PAGES: ${{ inputs.pages }}
+          PARTS: ${{ inputs.parts }}
+          PART: ${{ matrix.part }}
         run: |
           cd "$RUNNER_TEMP"
-          pages=$(pdfinfo book.pdf | awk '/^Pages:/ {print $2}')
-          last=$LAST; [ "$last" = "0" ] && last=$pages
-          mkdir -p pages text
-          ocr_page() {
-            p=$1
-            pdftoppm -f "$p" -l "$p" -r 250 -gray -png book.pdf "pages/p$p" >/dev/null 2>&1
-            img=$(ls pages/p$p*.png 2>/dev/null | head -1)
-            [ -n "$img" ] || return 0
-            tesseract "$img" "text/$(printf '%04d' "$p")" -l mar+san --psm 4 >/dev/null 2>&1 || true
-            rm -f "$img"
+          real=$(pdfinfo book.pdf | awk '/^Pages:/ {print $2}')
+          pages=${real:-$PAGES}
+          size=$(( (pages + PARTS - 1) / PARTS ))
+          first=$(( PART * size + 1 )); last=$(( first + size - 1 )); [ $last -gt $pages ] && last=$pages
+          echo "Part $PART: pages $first-$last of $pages"
+          echo "$first $last" > range.txt
+          mkdir -p img text
+          # Scans hold one image per page: extract it as is (much faster
+          # than rendering the page).
+          pdfimages -f "$first" -l "$last" -p -all book.pdf img/p
+          ls img | head -3; ls img | wc -l
+          ocr_one() {
+            f=$1
+            p=$(basename "$f" | sed -E 's/^p-0*([0-9]+)-.*/\1/')
+            tesseract "$f" "text/$(printf '%04d' "$p")-$(basename "$f")" -l mar+san --psm 4 >/dev/null 2>&1 || true
           }
-          export -f ocr_page
-          seq "$FIRST" "$last" | xargs -P "$(nproc)" -I{} bash -c 'ocr_page {}'
-          for f in text/*.txt; do
-            n=$((10#$(basename "$f" .txt)))
-            echo "===== पान $n ====="
-            cat "$f"
-          done > book.txt
-          wc -c book.txt
-          # A few page images to judge the OCR quality.
-          mkdir -p samples
-          for p in 1 5 20 100; do
-            [ "$p" -le "$last" ] && pdftoppm -f $p -l $p -r 90 -jpeg book.pdf "samples/page$p" || true
-          done
-          tar czf samples.tgz samples
+          export -f ocr_one
+          ls img/* | xargs -P "$(nproc)" -I{} bash -c 'ocr_one {}'
 
-      - name: Publish text
+      - name: Publish this part
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-          FILE: ${{ inputs.file }}
+          PART: ${{ matrix.part }}
         run: |
-          tag="ocr-${{ github.run_number }}"
-          gh release create "$tag" "$RUNNER_TEMP/book.txt" "$RUNNER_TEMP/samples.tgz" "$RUNNER_TEMP/pdfinfo.txt" \
-            --repo "${{ github.repository }}" --target "${{ github.sha }}" --prerelease \
-            --title "OCR: $FILE" \
-            --notes "Marathi OCR (tesseract mar+san) of the public-domain scan \"$FILE\" from Wikimedia Commons. Raw OCR text – contains errors; used to prepare Guru Gyan lesson summaries."
-          echo "Published $tag" >> "$GITHUB_STEP_SUMMARY"
+          cd "$RUNNER_TEMP"
+          out=$(printf 'book-part-%02d.txt' "$PART")
+          : > "$out"
+          for f in $(ls text/*.txt 2>/dev/null | sort); do
+            n=$((10#$(basename "$f" | cut -c1-4)))
+            echo "===== पान $n =====" >> "$out"
+            cat "$f" >> "$out"
+          done
+          wc -c "$out"
+          gh release upload "${{ needs.plan.outputs.tag }}" "$out" --repo "${{ github.repository }}" --clobber
