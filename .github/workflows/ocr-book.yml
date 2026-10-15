@@ -1,0 +1,85 @@
+# Downloads a public-domain scanned book (e.g. from Wikimedia Commons),
+# runs Marathi OCR on every page and publishes the text as a pre-release
+# (tag ocr-<run number>), so Guru Gyan lessons can be prepared from it.
+name: OCR a scanned book
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: Wikimedia Commons file name (without "File:")
+        required: true
+        default: "कथा-कल्पतरु पूर्वार्ध स्तबक १-७ संपूर्ण.pdf"
+      first_page:
+        description: First page to OCR
+        default: "1"
+      last_page:
+        description: Last page to OCR (0 = all)
+        default: "0"
+
+permissions:
+  contents: write
+
+jobs:
+  ocr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Install OCR tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q tesseract-ocr tesseract-ocr-mar tesseract-ocr-san poppler-utils
+
+      - name: Download the scan
+        env:
+          FILE: ${{ inputs.file }}
+        run: |
+          name=$(python3 -c 'import os,urllib.parse; print(urllib.parse.quote(os.environ["FILE"].replace(" ", "_")))')
+          curl -fL --retry 4 -A "KalbhairavDevsthanOCR/1.0 (temple app; github actions)" \
+            -o "$RUNNER_TEMP/book.pdf" "https://commons.wikimedia.org/wiki/Special:FilePath/$name"
+          ls -lh "$RUNNER_TEMP/book.pdf"
+          pdfinfo "$RUNNER_TEMP/book.pdf" | tee "$RUNNER_TEMP/pdfinfo.txt"
+
+      - name: OCR every page
+        env:
+          FIRST: ${{ inputs.first_page }}
+          LAST: ${{ inputs.last_page }}
+        run: |
+          cd "$RUNNER_TEMP"
+          pages=$(pdfinfo book.pdf | awk '/^Pages:/ {print $2}')
+          last=$LAST; [ "$last" = "0" ] && last=$pages
+          mkdir -p pages text
+          ocr_page() {
+            p=$1
+            pdftoppm -f "$p" -l "$p" -r 250 -gray -png book.pdf "pages/p$p" >/dev/null 2>&1
+            img=$(ls pages/p$p*.png 2>/dev/null | head -1)
+            [ -n "$img" ] || return 0
+            tesseract "$img" "text/$(printf '%04d' "$p")" -l mar+san --psm 4 >/dev/null 2>&1 || true
+            rm -f "$img"
+          }
+          export -f ocr_page
+          seq "$FIRST" "$last" | xargs -P "$(nproc)" -I{} bash -c 'ocr_page {}'
+          for f in text/*.txt; do
+            n=$((10#$(basename "$f" .txt)))
+            echo "===== पान $n ====="
+            cat "$f"
+          done > book.txt
+          wc -c book.txt
+          # A few page images to judge the OCR quality.
+          mkdir -p samples
+          for p in 1 5 20 100; do
+            [ "$p" -le "$last" ] && pdftoppm -f $p -l $p -r 90 -jpeg book.pdf "samples/page$p" || true
+          done
+          tar czf samples.tgz samples
+
+      - name: Publish text
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FILE: ${{ inputs.file }}
+        run: |
+          tag="ocr-${{ github.run_number }}"
+          gh release create "$tag" "$RUNNER_TEMP/book.txt" "$RUNNER_TEMP/samples.tgz" "$RUNNER_TEMP/pdfinfo.txt" \
+            --repo "${{ github.repository }}" --target "${{ github.sha }}" --prerelease \
+            --title "OCR: $FILE" \
+            --notes "Marathi OCR (tesseract mar+san) of the public-domain scan \"$FILE\" from Wikimedia Commons. Raw OCR text – contains errors; used to prepare Guru Gyan lesson summaries."
+          echo "Published $tag" >> "$GITHUB_STEP_SUMMARY"
