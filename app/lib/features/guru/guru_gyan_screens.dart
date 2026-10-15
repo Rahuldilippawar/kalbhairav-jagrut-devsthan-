@@ -312,7 +312,7 @@ class _ShishyaFormState extends ConsumerState<_ShishyaForm> {
 
 String? _lessonImage(GuruLesson lesson, Map<String, Deity> deities) {
   if (lesson.photoUrl != null && lesson.photoUrl!.isNotEmpty) return lesson.photoUrl;
-  return deities[lesson.deityId]?.photoUrl;
+  return deities[lesson.deityId]?.cover;
 }
 
 class _LessonsHome extends ConsumerStatefulWidget {
@@ -384,7 +384,7 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
                           shape: BoxShape.circle,
                           color: _deity == d.id ? KjdColors.kumkum : KjdColors.goldLight,
                         ),
-                        child: ClipOval(child: NetImage(d.photoUrl, fallbackIcon: '🛕')),
+                        child: ClipOval(child: NetImage(d.cover, fallbackIcon: '🛕')),
                       ),
                       const SizedBox(height: 4),
                       Text(d.name,

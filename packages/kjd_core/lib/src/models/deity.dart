@@ -52,6 +52,9 @@ class Deity {
   /// Cover first, then the other photos.
   List<String> get allPhotos => [if (photoUrl != null && photoUrl!.isNotEmpty) photoUrl!, ...photos];
 
+  /// Main photo, or the first of the other photos when none is set.
+  String? get cover => allPhotos.firstOrNull;
+
   factory Deity.fromMap(String id, Map<String, dynamic> m) => Deity(
         id: id,
         name: asString(m['name']),
@@ -137,6 +140,9 @@ class Gadhipati {
   final int order;
 
   List<String> get allPhotos => [if (photoUrl != null && photoUrl!.isNotEmpty) photoUrl!, ...photos];
+
+  /// Main photo, or the first of the other photos when none is set.
+  String? get cover => allPhotos.firstOrNull;
 
   factory Gadhipati.fromMap(String id, Map<String, dynamic> m) => Gadhipati(
         id: id,

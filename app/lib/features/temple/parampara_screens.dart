@@ -16,7 +16,7 @@ Widget _portrait(Gadhipati g, double size, {bool ring = false}) => Container(
         gradient: ring ? const SweepGradient(colors: [KjdColors.gold, KjdColors.saffron, KjdColors.gold]) : null,
       ),
       child: ClipOval(
-        child: Container(color: KjdColors.goldLight, child: NetImage(g.photoUrl, fallbackIcon: '🙏')),
+        child: Container(color: KjdColors.goldLight, child: NetImage(g.cover, fallbackIcon: '🙏')),
       ),
     );
 

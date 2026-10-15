@@ -63,7 +63,7 @@ class DeityCard extends StatelessWidget {
           child: Stack(fit: StackFit.expand, children: [
             Container(
               decoration: const BoxDecoration(gradient: KjdColors.heroGradient),
-              child: NetImage(deity.photoUrl, fallbackIcon: '🛕'),
+              child: NetImage(deity.cover, fallbackIcon: '🛕'),
             ),
             const DecoratedBox(
               decoration: BoxDecoration(
@@ -170,7 +170,7 @@ class DeityDetailScreen extends ConsumerWidget {
                 child: Stack(fit: StackFit.expand, children: [
                   Container(
                     decoration: const BoxDecoration(gradient: KjdColors.heroGradient),
-                    child: NetImage(d.photoUrl, fallbackIcon: '🛕'),
+                    child: NetImage(d.cover, fallbackIcon: '🛕'),
                   ),
                   const DecoratedBox(
                     decoration: BoxDecoration(

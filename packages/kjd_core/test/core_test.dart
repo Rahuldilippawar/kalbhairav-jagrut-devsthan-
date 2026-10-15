@@ -218,4 +218,11 @@ void main() {
       expect(logs.map((l) => l['action']), containsAll(['create', 'delete']));
     });
   });
+
+  test('deity / gadhipati cover falls back to the first of the other photos', () {
+    expect(const Gadhipati(id: 'g', name: 'x', photos: ['a', 'b']).cover, 'a');
+    expect(const Gadhipati(id: 'g', name: 'x', photoUrl: 'm', photos: ['a']).cover, 'm');
+    expect(const Deity(id: 'd', name: 'x', photoUrl: '', photos: ['p']).cover, 'p');
+    expect(const Deity(id: 'd', name: 'x').cover, isNull);
+  });
 }
