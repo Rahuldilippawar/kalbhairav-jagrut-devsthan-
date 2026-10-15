@@ -190,7 +190,14 @@ String mediaContentType(String ext) => switch (ext) {
 /// Uploads media to Firebase Storage under `public/` and returns its URL.
 abstract class MediaUploader {
   bool get enabled;
-  Future<String> upload(Uint8List bytes, {required String fileName, required String folder});
+
+  /// [onProgress] reports bytes sent so far and the file size.
+  Future<String> upload(
+    Uint8List bytes, {
+    required String fileName,
+    required String folder,
+    void Function(int sent, int total)? onProgress,
+  });
 }
 
 class FirebaseMediaUploader implements MediaUploader {
@@ -198,13 +205,35 @@ class FirebaseMediaUploader implements MediaUploader {
   bool get enabled => true;
 
   @override
-  Future<String> upload(Uint8List bytes, {required String fileName, required String folder}) async {
+  Future<String> upload(
+    Uint8List bytes, {
+    required String fileName,
+    required String folder,
+    void Function(int sent, int total)? onProgress,
+  }) async {
     final safe = fileName.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
-    final ref = FirebaseStorage.instance.ref('public/$folder/${DateTime.now().millisecondsSinceEpoch}_$safe');
+    final ref = FirebaseStorage.instance.ref('public/$folder/${DateTime.now().microsecondsSinceEpoch}_$safe');
     final ext = safe.split('.').last.toLowerCase();
-    final type = mediaContentType(ext);
-    await ref.putData(bytes, SettableMetadata(contentType: type, cacheControl: 'public,max-age=31536000'));
-    return ref.getDownloadURL();
+    final meta = SettableMetadata(contentType: mediaContentType(ext), cacheControl: 'public,max-age=31536000');
+    // A weak connection may drop one file; try it again before giving up.
+    for (var attempt = 1;; attempt++) {
+      try {
+        final task = ref.putData(bytes, meta);
+        final sub = task.snapshotEvents.listen(
+          (s) => onProgress?.call(s.bytesTransferred, s.totalBytes),
+          onError: (Object _) {},
+        );
+        try {
+          await task;
+        } finally {
+          await sub.cancel();
+        }
+        return await ref.getDownloadURL();
+      } catch (_) {
+        if (attempt >= 3) rethrow;
+        await Future<void>.delayed(Duration(seconds: 2 * attempt));
+      }
+    }
   }
 }
 
@@ -212,6 +241,11 @@ class DisabledMediaUploader implements MediaUploader {
   @override
   bool get enabled => false;
   @override
-  Future<String> upload(Uint8List bytes, {required String fileName, required String folder}) =>
+  Future<String> upload(
+    Uint8List bytes, {
+    required String fileName,
+    required String folder,
+    void Function(int sent, int total)? onProgress,
+  }) =>
       throw UnsupportedError('Uploads need Firebase Storage. Paste an image URL instead.');
 }

@@ -57,6 +57,13 @@ class _DarshanPhotosPageState extends ConsumerState<DarshanPhotosPage> {
     }
     await ref.read(adminRepoProvider).log(
         actorId: a.uid, actorName: _actorName(a), action: 'upload', collection: Col.darshanPhotos, summary: '${files.length} files for $key');
+  }
+
+  /// One notification for the whole upload, with its first photo.
+  Future<void> _notifyDevotees(List<UploadedMedia> files) async {
+    final store = ref.read(dataStoreProvider);
+    final a = ref.read(currentAdminProvider)!;
+    final caption = _caption.text.trim().isEmpty ? null : _caption.text.trim();
     if (_notify) {
       final photo = files.where((f) => !f.isVideo).firstOrNull;
       final id = await store.add(Col.notifications, {
@@ -140,7 +147,7 @@ class _DarshanPhotosPageState extends ConsumerState<DarshanPhotosPage> {
               Checkbox(value: _notify, onChanged: (v) => setState(() => _notify = v ?? false)),
               const Text('Notify devotees'),
             ]),
-            BulkUploadButton(folder: 'darshan/${dateKey(_date)}', onUploaded: _save),
+            BulkUploadButton(folder: 'darshan/${dateKey(_date)}', onUploaded: _save, onFinished: _notifyDevotees),
           ]),
         ),
       ),

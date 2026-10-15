@@ -650,7 +650,7 @@ class _ImageListField extends ConsumerWidget {
           folder: folder,
           allowVideo: false,
           label: 'Add photos',
-          onUploaded: (files) async => onChanged([...urls, for (final f in files) f.url]),
+          onFinished: (files) async => onChanged([...urls, for (final f in files) f.url]),
         ),
       ]),
     );

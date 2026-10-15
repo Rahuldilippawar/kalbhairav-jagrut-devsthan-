@@ -147,8 +147,8 @@ void main() {
     await tester.enterText(find.widgetWithText(TextField, 'Caption (e.g. नवरात्र दिवस 5 – अलंकार)'), 'नवरात्र दिवस 1');
     await tester.tap(find.text('Upload photos / videos (many)'));
     await tester.pumpAndSettle();
-    expect(find.text('3 uploaded'), findsOneWidget);
-    expect(uploaded, ['darshan/2026-10-06/a.jpg', 'darshan/2026-10-06/b.jpg', 'videos/darshan/2026-10-06/aarti.mp4']);
+    expect(find.text('3 uploaded ✓'), findsOneWidget);
+    expect(uploaded, unorderedEquals(['darshan/2026-10-06/a.jpg', 'darshan/2026-10-06/b.jpg', 'videos/darshan/2026-10-06/aarti.mp4']));
     final store = c.read(dataStoreProvider) as MemoryDataStore;
     final photos = store.dump(Col.darshanPhotos).values.toList();
     expect(photos.map((p) => p['type']), ['photo', 'photo', 'video']);
@@ -274,6 +274,47 @@ void main() {
     expect(find.text('Shishya Requests'), findsNothing);
     expect(find.text('Lessons (पाठ)'), findsNothing);
   });
+
+  testWidgets('120 photos and videos upload in parallel, are saved in groups and failures can be retried', (tester) async {
+    final uploaded = <String>[];
+    var calls = 0;
+    final c = await _start(tester, _admin(AdminRole.galleryManager), overrides: [
+      uploaderProvider.overrideWithValue(_FakeUploader(uploaded)),
+      mediaPickerProvider.overrideWithValue(({bool allowVideo = true}) async => [
+            for (var i = 0; i < 118; i++)
+              PickedMedia(name: 'p$i.jpg', isVideo: false, read: () async => Uint8List(10)),
+            PickedMedia(name: 'bad1.jpg', isVideo: false, bytes: Uint8List(1)),
+            PickedMedia(name: 'v.mp4', isVideo: true, bytes: Uint8List(5)),
+          ]),
+    ]);
+    final saved = <String>[];
+    final all = <String>[];
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: c,
+      child: MaterialApp(
+        home: Scaffold(
+          body: BulkUploadButton(
+            folder: 'test',
+            onUploaded: (files) async {
+              calls++;
+              saved.addAll(files.map((f) => f.name));
+            },
+            onFinished: (files) async => all.addAll(files.map((f) => f.name)),
+          ),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('Upload photos / videos (many)'));
+    await tester.pumpAndSettle();
+    expect(saved.length, 119);
+    expect(saved.first, 'p0.jpg');
+    expect(saved.last, 'v.mp4'); // picked order is kept
+    expect(calls, greaterThanOrEqualTo(6)); // groups of 20, not one save at the end
+    expect(all, saved);
+    expect(uploaded, contains('videos/test/v.mp4'));
+    expect(find.textContaining('119 uploaded, 1 not uploaded'), findsOneWidget);
+    expect(find.text('Retry 1 not uploaded'), findsOneWidget);
+  });
 }
 
 class _FakeUploader implements MediaUploader {
@@ -282,7 +323,14 @@ class _FakeUploader implements MediaUploader {
   @override
   bool get enabled => true;
   @override
-  Future<String> upload(Uint8List bytes, {required String fileName, required String folder}) async {
+  Future<String> upload(
+    Uint8List bytes, {
+    required String fileName,
+    required String folder,
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    if (fileName.startsWith('bad')) throw Exception('network lost');
+    onProgress?.call(bytes.length, bytes.length);
     log.add('$folder/$fileName');
     return 'https://cdn.test/$folder/$fileName';
   }
