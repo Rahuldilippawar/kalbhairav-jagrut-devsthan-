@@ -330,5 +330,8 @@
   "requestSent": "अनुरोध भेजा 🙏",
   "lessonsProgress": "{total} में से {done} पाठ पढ़े",
   "readMinutes": "{n} मिनट पढ़ना",
-  "welcomeShishya": "{name}, गुरु ज्ञान में आपका स्वागत 🙏"
+  "welcomeShishya": "{name}, गुरु ज्ञान में आपका स्वागत 🙏",
+  "webQuickLinks": "त्वरित लिंक",
+  "webFestivals": "आगामी त्योहार व व्रत",
+  "webInstallHint": "इस पेज को होम स्क्रीन पर जोड़ें और ऐप की तरह उपयोग करें।"
 }

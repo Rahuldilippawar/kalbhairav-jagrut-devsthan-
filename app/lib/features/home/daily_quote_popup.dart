@@ -52,7 +52,9 @@ class DailyQuoteDialog extends ConsumerWidget {
     return Dialog(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      child: SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 460),
+        child: SingleChildScrollView(
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(
             decoration: const BoxDecoration(gradient: KjdColors.heroGradient),
@@ -100,7 +102,7 @@ class DailyQuoteDialog extends ConsumerWidget {
             child: Text(l.dontShowDaily, style: const TextStyle(color: KjdColors.inkMuted)),
           ),
         ]),
-      ),
+      )),
     );
   }
 }

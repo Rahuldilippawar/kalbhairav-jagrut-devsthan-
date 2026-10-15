@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../widgets/common.dart';
 import 'providers.dart';
+import 'web_layout.dart';
 
 /// Bottom navigation: Home • Darshan • Events • Seva • Guru Gyan • Profile.
 class AppShell extends ConsumerWidget {
@@ -25,7 +26,10 @@ class AppShell extends ConsumerWidget {
           ),
         ),
       ]),
-      bottomNavigationBar: NavigationBar(
+      // Wide screens navigate from the side menu (see WebFrame).
+      bottomNavigationBar: isWideLayout(context)
+          ? null
+          : NavigationBar(
         selectedIndex: shell.currentIndex,
         onDestinationSelected: (i) => shell.goBranch(i, initialLocation: i == shell.currentIndex),
         destinations: [

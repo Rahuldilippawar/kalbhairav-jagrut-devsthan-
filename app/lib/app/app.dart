@@ -6,6 +6,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../l10n/app_localizations.dart';
 import 'providers.dart';
 import 'router.dart';
+import 'web_layout.dart';
 
 class KjdApp extends ConsumerStatefulWidget {
   const KjdApp({super.key});
@@ -54,6 +55,8 @@ class _KjdAppState extends ConsumerState<KjdApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: router,
+      scrollBehavior: const KjdScrollBehavior(),
+      builder: (context, child) => WebFrame(child: child ?? const SizedBox.shrink()),
     );
   }
 }

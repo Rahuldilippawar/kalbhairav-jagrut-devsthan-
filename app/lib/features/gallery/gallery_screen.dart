@@ -64,8 +64,10 @@ class PhotoGrid extends StatelessWidget {
   Widget build(BuildContext context) => GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, mainAxisSpacing: 6, crossAxisSpacing: 6),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: (MediaQuery.sizeOf(context).width.clamp(0, 860) / 200).floor().clamp(3, 4),
+            mainAxisSpacing: 6,
+            crossAxisSpacing: 6),
         itemCount: urls.length,
         itemBuilder: (context, i) => GestureDetector(
           onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(

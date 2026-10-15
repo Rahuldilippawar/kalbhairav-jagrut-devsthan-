@@ -330,5 +330,8 @@
   "requestSent": "વિનંતી મોકલી 🙏",
   "lessonsProgress": "{total} માંથી {done} પાઠ વાંચ્યા",
   "readMinutes": "{n} મિનિટ વાંચન",
-  "welcomeShishya": "{name}, ગુરુ જ્ઞાનમાં આપનું સ્વાગત 🙏"
+  "welcomeShishya": "{name}, ગુરુ જ્ઞાનમાં આપનું સ્વાગત 🙏",
+  "webQuickLinks": "ઝડપી લિંક",
+  "webFestivals": "આગામી તહેવારો અને વ્રત",
+  "webInstallHint": "આ પેજ હોમ સ્ક્રીન પર ઉમેરો અને એપની જેમ વાપરો."
 }

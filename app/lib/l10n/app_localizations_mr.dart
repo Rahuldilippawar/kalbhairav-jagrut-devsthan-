@@ -1052,4 +1052,13 @@ class AppLocalizationsMr extends AppLocalizations {
   String welcomeShishya(String name) {
     return '$name, गुरु ज्ञानात आपले स्वागत 🙏';
   }
+
+  @override
+  String get webQuickLinks => 'झटपट';
+
+  @override
+  String get webFestivals => 'आगामी सण व व्रत';
+
+  @override
+  String get webInstallHint => 'हे पान होम स्क्रीनवर जोडा आणि ॲपसारखे वापरा.';
 }

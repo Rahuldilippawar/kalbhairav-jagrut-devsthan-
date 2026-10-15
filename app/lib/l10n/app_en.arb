@@ -417,5 +417,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "webQuickLinks": "Quick links",
+  "webFestivals": "Upcoming festivals & vrats",
+  "webInstallHint": "Add this page to your home screen to use it like an app."
 }

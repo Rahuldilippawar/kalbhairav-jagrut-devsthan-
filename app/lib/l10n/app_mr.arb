@@ -330,5 +330,8 @@
   "requestSent": "विनंती पाठवली 🙏",
   "lessonsProgress": "{total} पैकी {done} पाठ वाचले",
   "readMinutes": "{n} मिनिटे वाचन",
-  "welcomeShishya": "{name}, गुरु ज्ञानात आपले स्वागत 🙏"
+  "welcomeShishya": "{name}, गुरु ज्ञानात आपले स्वागत 🙏",
+  "webQuickLinks": "झटपट",
+  "webFestivals": "आगामी सण व व्रत",
+  "webInstallHint": "हे पान होम स्क्रीनवर जोडा आणि ॲपसारखे वापरा."
 }

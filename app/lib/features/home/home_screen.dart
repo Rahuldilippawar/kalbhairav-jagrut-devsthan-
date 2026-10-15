@@ -266,8 +266,9 @@ class _QuickActions extends StatelessWidget {
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
-      child: GridView.count(
-        crossAxisCount: 4,
+      child: LayoutBuilder(builder: (context, box) => GridView.count(
+        // 4 on phones, up to 6 on tablets and the web.
+        crossAxisCount: (box.maxWidth / 130).floor().clamp(4, 6),
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         mainAxisSpacing: 8,
@@ -298,7 +299,7 @@ class _QuickActions extends StatelessWidget {
               ),
             ),
         ],
-      ),
+      )),
     );
   }
 }

@@ -1049,4 +1049,13 @@ class AppLocalizationsGu extends AppLocalizations {
   String welcomeShishya(String name) {
     return '$name, ગુરુ જ્ઞાનમાં આપનું સ્વાગત 🙏';
   }
+
+  @override
+  String get webQuickLinks => 'ઝડપી લિંક';
+
+  @override
+  String get webFestivals => 'આગામી તહેવારો અને વ્રત';
+
+  @override
+  String get webInstallHint => 'આ પેજ હોમ સ્ક્રીન પર ઉમેરો અને એપની જેમ વાપરો.';
 }

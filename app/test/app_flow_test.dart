@@ -20,9 +20,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 final _now = DateTime(2026, 10, 6, 9, 30);
 const _devotee = AuthUser(uid: 'demo-919876543210', phone: '+919876543210');
 
-Future<ProviderContainer> _start(WidgetTester tester, {AuthUser? user, String to = '/home', bool quotePopup = false}) async {
+Future<ProviderContainer> _start(WidgetTester tester,
+    {AuthUser? user, String to = '/home', bool quotePopup = false, Size size = const Size(1080, 2400)}) async {
   SharedPreferences.setMockInitialValues({'onboarding_seen_v1': true, 'daily_quote_popup_v1': quotePopup});
-  tester.view.physicalSize = const Size(1080, 2400);
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 2.5;
   addTearDown(tester.view.reset);
   final container = ProviderContainer(overrides: demoOverrides(clock: () => _now, user: user, mapTiles: false));
@@ -450,5 +451,20 @@ void main() {
     expect(find.text('पार्वतीचे माहेर'), findsOneWidget);
     expect(find.textContaining('काळभैरव – ब्रह्मदेवांचा अहंकार हरण', findRichText: true), findsOneWidget);
     expect(find.textContaining('- ', findRichText: true), findsNothing); // markers are not shown
+  });
+
+  testWidgets('wide screens (web on a laptop) get a side menu and today panel', (tester) async {
+    final c = await _start(tester, size: const Size(1440 * 2.5, 900 * 2.5));
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.text('झटपट'), findsOneWidget); // side menu quick links
+    expect(find.text('🪔 आगामी सण व व्रत'), findsOneWidget); // today panel
+    await tester.tap(find.text('गुरु ज्ञान').first);
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).routerDelegate.currentConfiguration.uri.path, '/guru');
+    await tester.ensureVisible(find.widgetWithText(InkWell, 'मंत्र').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(InkWell, 'मंत्र').first);
+    await tester.pumpAndSettle();
+    expect(find.text('ॐ नमः शिवाय'), findsWidgets); // the mantra list opened
   });
 }

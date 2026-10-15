@@ -2087,6 +2087,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome to Guru Gyan, {name} 🙏'**
   String welcomeShishya(String name);
+
+  /// No description provided for @webQuickLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick links'**
+  String get webQuickLinks;
+
+  /// No description provided for @webFestivals.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming festivals & vrats'**
+  String get webFestivals;
+
+  /// No description provided for @webInstallHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add this page to your home screen to use it like an app.'**
+  String get webInstallHint;
 }
 
 class _AppLocalizationsDelegate
