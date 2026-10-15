@@ -1061,4 +1061,41 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get webInstallHint => 'हे पान होम स्क्रीनवर जोडा आणि ॲपसारखे वापरा.';
+
+  @override
+  String get updateAvailableTitle => 'नवीन आवृत्ती उपलब्ध 🎉';
+
+  @override
+  String get updateAvailableBody =>
+      'ॲपची नवीन आवृत्ती आली आहे – नवीन सुविधा व दुरुस्त्या. आत्ताच अपडेट करा.';
+
+  @override
+  String get updateRequired =>
+      'ही आवृत्ती जुनी झाली आहे. पुढे वापरण्यासाठी कृपया अपडेट करा.';
+
+  @override
+  String get updateNow => 'आत्ता अपडेट करा';
+
+  @override
+  String get updateLater => 'नंतर';
+
+  @override
+  String get updateInstallHint =>
+      'डाउनलोड झाल्यावर फाइल उघडा आणि Install दाबा (विचारल्यास \"Install unknown apps\" परवानगी द्या).';
+
+  @override
+  String get upToDate => 'ॲप अद्ययावत आहे ✓';
+
+  @override
+  String get checkForUpdate => 'अपडेट तपासा';
+
+  @override
+  String appVersion(int build) {
+    return 'ॲप आवृत्ती $build';
+  }
+
+  @override
+  String newVersionNumber(int build) {
+    return 'आवृत्ती $build';
+  }
 }

@@ -9,6 +9,15 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
+    inputs:
+      note:
+        description: What is new (shown in the app's update dialog)
+        required: false
+        default: ""
+      required:
+        description: Older apps must update (they cannot be used until updated)
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -55,6 +64,7 @@ jobs:
           flutter build apk --release \
             --target-platform android-arm,android-arm64 \
             --build-number=${{ github.run_number }} \
+            --dart-define=APP_BUILD=${{ github.run_number }} \
             --dart-define=FIREBASE_API_KEY="$FIREBASE_API_KEY" \
             --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
             --dart-define=FIREBASE_SENDER_ID="$FIREBASE_SENDER_ID" \
@@ -88,3 +98,55 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
         working-directory: app
+
+      # In-app update: put the APK at a public link in Firebase Storage and
+      # tell installed apps (app_settings/main) that this build is the latest.
+      - uses: google-github-actions/auth@v2
+        if: vars.FIREBASE_PROJECT_ID != ''
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Publish for in-app update
+        if: vars.FIREBASE_PROJECT_ID != ''
+        env:
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+          BUCKET: ${{ vars.FIREBASE_STORAGE_BUCKET }}
+          BUILD: ${{ github.run_number }}
+          NOTE: ${{ inputs.note }}
+          REQUIRED: ${{ inputs.required }}
+        run: |
+          bucket="${BUCKET:-$PROJECT.firebasestorage.app}"
+          apk="$RUNNER_TEMP/kalbhairav-$BUILD.apk"
+          for obj in "public/apk/kalbhairav-$BUILD.apk" "public/apk/kalbhairav-latest.apk"; do
+            gcloud storage cp "$apk" "gs://$bucket/$obj" \
+              --content-type=application/vnd.android.package-archive --cache-control="no-cache"
+          done
+          link() { echo "https://firebasestorage.googleapis.com/v0/b/$bucket/o/$(python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1")?alt=media"; }
+          url=$(link "public/apk/kalbhairav-$BUILD.apk")
+          latest=$(link "public/apk/kalbhairav-latest.apk")
+          body=$(python3 - "$BUILD" "$url" "$NOTE" "$REQUIRED" <<'PY'
+          import json, sys
+          build, url, note, required = sys.argv[1:5]
+          fields = {
+              "androidBuild": {"integerValue": build},
+              "androidApkUrl": {"stringValue": url},
+              "androidUpdateNote": {"stringValue": note} if note.strip() else {"nullValue": None},
+          }
+          if required == "true":
+              fields["minAndroidBuild"] = {"integerValue": build}
+          print(json.dumps({"fields": fields}))
+          PY
+          )
+          mask="updateMask.fieldPaths=androidBuild&updateMask.fieldPaths=androidApkUrl&updateMask.fieldPaths=androidUpdateNote"
+          [ "$REQUIRED" = "true" ] && mask="$mask&updateMask.fieldPaths=minAndroidBuild"
+          curl -fsS -X PATCH \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application/json" \
+            "https://firestore.googleapis.com/v1/projects/$PROJECT/databases/(default)/documents/app_settings/main?$mask" \
+            -d "$body" > /dev/null
+          {
+            echo "## 🔔 In-app update published"
+            echo ""
+            echo "Installed apps (build 19 or later) will offer build $BUILD."
+            echo ""
+            echo "Public download link (share with devotees): $latest"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/app_update.dart';
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
 
@@ -53,8 +54,10 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (v) => ref.read(dailyQuotePopupProvider.notifier).set(v),
           ),
         ),
-        const SizedBox(height: 24),
-        const Center(child: Text('Kalbhairav Jagrut Devsthan • v1.0.0', style: TextStyle(color: Colors.grey))),
+        const SizedBox(height: 16),
+        const AppVersionTile(),
+        const SizedBox(height: 16),
+        const Center(child: Text('Kalbhairav Jagrut Devsthan', style: TextStyle(color: Colors.grey))),
       ]),
     );
   }

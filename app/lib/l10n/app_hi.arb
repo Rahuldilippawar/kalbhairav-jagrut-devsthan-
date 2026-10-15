@@ -333,5 +333,15 @@
   "welcomeShishya": "{name}, गुरु ज्ञान में आपका स्वागत 🙏",
   "webQuickLinks": "त्वरित लिंक",
   "webFestivals": "आगामी त्योहार व व्रत",
-  "webInstallHint": "इस पेज को होम स्क्रीन पर जोड़ें और ऐप की तरह उपयोग करें।"
+  "webInstallHint": "इस पेज को होम स्क्रीन पर जोड़ें और ऐप की तरह उपयोग करें।",
+  "updateAvailableTitle": "नया संस्करण उपलब्ध 🎉",
+  "updateAvailableBody": "ऐप का नया संस्करण आया है – नई सुविधाएँ व सुधार। अभी अपडेट करें।",
+  "updateRequired": "यह संस्करण पुराना हो गया है। आगे उपयोग के लिए कृपया अपडेट करें।",
+  "updateNow": "अभी अपडेट करें",
+  "updateLater": "बाद में",
+  "updateInstallHint": "डाउनलोड होने पर फ़ाइल खोलें और Install दबाएँ (पूछे जाने पर \"Install unknown apps\" अनुमति दें)।",
+  "upToDate": "ऐप अपडेटेड है ✓",
+  "checkForUpdate": "अपडेट जाँचें",
+  "appVersion": "ऐप संस्करण {build}",
+  "newVersionNumber": "संस्करण {build}"
 }

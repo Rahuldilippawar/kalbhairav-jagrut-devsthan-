@@ -225,4 +225,14 @@ void main() {
     expect(const Deity(id: 'd', name: 'x', photoUrl: '', photos: ['p']).cover, 'p');
     expect(const Deity(id: 'd', name: 'x').cover, isNull);
   });
+
+  test('app update: offered to older builds, required below the minimum', () {
+    const s = AppSettings(androidBuild: 20, androidApkUrl: 'https://x/a.apk', minAndroidBuild: 15);
+    expect(s.updateFor(20), (available: false, required: false));
+    expect(s.updateFor(18), (available: true, required: false));
+    expect(s.updateFor(12), (available: true, required: true));
+    expect(s.updateFor(0), (available: false, required: false)); // local build
+    expect(const AppSettings(androidBuild: 20).updateFor(5).available, isFalse); // no APK link
+    expect(AppSettings.fromMap({'androidBuild': 21, 'androidApkUrl': 'u'}).updateFor(20).available, isTrue);
+  });
 }

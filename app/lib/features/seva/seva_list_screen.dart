@@ -51,11 +51,18 @@ class SevaListScreen extends ConsumerWidget {
                         Text(s.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: KjdColors.inkMuted)),
                         const SizedBox(height: 8),
                         Row(children: [
-                          Text(s.pricePaise == 0 ? l.free : formatPaise(s.pricePaise),
-                              style: const TextStyle(fontWeight: FontWeight.w800, color: KjdColors.kumkum, fontSize: 16)),
-                          const Spacer(),
+                          Expanded(
+                            child: Text(s.pricePaise == 0 ? l.free : formatPaise(s.pricePaise),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontWeight: FontWeight.w800, color: KjdColors.kumkum, fontSize: 16)),
+                          ),
+                          const SizedBox(width: 8),
                           FilledButton(
-                            style: FilledButton.styleFrom(minimumSize: const Size(0, 36)),
+                            style: FilledButton.styleFrom(
+                              minimumSize: const Size(0, 36),
+                              padding: const EdgeInsets.symmetric(horizontal: 14),
+                            ),
                             onPressed: () => context.push('/book/${s.id}'),
                             child: Text(l.bookSeva),
                           ),

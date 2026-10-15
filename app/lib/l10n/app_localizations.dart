@@ -2105,6 +2105,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add this page to your home screen to use it like an app.'**
   String get webInstallHint;
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New version available 🎉'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version of the app is out with new features and fixes. Update now.'**
+  String get updateAvailableBody;
+
+  /// No description provided for @updateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This version is too old. Please update to continue.'**
+  String get updateRequired;
+
+  /// No description provided for @updateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get updateNow;
+
+  /// No description provided for @updateLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get updateLater;
+
+  /// No description provided for @updateInstallHint.
+  ///
+  /// In en, this message translates to:
+  /// **'When the download finishes, open the file and tap Install (allow \"Install unknown apps\" if asked).'**
+  String get updateInstallHint;
+
+  /// No description provided for @upToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'The app is up to date ✓'**
+  String get upToDate;
+
+  /// No description provided for @checkForUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for update'**
+  String get checkForUpdate;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version {build}'**
+  String appVersion(int build);
+
+  /// No description provided for @newVersionNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {build}'**
+  String newVersionNumber(int build);
 }
 
 class _AppLocalizationsDelegate

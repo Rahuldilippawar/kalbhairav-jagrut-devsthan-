@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
 
+import '../../app/app_update.dart';
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
 import '../darshan/darshan_screen.dart';
@@ -33,6 +34,7 @@ class HomeScreen extends ConsumerWidget {
         },
         child: CustomScrollView(slivers: [
           const _Header(),
+          const SliverToBoxAdapter(child: UpdateBanner()),
           const SliverToBoxAdapter(child: DailyQuoteGate()),
           const SliverToBoxAdapter(child: _HeroCarousel()),
           const SliverToBoxAdapter(child: DarshanSlider(height: 240, padding: EdgeInsets.symmetric(horizontal: 16), maxAgeDays: 1)),

@@ -1063,4 +1063,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get webInstallHint =>
       'Add this page to your home screen to use it like an app.';
+
+  @override
+  String get updateAvailableTitle => 'New version available 🎉';
+
+  @override
+  String get updateAvailableBody =>
+      'A new version of the app is out with new features and fixes. Update now.';
+
+  @override
+  String get updateRequired =>
+      'This version is too old. Please update to continue.';
+
+  @override
+  String get updateNow => 'Update now';
+
+  @override
+  String get updateLater => 'Later';
+
+  @override
+  String get updateInstallHint =>
+      'When the download finishes, open the file and tap Install (allow \"Install unknown apps\" if asked).';
+
+  @override
+  String get upToDate => 'The app is up to date ✓';
+
+  @override
+  String get checkForUpdate => 'Check for update';
+
+  @override
+  String appVersion(int build) {
+    return 'App version $build';
+  }
+
+  @override
+  String newVersionNumber(int build) {
+    return 'Version $build';
+  }
 }

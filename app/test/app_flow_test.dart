@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kjd_app/app/app.dart';
+import 'package:kjd_app/app/app_update.dart';
 import 'package:kjd_app/app/providers.dart';
 import 'package:kjd_app/app/router.dart';
 import 'package:kjd_app/main.dart';
@@ -21,12 +23,17 @@ final _now = DateTime(2026, 10, 6, 9, 30);
 const _devotee = AuthUser(uid: 'demo-919876543210', phone: '+919876543210');
 
 Future<ProviderContainer> _start(WidgetTester tester,
-    {AuthUser? user, String to = '/home', bool quotePopup = false, Size size = const Size(1080, 2400)}) async {
+    {AuthUser? user,
+    String to = '/home',
+    bool quotePopup = false,
+    Size size = const Size(1080, 2400),
+    List<Override> extra = const []}) async {
   SharedPreferences.setMockInitialValues({'onboarding_seen_v1': true, 'daily_quote_popup_v1': quotePopup});
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 2.5;
   addTearDown(tester.view.reset);
-  final container = ProviderContainer(overrides: demoOverrides(clock: () => _now, user: user, mapTiles: false));
+  final container =
+      ProviderContainer(overrides: [...demoOverrides(clock: () => _now, user: user, mapTiles: false), ...extra]);
   addTearDown(container.dispose);
   await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const KjdApp()));
   await tester.pump(const Duration(seconds: 2)); // splash
@@ -466,5 +473,27 @@ void main() {
     await tester.tap(find.widgetWithText(InkWell, 'मंत्र').first);
     await tester.pumpAndSettle();
     expect(find.text('ॐ नमः शिवाय'), findsWidgets); // the mantra list opened
+  });
+
+  testWidgets('an older app offers the new version; a too-old one must update', (tester) async {
+    final c = await _start(tester, extra: [appBuildProvider.overrideWithValue(17)]);
+    expect(find.text('नवीन आवृत्ती उपलब्ध 🎉'), findsNothing);
+    final store = c.read(dataStoreProvider);
+    await store.set(Col.appSettings, Col.mainDoc,
+        {'androidBuild': 19, 'androidApkUrl': 'https://example.org/kalbhairav-19.apk', 'androidUpdateNote': 'गुरु ज्ञान'},
+        merge: true);
+    await tester.pumpAndSettle();
+    expect(find.text('नवीन आवृत्ती उपलब्ध 🎉'), findsWidgets); // dialog + home banner
+    expect(find.text('गुरु ज्ञान'), findsWidgets);
+    await tester.tap(find.text('नंतर'));
+    await tester.pumpAndSettle();
+    expect(find.byType(UpdateDialog), findsNothing);
+    expect(find.byType(UpdateBanner), findsOneWidget);
+    expect(find.text('आत्ता अपडेट करा'), findsOneWidget); // banner button stays
+
+    await store.set(Col.appSettings, Col.mainDoc, {'minAndroidBuild': 19}, merge: true);
+    c.read(routerProvider).go('/seva');
+    await tester.pumpAndSettle();
+    expect(c.read(appUpdateProvider).required, isTrue);
   });
 }

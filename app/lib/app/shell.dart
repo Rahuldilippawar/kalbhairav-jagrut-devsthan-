@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/common.dart';
+import 'app_update.dart';
 import 'providers.dart';
 import 'web_layout.dart';
 
@@ -15,7 +16,8 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final demo = ref.watch(demoModeProvider);
-    return Scaffold(
+    return UpdatePrompt(
+        child: Scaffold(
       body: Column(children: [
         if (demo) const SafeArea(bottom: false, child: DemoBanner()),
         Expanded(
@@ -41,7 +43,7 @@ class AppShell extends ConsumerWidget {
           NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: l.navProfile),
         ],
       ),
-    );
+    ));
   }
 }
 

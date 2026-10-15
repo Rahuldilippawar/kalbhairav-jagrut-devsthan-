@@ -1058,4 +1058,41 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get webInstallHint => 'આ પેજ હોમ સ્ક્રીન પર ઉમેરો અને એપની જેમ વાપરો.';
+
+  @override
+  String get updateAvailableTitle => 'નવું વર્ઝન ઉપલબ્ધ 🎉';
+
+  @override
+  String get updateAvailableBody =>
+      'એપનું નવું વર્ઝન આવ્યું છે – નવી સુવિધાઓ અને સુધારા. હમણાં અપડેટ કરો.';
+
+  @override
+  String get updateRequired =>
+      'આ વર્ઝન જૂનું થઈ ગયું છે. આગળ વાપરવા કૃપા કરી અપડેટ કરો.';
+
+  @override
+  String get updateNow => 'હમણાં અપડેટ કરો';
+
+  @override
+  String get updateLater => 'પછી';
+
+  @override
+  String get updateInstallHint =>
+      'ડાઉનલોડ થયા પછી ફાઇલ ખોલો અને Install દબાવો (પૂછે તો \"Install unknown apps\" મંજૂરી આપો).';
+
+  @override
+  String get upToDate => 'એપ અપડેટેડ છે ✓';
+
+  @override
+  String get checkForUpdate => 'અપડેટ તપાસો';
+
+  @override
+  String appVersion(int build) {
+    return 'એપ વર્ઝન $build';
+  }
+
+  @override
+  String newVersionNumber(int build) {
+    return 'વર્ઝન $build';
+  }
 }

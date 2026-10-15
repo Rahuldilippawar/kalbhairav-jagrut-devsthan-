@@ -290,7 +290,31 @@ class AppSettings {
     this.upiId,
     this.upiPayeeName,
     this.upiQrImageUrl,
+    this.androidBuild = 0,
+    this.androidApkUrl,
+    this.androidUpdateNote,
+    this.minAndroidBuild = 0,
   });
+
+  /// Latest Android app build and its public APK link (written by the
+  /// "Build Android APK" workflow). Older apps offer the update.
+  final int androidBuild;
+  final String? androidApkUrl;
+
+  /// What is new, shown in the update dialog.
+  final String? androidUpdateNote;
+
+  /// Apps older than this must update before they can be used.
+  final int minAndroidBuild;
+
+  /// Whether an app at [currentBuild] should offer (or, below
+  /// [minAndroidBuild], require) the update. Builds without a number (0,
+  /// e.g. local runs) never ask.
+  ({bool available, bool required}) updateFor(int currentBuild) {
+    final hasApk = androidApkUrl != null && androidApkUrl!.isNotEmpty;
+    if (currentBuild <= 0 || !hasApk) return (available: false, required: false);
+    return (available: androidBuild > currentBuild, required: currentBuild < minAndroidBuild);
+  }
 
   /// Temple UPI ID (e.g. `kalbhairav@sbi`). When set, devotees pay by UPI
   /// QR / UPI app and the office verifies the UTR.
@@ -330,6 +354,10 @@ class AppSettings {
       upiId: asStringOrNull(m['upiId'])?.trim(),
       upiPayeeName: asStringOrNull(m['upiPayeeName']),
       upiQrImageUrl: asStringOrNull(m['upiQrImageUrl']),
+      androidBuild: asInt(m['androidBuild']),
+      androidApkUrl: asStringOrNull(m['androidApkUrl']),
+      androidUpdateNote: asStringOrNull(m['androidUpdateNote']),
+      minAndroidBuild: asInt(m['minAndroidBuild']),
     );
   }
 
@@ -344,5 +372,9 @@ class AppSettings {
         'upiId': upiId,
         'upiPayeeName': upiPayeeName,
         'upiQrImageUrl': upiQrImageUrl,
+        'androidBuild': androidBuild,
+        'androidApkUrl': androidApkUrl,
+        'androidUpdateNote': androidUpdateNote,
+        'minAndroidBuild': minAndroidBuild,
       };
 }
