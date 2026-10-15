@@ -496,4 +496,25 @@ void main() {
     await tester.pumpAndSettle();
     expect(c.read(appUpdateProvider).required, isTrue);
   });
+
+  testWidgets('approved shishya reads Katha-Kalpataru chapter by chapter', (tester) async {
+    final c = await _start(tester, to: '/guru');
+    final uid = c.read(uidProvider)!;
+    await c.read(dataStoreProvider).set(Col.shishyas, uid, {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
+    await tester.pumpAndSettle();
+    expect(find.text('कथाकल्पतरू'), findsOneWidget);
+    await tester.tap(find.text('कथाकल्पतरू'));
+    await tester.pumpAndSettle();
+    expect(find.text('स्तबक 1'), findsOneWidget);
+    await tester.tap(find.text('स्तबक 2'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('अंबरीष राजाची कथा व कपालेश्वराची कथा'));
+    await tester.pumpAndSettle();
+    expect(find.text('कपालेश्वराची कथा'), findsOneWidget); // ## heading
+    expect(find.text('✓ शुद्ध'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('वाचले ✓'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.text('वाचले ✓'));
+    await tester.pumpAndSettle();
+    expect((await c.read(dataStoreProvider).get(Col.shishyas, uid))!.data['completed'], ['kk-s2-a08']);
+  });
 }

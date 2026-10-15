@@ -290,6 +290,30 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
         'requestedAt': today,
       },
     },
+    // Demo only: two chapters; the live app imports the whole granth.
+    Col.granth: {
+      'kathakalpataru': {
+        'title': 'कथाकल्पतरू',
+        'subtitle': 'पूर्वार्ध – स्तबक १ ते ७',
+        'author': 'कवी श्रीकृष्ण व मधुकर',
+        'edition': 'सरळ गोष्टींच्या रूपाने सुलभ मराठी भाषांतर – मुंबई, इ.स. १९१०',
+        'chapters': [
+          {'id': 'kk-s1-a01', 'stabak': 1, 'adhyay': 1, 'adhyayTo': 1, 'title': 'मंगलाचरण', 'topics': <String>[], 'proofread': false},
+          {
+            'id': 'kk-s2-a08', 'stabak': 2, 'adhyay': 8, 'adhyayTo': 8,
+            'title': 'अंबरीष राजाची कथा व कपालेश्वराची कथा',
+            'topics': ['अंबरीष राजाची कथा', 'सुदर्शन चक्र', 'कपालेश्वराची कथा', 'ऋषींचा सत्कार'], 'proofread': true,
+          },
+        ],
+      },
+    },
+    Col.granthText: {
+      'kk-s1-a01': {'body': 'हे मंगलमूर्ती गजानना, तुला मी साष्टांग नमस्कार करितो. (नमुना मजकूर)'},
+      'kk-s2-a08': {
+        'body': '## कपालेश्वराची कथा\n\nपूर्वी ब्रह्मदेवाला पाच मुखे असून ते चार मुखांनी चार वेदांचे पठण करीत असत, '
+            'व पाचव्या मुखाने उपवेद जे गायन ते म्हणत असत. (नमुना मजकूर)',
+      },
+    },
     Col.darshanSchedule: byId(darshan, (s) => s.id, (s) => s.toMap()),
     Col.dailyQuotes: byId([...quotes, ...suvicharLibrary], (q) => q.id, (q) => q.toMap()),
     Col.mantras: byId([...mantras, ...mantraLibrary], (m) => m.id, (m) => m.toMap()),

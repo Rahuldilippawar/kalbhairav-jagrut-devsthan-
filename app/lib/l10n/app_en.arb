@@ -444,5 +444,11 @@
         "type": "int"
       }
     }
-  }
+  },
+  "granthReading": "Granth reading",
+  "stabakLabel": "Stabak",
+  "adhyayLabel": "Adhyay",
+  "proofreadBadge": "Checked",
+  "ocrNote": "This chapter was read by computer from the 1910 printed book and may have spelling mistakes.",
+  "nextAdhyay": "Next adhyay"
 }

@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/secure_screen.dart';
 import '../../widgets/youtube_view.dart';
 import '../gallery/gallery_screen.dart';
+import 'granth_screens.dart';
 import 'lesson_body.dart';
 
 /// Guru Gyan tab: lessons for the shishya parivar. Anyone can ask for
@@ -364,6 +365,7 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
             Text(l.lessonsProgress(done, all.length), style: const TextStyle(color: KjdColors.goldLight)),
           ]),
         ),
+        for (final id in granthIds) GranthCard(id: id, completed: s.completed),
         if (lessonDeities.isNotEmpty) ...[
           const SizedBox(height: 14),
           SizedBox(

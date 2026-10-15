@@ -2165,6 +2165,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {build}'**
   String newVersionNumber(int build);
+
+  /// No description provided for @granthReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Granth reading'**
+  String get granthReading;
+
+  /// No description provided for @stabakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stabak'**
+  String get stabakLabel;
+
+  /// No description provided for @adhyayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Adhyay'**
+  String get adhyayLabel;
+
+  /// No description provided for @proofreadBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked'**
+  String get proofreadBadge;
+
+  /// No description provided for @ocrNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This chapter was read by computer from the 1910 printed book and may have spelling mistakes.'**
+  String get ocrNote;
+
+  /// No description provided for @nextAdhyay.
+  ///
+  /// In en, this message translates to:
+  /// **'Next adhyay'**
+  String get nextAdhyay;
 }
 
 class _AppLocalizationsDelegate

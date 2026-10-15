@@ -383,6 +383,12 @@ class GuruGyanRepository {
           ..sort((a, b) => a.order.compareTo(b.order));
       });
 
+  Stream<Granth?> watchGranth(String id) =>
+      store.watchDoc(Col.granth, id).map((d) => d == null ? null : Granth.fromMap(d.id, d.data));
+
+  Future<String?> chapterText(String chapterId) async =>
+      asStringOrNull((await store.get(Col.granthText, chapterId))?.data['body']);
+
   /// Admin: every request, newest first.
   Stream<List<Shishya>> watchShishyas() => store
       .watch(Col.shishyas, const Query(orderBy: 'requestedAt', descending: true))

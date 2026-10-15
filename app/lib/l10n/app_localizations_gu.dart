@@ -1095,4 +1095,23 @@ class AppLocalizationsGu extends AppLocalizations {
   String newVersionNumber(int build) {
     return 'વર્ઝન $build';
   }
+
+  @override
+  String get granthReading => 'ગ્રંથ વાંચન';
+
+  @override
+  String get stabakLabel => 'સ્તબક';
+
+  @override
+  String get adhyayLabel => 'અધ્યાય';
+
+  @override
+  String get proofreadBadge => 'શુદ્ધ';
+
+  @override
+  String get ocrNote =>
+      'આ અધ્યાય 1910 ની છાપેલી પ્રતમાંથી કમ્પ્યુટરે વાંચ્યો છે; થોડી અક્ષરભૂલો હોઈ શકે.';
+
+  @override
+  String get nextAdhyay => 'આગળનો અધ્યાય';
 }

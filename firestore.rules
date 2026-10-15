@@ -95,6 +95,15 @@ service cloud.firestore {
       allow read: if approvedShishya() || can('content') || can('devotees');
       allow write: if can('content');
     }
+    // Granths (e.g. Katha-Kalpataru): chapter list and chapter texts.
+    match /granth/{id} {
+      allow read: if approvedShishya() || can('content') || can('devotees');
+      allow write: if can('content');
+    }
+    match /granth_text/{id} {
+      allow read: if approvedShishya() || can('content') || can('devotees');
+      allow write: if can('content');
+    }
 
     // ---- devotee data --------------------------------------------------
     match /users/{userId} {

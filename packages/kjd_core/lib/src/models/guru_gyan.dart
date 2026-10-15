@@ -171,3 +171,77 @@ class GuruLesson {
         'active': active,
       };
 }
+
+/// One chapter in a granth's index (`granth/<book>.chapters`).
+class GranthChapter {
+  const GranthChapter({
+    required this.id,
+    required this.stabak,
+    required this.adhyay,
+    required this.title,
+    int? adhyayTo,
+    this.topics = const [],
+    this.proofread = false,
+  }) : adhyayTo = adhyayTo ?? adhyay;
+
+  final String id;
+  final int stabak;
+  final int adhyay;
+
+  /// Last adhyay when the chapter covers several (a merged OCR heading).
+  final int adhyayTo;
+  final String title;
+  final List<String> topics;
+
+  /// Text checked by hand (else raw OCR of the printed book).
+  final bool proofread;
+
+  String get adhyayLabel => adhyayTo > adhyay ? '$adhyay–$adhyayTo' : '$adhyay';
+
+  factory GranthChapter.fromMap(Map<String, dynamic> m) => GranthChapter(
+        id: asString(m['id']),
+        stabak: asInt(m['stabak']),
+        adhyay: asInt(m['adhyay']),
+        adhyayTo: m['adhyayTo'] == null ? null : asInt(m['adhyayTo']),
+        title: asString(m['title']),
+        topics: asStringList(m['topics']),
+        proofread: asBool(m['proofread']),
+      );
+}
+
+/// `granth/<id>` – a scripture read chapter by chapter (text in
+/// `granth_text/<chapter id>`).
+class Granth {
+  const Granth({
+    required this.id,
+    required this.title,
+    this.subtitle,
+    this.author,
+    this.edition,
+    this.note,
+    this.chapters = const [],
+  });
+
+  final String id;
+  final String title;
+  final String? subtitle;
+  final String? author;
+  final String? edition;
+  final String? note;
+  final List<GranthChapter> chapters;
+
+  List<int> get stabaks => {for (final c in chapters) c.stabak}.toList()..sort();
+
+  factory Granth.fromMap(String id, Map<String, dynamic> m) => Granth(
+        id: id,
+        title: asString(m['title']),
+        subtitle: asStringOrNull(m['subtitle']),
+        author: asStringOrNull(m['author']),
+        edition: asStringOrNull(m['edition']),
+        note: asStringOrNull(m['note']),
+        chapters: [
+          for (final c in (m['chapters'] as List? ?? const []))
+            if (c is Map) GranthChapter.fromMap(Map<String, dynamic>.from(c)),
+        ],
+      );
+}

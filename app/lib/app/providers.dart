@@ -96,6 +96,15 @@ final guruLessonsProvider = StreamProvider<List<GuruLesson>>((ref) {
   if (!approved) return Stream.value(const []);
   return ref.watch(guruRepoProvider).watchLessons();
 });
+/// A granth's chapter list; null until the shishya is approved.
+final granthProvider = StreamProvider.family<Granth?, String>((ref, id) {
+  final approved = ref.watch(myShishyaProvider.select((s) => s.value?.isApproved ?? false));
+  if (!approved) return Stream.value(null);
+  return ref.watch(guruRepoProvider).watchGranth(id);
+});
+
+final granthTextProvider =
+    FutureProvider.family<String?, String>((ref, chapterId) => ref.watch(guruRepoProvider).chapterText(chapterId));
 final festivalOverridesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchFestivalOverrides());
 
 /// The year's festivals and vrats with the temple's date corrections.

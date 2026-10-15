@@ -1100,4 +1100,23 @@ class AppLocalizationsHi extends AppLocalizations {
   String newVersionNumber(int build) {
     return 'संस्करण $build';
   }
+
+  @override
+  String get granthReading => 'ग्रंथ वाचन';
+
+  @override
+  String get stabakLabel => 'स्तबक';
+
+  @override
+  String get adhyayLabel => 'अध्याय';
+
+  @override
+  String get proofreadBadge => 'शुद्ध';
+
+  @override
+  String get ocrNote =>
+      'यह अध्याय 1910 की छपी प्रति से कंप्यूटर द्वारा पढ़ा गया है; कुछ अक्षर-त्रुटियाँ हो सकती हैं।';
+
+  @override
+  String get nextAdhyay => 'अगला अध्याय';
 }

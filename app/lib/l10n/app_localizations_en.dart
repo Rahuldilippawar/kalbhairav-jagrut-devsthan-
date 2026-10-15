@@ -1100,4 +1100,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String newVersionNumber(int build) {
     return 'Version $build';
   }
+
+  @override
+  String get granthReading => 'Granth reading';
+
+  @override
+  String get stabakLabel => 'Stabak';
+
+  @override
+  String get adhyayLabel => 'Adhyay';
+
+  @override
+  String get proofreadBadge => 'Checked';
+
+  @override
+  String get ocrNote =>
+      'This chapter was read by computer from the 1910 printed book and may have spelling mistakes.';
+
+  @override
+  String get nextAdhyay => 'Next adhyay';
 }

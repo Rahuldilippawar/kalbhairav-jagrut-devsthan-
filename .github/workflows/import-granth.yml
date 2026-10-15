@@ -1,0 +1,22 @@
+# Writes the granth texts in data/granth/ (Katha-Kalpataru) to Firestore,
+# where approved shishyas read them under Guru Gyan. Run again after
+# proofreading chapters (tools/granth/proofread/).
+name: Import granth to Firestore
+
+on:
+  workflow_dispatch:
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Import
+        env:
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+        run: |
+          export TOKEN=$(gcloud auth print-access-token)
+          python3 tools/granth/import_firestore.py data/granth/kathakalpataru.json | tee -a "$GITHUB_STEP_SUMMARY"

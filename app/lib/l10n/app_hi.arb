@@ -343,5 +343,11 @@
   "upToDate": "ऐप अपडेटेड है ✓",
   "checkForUpdate": "अपडेट जाँचें",
   "appVersion": "ऐप संस्करण {build}",
-  "newVersionNumber": "संस्करण {build}"
+  "newVersionNumber": "संस्करण {build}",
+  "granthReading": "ग्रंथ वाचन",
+  "stabakLabel": "स्तबक",
+  "adhyayLabel": "अध्याय",
+  "proofreadBadge": "शुद्ध",
+  "ocrNote": "यह अध्याय 1910 की छपी प्रति से कंप्यूटर द्वारा पढ़ा गया है; कुछ अक्षर-त्रुटियाँ हो सकती हैं।",
+  "nextAdhyay": "अगला अध्याय"
 }

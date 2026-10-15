@@ -144,6 +144,7 @@ test("guru gyan: shishya requests and lessons need approval", async () => {
   await assertFails(getDoc(doc(other(), "shishyas/u1")));
   // Waiting shishya: no lessons, cannot approve themselves.
   await assertFails(getDoc(doc(devotee(), "guru_gyan/l1")));
+  await assertFails(getDoc(doc(devotee(), "granth_text/kk-s2-a08")));
   await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { status: "approved" }));
   await assertFails(getDocs(collection(guest(), "guru_gyan")));
   // Staff approve; then lessons open and progress can be saved.
@@ -151,6 +152,10 @@ test("guru gyan: shishya requests and lessons need approval", async () => {
   await assertSucceeds(getDocs(collection(admin("seva_manager"), "shishyas")));
   await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), "shishyas/u1"), { status: "approved" }));
   await assertSucceeds(getDocs(collection(devotee(), "guru_gyan")));
+  await assertSucceeds(getDoc(doc(devotee(), "granth/kathakalpataru")));
+  await assertSucceeds(getDoc(doc(devotee(), "granth_text/kk-s2-a08")));
+  await assertFails(getDoc(doc(other(), "granth_text/kk-s2-a08")));
+  await assertFails(setDoc(doc(devotee(), "granth_text/kk-s2-a08"), { body: "x" }));
   await assertSucceeds(updateDoc(doc(devotee(), "shishyas/u1"), { completed: ["l1"] }));
   await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { completed: ["l1"], name: "x" }));
   await assertFails(setDoc(doc(devotee(), "guru_gyan/l2"), { title: "x" }));

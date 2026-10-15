@@ -12,6 +12,7 @@ import '../features/donation/receipt_screen.dart';
 import '../features/events/event_detail_screen.dart';
 import '../features/events/events_screen.dart';
 import '../features/gallery/gallery_screen.dart';
+import '../features/guru/granth_screens.dart';
 import '../features/guru/guru_gyan_screens.dart';
 import '../features/home/home_screen.dart';
 import '../features/mantra/mantra_screens.dart';
@@ -63,6 +64,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/temple', builder: (_, _) => const TempleInfoScreen()),
       GoRoute(path: '/deities', builder: (_, _) => const DeitiesScreen()),
       GoRoute(path: '/deity/:id', builder: (_, s) => DeityDetailScreen(deityId: s.pathParameters['id']!)),
+      GoRoute(path: '/granth/:id', builder: (_, s) => GranthScreen(id: s.pathParameters['id']!)),
+      GoRoute(
+        path: '/granth/:id/:chapter',
+        builder: (_, s) => GranthChapterScreen(granthId: s.pathParameters['id']!, chapterId: s.pathParameters['chapter']!),
+      ),
       GoRoute(path: '/guru/:id', builder: (_, s) => GuruLessonScreen(lessonId: s.pathParameters['id']!)),
       GoRoute(path: '/parampara', builder: (_, _) => const ParamparaScreen()),
       GoRoute(path: '/parampara/:id', builder: (_, s) => GadhipatiScreen(id: s.pathParameters['id']!)),

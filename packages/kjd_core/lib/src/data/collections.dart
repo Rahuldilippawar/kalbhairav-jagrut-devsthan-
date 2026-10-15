@@ -46,6 +46,10 @@ abstract final class Col {
 
   /// Guru Gyan lessons (approved shishyas only).
   static const guruGyan = 'guru_gyan';
+
+  /// Granth chapter lists (`granth/<book>`) and texts (`granth_text/<chapter>`).
+  static const granth = 'granth';
+  static const granthText = 'granth_text';
   static const videos = 'videos';
 
   static const templeInfo = 'temple_info';
