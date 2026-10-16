@@ -2139,7 +2139,7 @@ abstract class AppLocalizations {
   /// No description provided for @updateInstallHint.
   ///
   /// In en, this message translates to:
-  /// **'When the download finishes, open the file and tap Install (allow \"Install unknown apps\" if asked).'**
+  /// **'Tap \"Update now\" – the app downloads it itself; then tap \"Update\" on Android\'s screen.'**
   String get updateInstallHint;
 
   /// No description provided for @upToDate.
@@ -2393,6 +2393,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove'**
   String get chatDelete;
+
+  /// No description provided for @updateDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading the new version… {percent}%'**
+  String updateDownloading(int percent);
+
+  /// No description provided for @updateAllowInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'On the next screen turn on \"Allow from this source\", then come back – the update continues by itself.'**
+  String get updateAllowInstall;
 }
 
 class _AppLocalizationsDelegate

@@ -1083,7 +1083,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateInstallHint =>
-      'When the download finishes, open the file and tap Install (allow \"Install unknown apps\" if asked).';
+      'Tap \"Update now\" – the app downloads it itself; then tap \"Update\" on Android\'s screen.';
 
   @override
   String get upToDate => 'The app is up to date ✓';
@@ -1231,4 +1231,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatDelete => 'Remove';
+
+  @override
+  String updateDownloading(int percent) {
+    return 'Downloading the new version… $percent%';
+  }
+
+  @override
+  String get updateAllowInstall =>
+      'On the next screen turn on \"Allow from this source\", then come back – the update continues by itself.';
 }

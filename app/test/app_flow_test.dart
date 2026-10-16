@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +15,7 @@ import 'package:kjd_app/main.dart';
 import 'package:kjd_app/features/banner/festival_picker.dart';
 import 'package:kjd_app/features/guru/lesson_body.dart';
 import 'package:kjd_app/features/guru/shishya_chat_screen.dart';
+import 'package:kjd_app/services/apk_installer.dart';
 import 'package:kjd_app/services/chat_media.dart';
 import 'package:kjd_app/widgets/common.dart';
 import 'package:kjd_app/widgets/media_viewer.dart';
@@ -503,6 +506,25 @@ void main() {
     expect(c.read(appUpdateProvider).required, isTrue);
   });
 
+  testWidgets('"Update now" downloads and installs inside the app on Android', (tester) async {
+    final installer = _FakeInstaller();
+    final c = await _start(tester, extra: [
+      appBuildProvider.overrideWithValue(17),
+      apkInstallerProvider.overrideWithValue(installer),
+    ]);
+    await c.read(dataStoreProvider).set(Col.appSettings, Col.mainDoc,
+        {'androidBuild': 19, 'androidApkUrl': 'https://example.org/kalbhairav-19.apk'},
+        merge: true);
+    await tester.pumpAndSettle();
+    await tester.tap(find.descendant(of: find.byType(UpdateDialog), matching: find.text('आत्ता अपडेट करा')));
+    await tester.pump();
+    expect(find.textContaining('डाउनलोड होत आहे'), findsOneWidget); // progress dialog
+    installer.done.complete(InstallResult.started);
+    await tester.pumpAndSettle();
+    expect(installer.urls, ['https://example.org/kalbhairav-19.apk']);
+    expect(find.textContaining('डाउनलोड होत आहे'), findsNothing);
+  });
+
   testWidgets('approved shishya reads Katha-Kalpataru chapter by chapter', (tester) async {
     final c = await _start(tester, to: '/guru');
     final uid = c.read(uidProvider)!;
@@ -654,4 +676,17 @@ class _FakeVoiceRecorder implements VoiceRecorder {
   Future<void> cancel() async {}
   @override
   void dispose() {}
+}
+
+class _FakeInstaller implements ApkInstaller {
+  final urls = <String>[];
+  final done = Completer<InstallResult>();
+  @override
+  bool get supported => true;
+  @override
+  Future<InstallResult> downloadAndInstall(String url, {void Function(double progress)? onProgress}) {
+    urls.add(url);
+    onProgress?.call(0.5);
+    return done.future;
+  }
 }

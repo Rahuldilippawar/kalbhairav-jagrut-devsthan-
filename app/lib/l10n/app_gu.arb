@@ -339,7 +339,7 @@
   "updateRequired": "આ વર્ઝન જૂનું થઈ ગયું છે. આગળ વાપરવા કૃપા કરી અપડેટ કરો.",
   "updateNow": "હમણાં અપડેટ કરો",
   "updateLater": "પછી",
-  "updateInstallHint": "ડાઉનલોડ થયા પછી ફાઇલ ખોલો અને Install દબાવો (પૂછે તો \"Install unknown apps\" મંજૂરી આપો).",
+  "updateInstallHint": "\"હમણાં અપડેટ કરો\" દબાવો – એપ જાતે ડાઉનલોડ કરશે; પછી Android ની સ્ક્રીન પર \"Update\" દબાવો.",
   "upToDate": "એપ અપડેટેડ છે ✓",
   "checkForUpdate": "અપડેટ તપાસો",
   "appVersion": "એપ વર્ઝન {build}",
@@ -381,5 +381,7 @@
   "chatMicDenied": "અવાજ સંદેશ માટે માઇક્રોફોનની મંજૂરી આપો",
   "chatFileTooBig": "ફાઇલ બહુ મોટી છે (મર્યાદા {mb} MB)",
   "chatDeleteAsk": "આ સંદેશ દૂર કરવો?",
-  "chatDelete": "દૂર કરો"
+  "chatDelete": "દૂર કરો",
+  "updateDownloading": "નવું સંસ્કરણ ડાઉનલોડ થાય છે… {percent}%",
+  "updateAllowInstall": "આગલી સ્ક્રીન પર \"આ સ્રોતથી મંજૂરી આપો\" ચાલુ કરો અને પાછા આવો – અપડેટ આપમેળે આગળ વધશે."
 }

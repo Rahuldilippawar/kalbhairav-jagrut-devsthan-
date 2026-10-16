@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kjd_core/kjd_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../services/apk_installer.dart';
 import '../widgets/common.dart';
 import 'providers.dart';
 
@@ -24,6 +27,65 @@ final appUpdateProvider = Provider<({bool available, bool required})>((ref) {
 Future<void> openApkDownload(BuildContext context, String url) async {
   final ok = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   if (!ok && context.mounted) context.toast(context.l10n.error);
+}
+
+final apkInstallerProvider = Provider<ApkInstaller>((_) => AndroidApkInstaller());
+
+/// "Update now": on Android the app downloads the new APK itself (with a
+/// progress dialog) and opens Android's install screen, where the devotee
+/// taps "Update". The first time, Android asks to allow installs from this
+/// app; the update carries on when they come back. Elsewhere, or if anything
+/// fails, the APK opens in the browser as before.
+Future<void> startAppUpdate(BuildContext context, WidgetRef ref, String url) async {
+  final installer = ref.read(apkInstallerProvider);
+  if (!installer.supported) return openApkDownload(context, url);
+  final l = context.l10n;
+  final progress = ValueNotifier<double>(0);
+  final nav = Navigator.of(context, rootNavigator: true);
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => PopScope(
+      canPop: false,
+      child: AlertDialog(
+        content: ValueListenableBuilder<double>(
+          valueListenable: progress,
+          builder: (_, p, _) => Column(mainAxisSize: MainAxisSize.min, children: [
+            LinearProgressIndicator(value: p == 0 ? null : p),
+            const SizedBox(height: 14),
+            Text(l.updateDownloading((p * 100).round())),
+          ]),
+        ),
+      ),
+    ),
+  );
+  var result = InstallResult.failed;
+  try {
+    result = await installer.downloadAndInstall(url, onProgress: (p) => progress.value = p);
+    if (result == InstallResult.needsPermission) {
+      if (context.mounted) context.toast(l.updateAllowInstall);
+      // Android's "install unknown apps" screen is open; carry on when the
+      // devotee comes back from it.
+      await _nextResume();
+      result = await installer.downloadAndInstall(url);
+    }
+  } catch (_) {
+    result = InstallResult.failed;
+  } finally {
+    nav.pop();
+    progress.dispose();
+  }
+  if (result != InstallResult.started && context.mounted) await openApkDownload(context, url);
+}
+
+Future<void> _nextResume() {
+  final done = Completer<void>();
+  late final AppLifecycleListener listener;
+  listener = AppLifecycleListener(onResume: () {
+    listener.dispose();
+    if (!done.isCompleted) done.complete();
+  });
+  return done.future;
 }
 
 /// Shows the update dialog once per app start when a newer version is out
@@ -121,7 +183,7 @@ class UpdateDialog extends ConsumerWidget {
                   child: FilledButton.icon(
                     icon: const Icon(Icons.system_update),
                     label: Text(l.updateNow),
-                    onPressed: () => openApkDownload(context, s.androidApkUrl!),
+                    onPressed: () => startAppUpdate(context, ref, s.androidApkUrl!),
                   ),
                 ),
               ]),
@@ -152,7 +214,7 @@ class UpdateBanner extends ConsumerWidget {
           title: Text(l.updateAvailableTitle, style: const TextStyle(fontWeight: FontWeight.w800)),
           subtitle: Text(l.newVersionNumber(s.androidBuild)),
           trailing: FilledButton(
-            onPressed: () => openApkDownload(context, s.androidApkUrl!),
+            onPressed: () => startAppUpdate(context, ref, s.androidApkUrl!),
             child: Text(l.updateNow),
           ),
         ),

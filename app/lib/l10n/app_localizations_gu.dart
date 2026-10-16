@@ -1078,7 +1078,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get updateInstallHint =>
-      'ડાઉનલોડ થયા પછી ફાઇલ ખોલો અને Install દબાવો (પૂછે તો \"Install unknown apps\" મંજૂરી આપો).';
+      '\"હમણાં અપડેટ કરો\" દબાવો – એપ જાતે ડાઉનલોડ કરશે; પછી Android ની સ્ક્રીન પર \"Update\" દબાવો.';
 
   @override
   String get upToDate => 'એપ અપડેટેડ છે ✓';
@@ -1224,4 +1224,13 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get chatDelete => 'દૂર કરો';
+
+  @override
+  String updateDownloading(int percent) {
+    return 'નવું સંસ્કરણ ડાઉનલોડ થાય છે… $percent%';
+  }
+
+  @override
+  String get updateAllowInstall =>
+      'આગલી સ્ક્રીન પર \"આ સ્રોતથી મંજૂરી આપો\" ચાલુ કરો અને પાછા આવો – અપડેટ આપમેળે આગળ વધશે.';
 }
