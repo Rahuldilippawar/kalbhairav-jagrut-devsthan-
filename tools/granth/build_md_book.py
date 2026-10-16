@@ -31,7 +31,7 @@ def main(book):
             'adhyay': adhyay,
             'adhyayTo': adhyay,
             'title': first.lstrip('# ').strip(),
-            'topics': [l[3:].strip() for l in body.split('\n') if l.startswith('## ')][:12],
+            'topics': [l[3:].strip() for l in body.split('\n') if l.startswith('## ')][:20],
             'body': body.strip(),
             'proofread': True,
         })
