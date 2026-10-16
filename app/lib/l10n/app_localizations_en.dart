@@ -1240,4 +1240,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get updateAllowInstall =>
       'On the next screen turn on \"Allow from this source\", then come back – the update continues by itself.';
+
+  @override
+  String get chatYesterday => 'Yesterday';
+
+  @override
+  String get chatReply => 'Reply';
+
+  @override
+  String get chatCopy => 'Copy';
+
+  @override
+  String get chatCopied => 'Copied';
+
+  @override
+  String get chatInfo => 'Message info';
+
+  @override
+  String get chatSeenTitle => 'Seen by';
+
+  @override
+  String get chatNotSeen => 'Nobody has seen it yet';
+
+  @override
+  String chatSeenBy(int count) {
+    return '$count seen';
+  }
 }

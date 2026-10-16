@@ -90,6 +90,28 @@ void main() {
     expect((await chat.watchMessages().first).length, 2);
   });
 
+  test('shishya chat replies, seen-by and read cursors', () async {
+    final store = MemoryDataStore();
+    var now = DateTime(2026, 10, 16, 10);
+    store.clock = () => now;
+    final chat = ShishyaChatRepository(store);
+    const a = Shishya(uid: 'a', name: 'गणेश', mobile: '+919822012345', status: ShishyaStatus.approved);
+    const b = Shishya(uid: 'b', name: 'रमेश', mobile: '+919822012346', status: ShishyaStatus.approved);
+    await chat.send(a, ChatKind.voice, mediaUrl: 'https://x/v', durationMs: 3000);
+    var first = (await chat.watchMessages().first).single;
+    now = now.add(const Duration(minutes: 1));
+    await chat.send(b, ChatKind.text, text: 'ऐकले 🙏', replyTo: first);
+    final reply = (await chat.watchMessages().first).first;
+    expect((reply.replyToId, reply.replyName, reply.replyText), (first.id, 'गणेश', '🎤 Voice'));
+
+    expect(first.seenBy(await chat.watchReads().first), isEmpty);
+    await chat.markRead(b); // at 10:01, after a's message
+    await chat.markRead(a);
+    final reads = await chat.watchReads().first;
+    first = (await chat.watchMessages().first).last;
+    expect(first.seenBy(reads).map((r) => r.name), ['रमेश']); // not the sender
+  });
+
   test('shishya request, progress and login email', () async {
     final store = MemoryDataStore();
     final repo = GuruGyanRepository(store);

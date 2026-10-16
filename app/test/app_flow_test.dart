@@ -642,15 +642,59 @@ void main() {
     expect(msgs.firstWhere((m) => m.kind == ChatKind.voice).durationMs, 3000);
     expect(uploads, ['$uid/jpg/image/jpeg', '$uid/m4a/audio/mp4']);
 
-    // Own message can be removed; others' only by a gadhipati.
+    // Someone else's message: reply and copy, but no remove.
     await tester.longPress(find.text('जय काळभैरव'));
     await tester.pumpAndSettle();
-    expect(find.text('हा संदेश काढायचा?'), findsNothing);
+    expect(find.text('काढा'), findsNothing);
+    await tester.tap(find.text('उत्तर द्या'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'जय जय');
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.send));
+    await tester.pumpAndSettle();
+    final reply = (await c.read(shishyaChatRepoProvider).watchMessages().first).firstWhere((m) => m.text == 'जय जय');
+    expect((reply.replyName, reply.replyText), ('रमेश', 'जय काळभैरव'));
+    expect(find.text('रमेश'), findsWidgets); // quoted in the reply
+
+    // Opening the chat marked it read; रमेश reading it turns the ticks blue.
+    expect((await store.get(Col.shishyaChatReads, uid))!.data['name'], 'गणेश');
+    expect(find.byIcon(Icons.done), findsWidgets);
+    await store.set(Col.shishyaChatReads, 'u9', {'name': 'रमेश', 'readAt': DateTime(2030)});
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.done_all), findsWidgets);
+    expect(find.textContaining('1 जणांनी पाहिले'), findsWidgets);
+    await tester.longPress(find.text('जय जय'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('संदेशाची माहिती'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('कोणी पाहिले (1)'), findsOneWidget);
+    expect(find.text('रमेश'), findsWidgets);
+    await tester.tapAt(const Offset(20, 20)); // close the sheet
+    await tester.pumpAndSettle();
+
+    // Own message can be removed.
     await tester.longPress(find.text('नमस्कार🙏'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('काढा'));
     await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'काढा'));
+    await tester.pumpAndSettle();
     expect(find.text('नमस्कार🙏'), findsNothing);
+  });
+
+  testWidgets('guru gyan shows how many chat messages are unread', (tester) async {
+    final c = await _start(tester, to: '/guru');
+    final store = c.read(dataStoreProvider);
+    final uid = c.read(uidProvider)!;
+    await store.set(Col.shishyas, uid, {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
+    await store.add(Col.shishyaChat, {'uid': 'u9', 'name': 'रमेश', 'kind': 'text', 'text': 'अ', 'createdAt': DateTime(2026, 1, 1)});
+    await store.add(Col.shishyaChat, {'uid': 'u9', 'name': 'रमेश', 'kind': 'text', 'text': 'ब', 'createdAt': DateTime(2026, 1, 2)});
+    await store.add(Col.shishyaChat, {'uid': uid, 'name': 'गणेश', 'kind': 'text', 'text': 'क', 'createdAt': DateTime(2026, 1, 3)});
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: find.byType(Badge), matching: find.text('2')), findsOneWidget);
+    await store.set(Col.shishyaChatReads, uid, {'name': 'गणेश', 'readAt': DateTime(2026, 1, 1, 12)});
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: find.byType(Badge), matching: find.text('1')), findsOneWidget);
   });
 }
 

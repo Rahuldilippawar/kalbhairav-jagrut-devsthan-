@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
@@ -50,6 +52,8 @@ class ShishyaChatScreen extends ConsumerStatefulWidget {
 
 class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
   final _text = TextEditingController();
+  ChatMessage? _replyTo;
+  bool _marking = false;
   bool _emoji = false;
   bool _sending = false;
   VoiceRecorder? _recorder;
@@ -80,8 +84,9 @@ class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
     final t = _text.text.trim();
     if (t.isEmpty) return;
     await _guard(() async {
-      await ref.read(shishyaChatRepoProvider).send(me, ChatKind.text, text: t);
+      await ref.read(shishyaChatRepoProvider).send(me, ChatKind.text, text: t, replyTo: _replyTo);
       _text.clear();
+      _replyTo = null;
     });
   }
 
@@ -104,8 +109,9 @@ class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
       final caption = _text.text.trim();
       await ref
           .read(shishyaChatRepoProvider)
-          .send(me, pick.isVideo ? ChatKind.video : ChatKind.image, mediaUrl: url, text: caption);
+          .send(me, pick.isVideo ? ChatKind.video : ChatKind.image, mediaUrl: url, text: caption, replyTo: _replyTo);
       _text.clear();
+      _replyTo = null;
     });
   }
 
@@ -141,7 +147,10 @@ class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
       final url = await ref
           .read(chatMediaUploaderProvider)
           .upload(me.uid, clip.bytes, extension: clip.extension, contentType: clip.contentType);
-      await ref.read(shishyaChatRepoProvider).send(me, ChatKind.voice, mediaUrl: url, durationMs: clip.durationMs);
+      await ref
+          .read(shishyaChatRepoProvider)
+          .send(me, ChatKind.voice, mediaUrl: url, durationMs: clip.durationMs, replyTo: _replyTo);
+      _replyTo = null;
     });
   }
 
@@ -195,6 +204,97 @@ class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
     if (ok == true) await _guard(() => ref.read(shishyaChatRepoProvider).remove(m.id));
   }
 
+  /// Long-press menu, like WhatsApp: reply, copy, info, remove.
+  void _menu(ChatMessage m, {required bool mine, required bool moderator}) {
+    final l = context.l10n;
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheet) => SafeArea(
+        child: Wrap(children: [
+          ListTile(
+            leading: const Icon(Icons.reply),
+            title: Text(l.chatReply),
+            onTap: () {
+              Navigator.pop(sheet);
+              setState(() => _replyTo = m);
+            },
+          ),
+          if (m.text != null)
+            ListTile(
+              leading: const Icon(Icons.copy),
+              title: Text(l.chatCopy),
+              onTap: () {
+                Navigator.pop(sheet);
+                Clipboard.setData(ClipboardData(text: m.text!));
+                context.toast(l.chatCopied);
+              },
+            ),
+          if (mine || moderator)
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: Text(l.chatInfo),
+              onTap: () {
+                Navigator.pop(sheet);
+                _info(m);
+              },
+            ),
+          if (mine || moderator)
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: KjdColors.kumkum),
+              title: Text(l.chatDelete, style: const TextStyle(color: KjdColors.kumkum)),
+              onTap: () {
+                Navigator.pop(sheet);
+                _remove(m);
+              },
+            ),
+        ]),
+      ),
+    );
+  }
+
+  /// Who has seen a message, and when.
+  void _info(ChatMessage m) {
+    final l = context.l10n;
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => Consumer(builder: (context, ref, _) {
+        final seen = m.seenBy(ref.watch(chatReadsProvider).value ?? const <ChatRead>[])
+          ..sort((a, b) => b.readAt!.compareTo(a.readAt!));
+        return SafeArea(
+          child: ListView(shrinkWrap: true, padding: const EdgeInsets.all(16), children: [
+            Text('✓✓ ${l.chatSeenTitle} (${seen.length})',
+                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: _seenBlue)),
+            const SizedBox(height: 8),
+            if (seen.isEmpty) Text(l.chatNotSeen, style: const TextStyle(color: KjdColors.inkMuted)),
+            for (final r in seen)
+              ListTile(
+                dense: true,
+                leading: CircleAvatar(
+                  backgroundColor: _nameColor(r.uid),
+                  child: Text(r.name.isEmpty ? '🙏' : r.name.characters.first, style: const TextStyle(color: Colors.white)),
+                ),
+                title: Text(r.name),
+                subtitle: Text(formatDateTime(r.readAt, locale: context.lang)),
+              ),
+          ]),
+        );
+      }),
+    );
+  }
+
+  /// Marks the chat read up to now when someone else wrote something newer.
+  void _maybeMarkRead(Shishya me, List<ChatMessage> msgs, List<ChatRead>? reads) {
+    if (_marking || reads == null) return;
+    final newest = msgs.where((m) => m.uid != me.uid && m.createdAt != null).firstOrNull;
+    if (newest == null) return;
+    final mine = reads.where((r) => r.uid == me.uid).firstOrNull?.readAt;
+    if (mine != null && !mine.isBefore(newest.createdAt!)) return;
+    _marking = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(shishyaChatRepoProvider).markRead(me).whenComplete(() => _marking = false).ignore();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
@@ -216,6 +316,9 @@ class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
           Expanded(
             child: AsyncView(ref.watch(chatMessagesProvider), data: (msgs) {
               if (msgs.isEmpty) return EmptyState(message: l.chatEmpty, icon: Icons.forum_outlined);
+              final reads = ref.watch(chatReadsProvider).value;
+              _maybeMarkRead(me, msgs, reads);
+              final today = DateUtils.dateOnly(ref.watch(clockProvider)());
               return ListView.builder(
                 reverse: true,
                 padding: const EdgeInsets.all(12),
@@ -223,16 +326,37 @@ class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
                 itemBuilder: (_, i) {
                   final m = msgs[i];
                   final mine = m.uid == me.uid;
-                  return _Bubble(
+                  // Day header above the first message of each day (the list runs newest first).
+                  final day = m.createdAt == null ? null : DateUtils.dateOnly(m.createdAt!);
+                  final olderDay = i + 1 < msgs.length && msgs[i + 1].createdAt != null
+                      ? DateUtils.dateOnly(msgs[i + 1].createdAt!)
+                      : null;
+                  final bubble = _Bubble(
                     m: m,
                     mine: mine,
-                    onLongPress: mine || moderator ? () => _remove(m) : null,
+                    seen: mine ? m.seenBy(reads ?? const []).length : 0,
+                    onLongPress: () => _menu(m, mine: mine, moderator: moderator),
                   );
+                  if (day == null || day == olderDay) return bubble;
+                  return Column(children: [_DayChip(day: day, today: today), bubble]);
                 },
               );
             }),
           ),
           if (_sending) const LinearProgressIndicator(minHeight: 2),
+          if (_replyTo != null && !recording)
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.fromLTRB(12, 6, 4, 0),
+              child: Row(children: [
+                Expanded(child: _Quote(name: _replyTo!.name, uid: _replyTo!.uid, text: _replyTo!.preview)),
+                IconButton(
+                  tooltip: l.cancel,
+                  icon: const Icon(Icons.close),
+                  onPressed: () => setState(() => _replyTo = null),
+                ),
+              ]),
+            ),
           if (_emoji && !recording)
             Container(
               color: Colors.white,
@@ -330,16 +454,84 @@ String _clockText(int ms) {
   return '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
 }
 
+const _seenBlue = Color(0xFF34B7F1);
+
+/// Each shishya's name in their own colour, as in WhatsApp groups.
+Color _nameColor(String uid) => const [
+      Color(0xFFB71C1C),
+      Color(0xFF1565C0),
+      Color(0xFF2E7D32),
+      Color(0xFF6A1B9A),
+      Color(0xFFEF6C00),
+      Color(0xFF00838F),
+      Color(0xFFAD1457),
+      Color(0xFF4E342E),
+    ][uid.hashCode.abs() % 8];
+
+class _DayChip extends StatelessWidget {
+  const _DayChip({required this.day, required this.today});
+  final DateTime day;
+  final DateTime today;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final label = day == today
+        ? l.periodToday
+        : day == today.subtract(const Duration(days: 1))
+            ? l.chatYesterday
+            : formatDate(day, locale: context.lang);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        decoration: BoxDecoration(color: const Color(0xFFE1F0F7), borderRadius: BorderRadius.circular(10)),
+        child: Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+      ),
+    );
+  }
+}
+
+/// The quoted message inside a reply.
+class _Quote extends StatelessWidget {
+  const _Quote({required this.name, required this.uid, required this.text});
+  final String name;
+  final String? uid;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = uid == null ? KjdColors.saffron : _nameColor(uid!);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border(left: BorderSide(color: color, width: 4)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(name, style: TextStyle(fontWeight: FontWeight.w800, color: color, fontSize: 12.5)),
+        Text(text, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)),
+      ]),
+    );
+  }
+}
+
 class _Bubble extends StatelessWidget {
-  const _Bubble({required this.m, required this.mine, this.onLongPress});
+  const _Bubble({required this.m, required this.mine, required this.seen, required this.onLongPress});
   final ChatMessage m;
   final bool mine;
-  final VoidCallback? onLongPress;
+
+  /// How many others have seen this message (own messages only).
+  final int seen;
+  final VoidCallback onLongPress;
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
     final url = m.mediaUrl;
+    final time = m.createdAt == null ? null : DateFormat.jm(context.lang).format(m.createdAt!);
     return Align(
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
@@ -355,7 +547,8 @@ class _Bubble extends StatelessWidget {
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             if (!mine)
-              Text(m.name, style: const TextStyle(fontWeight: FontWeight.w800, color: KjdColors.kumkum, fontSize: 12.5)),
+              Text(m.name, style: TextStyle(fontWeight: FontWeight.w800, color: _nameColor(m.uid), fontSize: 12.5)),
+            if (m.replyName != null) _Quote(name: m.replyName!, uid: null, text: m.replyText ?? ''),
             if (url != null && m.kind == ChatKind.image)
               GestureDetector(
                 onTap: () => MediaViewer.open(context, [MediaEntry(url: url, caption: m.text)]),
@@ -385,8 +578,21 @@ class _Bubble extends StatelessWidget {
               ),
             Align(
               alignment: Alignment.bottomRight,
-              child: Text(m.createdAt == null ? '…' : formatDateTime(m.createdAt, locale: context.lang),
-                  style: const TextStyle(fontSize: 10.5, color: KjdColors.inkMuted)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                if (mine && seen > 0)
+                  Text('${l.chatSeenBy(seen)} ', style: const TextStyle(fontSize: 10.5, color: KjdColors.inkMuted)),
+                Text(time ?? '', style: const TextStyle(fontSize: 10.5, color: KjdColors.inkMuted)),
+                if (mine) ...[
+                  const SizedBox(width: 3),
+                  // 🕓 on its way · ✓ sent · ✓✓ blue once someone has seen it.
+                  if (time == null)
+                    const Icon(Icons.schedule, size: 14, color: KjdColors.inkMuted)
+                  else if (seen == 0)
+                    const Icon(Icons.done, size: 15, color: KjdColors.inkMuted)
+                  else
+                    const Icon(Icons.done_all, size: 15, color: _seenBlue),
+                ],
+              ]),
             ),
           ]),
         ),

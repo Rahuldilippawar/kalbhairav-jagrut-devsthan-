@@ -539,5 +539,20 @@
         "type": "int"
       }
     }
+  },
+  "chatYesterday": "Yesterday",
+  "chatReply": "Reply",
+  "chatCopy": "Copy",
+  "chatCopied": "Copied",
+  "chatInfo": "Message info",
+  "chatSeenTitle": "Seen by",
+  "chatNotSeen": "Nobody has seen it yet",
+  "chatSeenBy": "{count} seen",
+  "@chatSeenBy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

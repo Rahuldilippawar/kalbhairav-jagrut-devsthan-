@@ -1233,4 +1233,30 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get updateAllowInstall =>
       'આગલી સ્ક્રીન પર \"આ સ્રોતથી મંજૂરી આપો\" ચાલુ કરો અને પાછા આવો – અપડેટ આપમેળે આગળ વધશે.';
+
+  @override
+  String get chatYesterday => 'ગઈકાલે';
+
+  @override
+  String get chatReply => 'જવાબ આપો';
+
+  @override
+  String get chatCopy => 'કૉપિ કરો';
+
+  @override
+  String get chatCopied => 'કૉપિ થયું';
+
+  @override
+  String get chatInfo => 'સંદેશની માહિતી';
+
+  @override
+  String get chatSeenTitle => 'કોણે જોયું';
+
+  @override
+  String get chatNotSeen => 'હજી કોઈએ જોયું નથી';
+
+  @override
+  String chatSeenBy(int count) {
+    return '$count એ જોયું';
+  }
 }

@@ -451,8 +451,10 @@ class ShishyaChatRepository {
       .watch(Col.shishyaChat, Query(orderBy: 'createdAt', descending: true, limit: limit))
       .map((d) => [for (final x in d) ChatMessage.fromMap(x.id, x.data)]);
 
-  Future<String> send(Shishya from, ChatKind kind, {String? text, String? mediaUrl, int? durationMs}) {
+  Future<String> send(Shishya from, ChatKind kind,
+      {String? text, String? mediaUrl, int? durationMs, ChatMessage? replyTo}) {
     final t = text?.trim();
+    final quote = replyTo?.preview;
     return store.add(Col.shishyaChat, {
       'uid': from.uid,
       'name': from.name,
@@ -460,9 +462,21 @@ class ShishyaChatRepository {
       if (t != null && t.isNotEmpty) 'text': t.length > 2000 ? t.substring(0, 2000) : t,
       'mediaUrl': ?mediaUrl,
       'durationMs': ?durationMs,
+      if (replyTo != null) ...{
+        'replyToId': replyTo.id,
+        'replyName': replyTo.name,
+        'replyText': quote!.length > 200 ? quote.substring(0, 200) : quote,
+      },
       'createdAt': store.serverTimestamp,
     });
   }
+
+  Stream<List<ChatRead>> watchReads() =>
+      store.watch(Col.shishyaChatReads).map((d) => [for (final x in d) ChatRead.fromMap(x.id, x.data)]);
+
+  /// [s] has seen everything up to now.
+  Future<void> markRead(Shishya s) =>
+      store.set(Col.shishyaChatReads, s.uid, {'name': s.name, 'readAt': store.serverTimestamp});
 
   Future<void> remove(String messageId) => store.delete(Col.shishyaChat, messageId);
 }

@@ -229,4 +229,14 @@ test("guru gyan: shishya parivar chat is for approved shishyas only", async () =
   await assertSucceeds(deleteDoc(doc(admin("temple_admin"), ref.path)));
   const mine = await addDoc(collection(devotee(), "shishya_chat"), msg());
   await assertSucceeds(deleteDoc(doc(devotee(), mine.path)));
+  // Replies quote the message they answer.
+  await assertSucceeds(addDoc(collection(devotee(), "shishya_chat"), msg({ replyToId: "m1", replyName: "रमेश", replyText: "🎤 Voice" })));
+  await assertFails(addDoc(collection(devotee(), "shishya_chat"), msg({ replyText: "x".repeat(400) })));
+  // Read cursors: own only, approved only, server time only.
+  await assertSucceeds(setDoc(doc(devotee(), "shishya_chat_reads/u1"), { name: "गणेश", readAt: serverTimestamp() }));
+  await assertFails(setDoc(doc(devotee(), "shishya_chat_reads/u2"), { name: "x", readAt: serverTimestamp() }));
+  await assertFails(setDoc(doc(devotee(), "shishya_chat_reads/u1"), { name: "गणेश", readAt: new Date(2030, 1, 1) }));
+  await assertFails(setDoc(doc(other(), "shishya_chat_reads/u2"), { name: "रमेश", readAt: serverTimestamp() }));
+  await assertSucceeds(getDocs(collection(devotee(), "shishya_chat_reads")));
+  await assertFails(getDocs(collection(other(), "shishya_chat_reads")));
 });

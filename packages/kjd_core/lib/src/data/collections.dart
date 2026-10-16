@@ -55,6 +55,10 @@ abstract final class Col {
   /// The shishya parivar group chat (approved shishyas only).
   static const shishyaChat = 'shishya_chat';
 
+  /// Up to when each shishya has seen the chat (doc id = uid), for "seen"
+  /// ticks and unread counts.
+  static const shishyaChatReads = 'shishya_chat_reads';
+
   /// Guru Gyan lessons (approved shishyas only).
   static const guruGyan = 'guru_gyan';
 

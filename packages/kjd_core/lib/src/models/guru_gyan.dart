@@ -340,6 +340,9 @@ class ChatMessage {
     this.mediaUrl,
     this.durationMs,
     this.createdAt,
+    this.replyToId,
+    this.replyName,
+    this.replyText,
   });
 
   final String id;
@@ -355,7 +358,28 @@ class ChatMessage {
 
   /// Length of a voice message.
   final int? durationMs;
+
+  /// Null while the message is still on its way to the server.
   final DateTime? createdAt;
+
+  /// The message this one answers (WhatsApp-style reply).
+  final String? replyToId;
+  final String? replyName;
+  final String? replyText;
+
+  /// One-line preview, for replies and notifications.
+  String get preview => switch (kind) {
+        ChatKind.text => text ?? '',
+        ChatKind.image => '📷 ${text ?? 'Photo'}',
+        ChatKind.video => '🎥 ${text ?? 'Video'}',
+        ChatKind.voice => '🎤 Voice',
+      };
+
+  /// Who (other than the sender) has seen this message, with when.
+  List<ChatRead> seenBy(Iterable<ChatRead> reads) => [
+        for (final r in reads)
+          if (r.uid != uid && createdAt != null && r.readAt != null && !r.readAt!.isBefore(createdAt!)) r,
+      ];
 
   factory ChatMessage.fromMap(String id, Map<String, dynamic> m) => ChatMessage(
         id: id,
@@ -366,5 +390,19 @@ class ChatMessage {
         mediaUrl: asStringOrNull(m['mediaUrl']),
         durationMs: m['durationMs'] == null ? null : asInt(m['durationMs']),
         createdAt: asDate(m['createdAt']),
+        replyToId: asStringOrNull(m['replyToId']),
+        replyName: asStringOrNull(m['replyName']),
+        replyText: asStringOrNull(m['replyText']),
       );
+}
+
+/// Up to when one shishya has seen the chat.
+class ChatRead {
+  const ChatRead({required this.uid, required this.name, this.readAt});
+  final String uid;
+  final String name;
+  final DateTime? readAt;
+
+  factory ChatRead.fromMap(String uid, Map<String, dynamic> m) =>
+      ChatRead(uid: uid, name: asString(m['name']), readAt: asDate(m['readAt']));
 }

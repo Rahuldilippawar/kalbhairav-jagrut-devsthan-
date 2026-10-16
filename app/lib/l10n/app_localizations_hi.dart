@@ -1238,4 +1238,30 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get updateAllowInstall =>
       'अगली स्क्रीन पर \"इस स्रोत से अनुमति दें\" चालू करें और वापस आएँ – अपडेट अपने आप शुरू होगा।';
+
+  @override
+  String get chatYesterday => 'कल';
+
+  @override
+  String get chatReply => 'जवाब दें';
+
+  @override
+  String get chatCopy => 'कॉपी करें';
+
+  @override
+  String get chatCopied => 'कॉपी हुआ';
+
+  @override
+  String get chatInfo => 'संदेश की जानकारी';
+
+  @override
+  String get chatSeenTitle => 'किसने देखा';
+
+  @override
+  String get chatNotSeen => 'अभी किसी ने नहीं देखा';
+
+  @override
+  String chatSeenBy(int count) {
+    return '$count ने देखा';
+  }
 }

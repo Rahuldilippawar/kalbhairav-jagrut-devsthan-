@@ -2405,6 +2405,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'On the next screen turn on \"Allow from this source\", then come back – the update continues by itself.'**
   String get updateAllowInstall;
+
+  /// No description provided for @chatYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get chatYesterday;
+
+  /// No description provided for @chatReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get chatReply;
+
+  /// No description provided for @chatCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get chatCopy;
+
+  /// No description provided for @chatCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get chatCopied;
+
+  /// No description provided for @chatInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Message info'**
+  String get chatInfo;
+
+  /// No description provided for @chatSeenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Seen by'**
+  String get chatSeenTitle;
+
+  /// No description provided for @chatNotSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody has seen it yet'**
+  String get chatNotSeen;
+
+  /// No description provided for @chatSeenBy.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} seen'**
+  String chatSeenBy(int count);
 }
 
 class _AppLocalizationsDelegate

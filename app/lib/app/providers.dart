@@ -123,6 +123,23 @@ final chatMessagesProvider = StreamProvider<List<ChatMessage>>((ref) {
   return ref.watch(shishyaChatRepoProvider).watchMessages();
 });
 
+/// How far each shishya has read the chat.
+final chatReadsProvider = StreamProvider<List<ChatRead>>((ref) {
+  final approved = ref.watch(myShishyaProvider.select((s) => s.value?.isApproved ?? false));
+  if (!approved && !(ref.watch(isGadhipatiProvider).value ?? false)) return Stream.value(const []);
+  return ref.watch(shishyaChatRepoProvider).watchReads();
+});
+
+/// Others' chat messages this shishya has not seen yet.
+final unreadChatCountProvider = Provider<int>((ref) {
+  final me = ref.watch(uidProvider);
+  final msgs = ref.watch(chatMessagesProvider).value ?? const <ChatMessage>[];
+  final reads = ref.watch(chatReadsProvider).value;
+  if (me == null || reads == null) return 0;
+  final mine = reads.where((r) => r.uid == me).firstOrNull?.readAt;
+  return msgs.where((m) => m.uid != me && m.createdAt != null && (mine == null || m.createdAt!.isAfter(mine))).length;
+});
+
 /// Granths on the Guru Gyan home, as listed in Firestore; empty until the
 /// shishya is approved.
 final granthIdsProvider = StreamProvider<List<String>>((ref) {

@@ -124,7 +124,10 @@ service cloud.firestore {
     match /shishya_chat/{id} {
       allow read: if approvedShishya() || gadhipati() || can('devotees');
       allow create: if approvedShishya()
-        && request.resource.data.keys().hasOnly(['uid','name','kind','text','mediaUrl','durationMs','createdAt'])
+        && request.resource.data.keys().hasOnly(['uid','name','kind','text','mediaUrl','durationMs','createdAt',
+          'replyToId','replyName','replyText'])
+        && (!('replyText' in request.resource.data) || (request.resource.data.replyText is string
+            && request.resource.data.replyText.size() <= 300))
         && request.resource.data.uid == uid()
         && request.resource.data.name is string && request.resource.data.name.size() <= 100
         && request.resource.data.createdAt == request.time
@@ -139,6 +142,14 @@ service cloud.firestore {
             && request.resource.data.durationMs <= 15 * 60 * 1000));
       allow update: if false;
       allow delete: if (signedIn() && resource.data.uid == uid()) || gadhipati() || can('devotees');
+    }
+    // How far each shishya has read the chat ("seen" ticks, unread counts).
+    match /shishya_chat_reads/{userId} {
+      allow read: if approvedShishya() || gadhipati() || can('devotees');
+      allow write: if approvedShishya() && uid() == userId
+        && request.resource.data.keys().hasOnly(['name', 'readAt'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 100
+        && request.resource.data.readAt == request.time;
     }
     match /guru_gyan/{id} {
       allow read: if approvedShishya() || can('content') || can('devotees');

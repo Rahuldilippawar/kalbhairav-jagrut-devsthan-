@@ -100,6 +100,35 @@ export async function deliver(id: string, n: NotificationDoc): Promise<void> {
   }
 }
 
+/** What a shishya chat message shows in a notification. */
+export function chatPreview(m: { kind?: string; text?: string }): string {
+  switch (m.kind) {
+    case "image":
+      return `📷 ${m.text ?? "फोटो"}`;
+    case "video":
+      return `🎥 ${m.text ?? "व्हिडिओ"}`;
+    case "voice":
+      return "🎤 आवाज संदेश";
+    default:
+      return (m.text ?? "").slice(0, 200);
+  }
+}
+
+/** New shishya parivar chat message → notify every other approved shishya. */
+export const onShishyaChatMessage = onDocumentCreated({ document: "shishya_chat/{id}", region: REGION }, async (event) => {
+  const m = event.data?.data();
+  if (!m) return;
+  const shishyas = await db().collection("shishyas").where("status", "==", "approved").get();
+  const tokens = await tokensForUsers(shishyas.docs.map((d) => d.id).filter((uid) => uid !== m.uid));
+  if (tokens.length === 0) return;
+  const notification = { title: `💬 शिष्य परिवार – ${m.name ?? ""}`, body: chatPreview(m) };
+  // One notification per phone, replaced by the next message (like a chat).
+  const android = { priority: "high" as const, notification: { color: "#B71C1C", tag: "shishya-chat" } };
+  for (const group of chunk(tokens, 500)) {
+    await getMessaging().sendEachForMulticast({ tokens: group, notification, data: { type: "chat", route: "/shishya-chat" }, android });
+  }
+});
+
 /** Admin (or a system job) creates a notification → deliver now unless scheduled. */
 export const onNotificationCreated = onDocumentCreated({ document: "notifications/{id}", region: REGION }, async (event) => {
   const n = event.data?.data() as NotificationDoc | undefined;

@@ -376,7 +376,14 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
               leading: const Text('💬', style: TextStyle(fontSize: 28)),
               title: Text(l.chatTitle, style: const TextStyle(fontWeight: FontWeight.w800)),
               subtitle: Text(l.chatHint),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: switch (ref.watch(unreadChatCountProvider)) {
+                0 => const Icon(Icons.chevron_right),
+                final n => Badge(
+                    label: Text(n > 99 ? '99+' : '$n'),
+                    backgroundColor: KjdColors.success,
+                    child: const Icon(Icons.chevron_right),
+                  ),
+              },
               onTap: () => context.push('/shishya-chat'),
             ),
           ),

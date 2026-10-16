@@ -383,5 +383,13 @@
   "chatDeleteAsk": "આ સંદેશ દૂર કરવો?",
   "chatDelete": "દૂર કરો",
   "updateDownloading": "નવું સંસ્કરણ ડાઉનલોડ થાય છે… {percent}%",
-  "updateAllowInstall": "આગલી સ્ક્રીન પર \"આ સ્રોતથી મંજૂરી આપો\" ચાલુ કરો અને પાછા આવો – અપડેટ આપમેળે આગળ વધશે."
+  "updateAllowInstall": "આગલી સ્ક્રીન પર \"આ સ્રોતથી મંજૂરી આપો\" ચાલુ કરો અને પાછા આવો – અપડેટ આપમેળે આગળ વધશે.",
+  "chatYesterday": "ગઈકાલે",
+  "chatReply": "જવાબ આપો",
+  "chatCopy": "કૉપિ કરો",
+  "chatCopied": "કૉપિ થયું",
+  "chatInfo": "સંદેશની માહિતી",
+  "chatSeenTitle": "કોણે જોયું",
+  "chatNotSeen": "હજી કોઈએ જોયું નથી",
+  "chatSeenBy": "{count} એ જોયું"
 }
