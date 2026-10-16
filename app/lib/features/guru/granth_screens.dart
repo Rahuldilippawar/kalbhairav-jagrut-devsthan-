@@ -8,8 +8,9 @@ import '../../widgets/common.dart';
 import '../../widgets/secure_screen.dart';
 import 'lesson_body.dart';
 
-/// Granths shown on the Guru Gyan home.
-const granthIds = ['moolstambh', 'kathakalpataru'];
+/// Granths shown on the Guru Gyan home until the list loads from Firestore
+/// (new granths added there need no new app release).
+const granthIds = ['moolstambh', 'navnath', 'kathakalpataru'];
 
 /// Guru Gyan home card that opens a granth.
 class GranthCard extends ConsumerWidget {

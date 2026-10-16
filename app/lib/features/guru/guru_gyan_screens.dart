@@ -365,7 +365,7 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
             Text(l.lessonsProgress(done, all.length), style: const TextStyle(color: KjdColors.goldLight)),
           ]),
         ),
-        for (final id in granthIds) GranthCard(id: id, completed: s.completed),
+        for (final id in ref.watch(granthIdsProvider).value ?? granthIds) GranthCard(id: id, completed: s.completed),
         if (lessonDeities.isNotEmpty) ...[
           const SizedBox(height: 14),
           SizedBox(

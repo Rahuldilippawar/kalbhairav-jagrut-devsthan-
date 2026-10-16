@@ -11,6 +11,6 @@ public domain) for approved shishyas.
 3. **Proofread** – put a corrected chapter in `proofread/<chapter id>.md`
    (first line `# title`, then the text; `## ` for sub-headings) and run
    step 2 again; the app marks it "शुद्ध".
-4. **Hand-entered books** (e.g. मूळस्तंभ) – one `data/granth/<book>/aNN.md` per adhyay plus `book.json`; run `python3 tools/granth/build_md_book.py <book>`.
+4. **Hand-entered books** (e.g. मूळस्तंभ) – one `data/granth/<book>/aNN.md` per adhyay plus `book.json`; run `python3 tools/granth/build_md_book.py <book>`. `order` in `book.json` sets its place on the Guru Gyan home; the app lists every granth in Firestore, so a new book shows up after the import without an app release.
 5. **Import** – Actions → "Import granth to Firestore" writes
    `granth/kathakalpataru` (chapter list) and `granth_text/<id>` (texts).

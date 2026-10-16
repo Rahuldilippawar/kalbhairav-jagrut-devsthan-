@@ -96,6 +96,14 @@ final guruLessonsProvider = StreamProvider<List<GuruLesson>>((ref) {
   if (!approved) return Stream.value(const []);
   return ref.watch(guruRepoProvider).watchLessons();
 });
+/// Granths on the Guru Gyan home, as listed in Firestore; empty until the
+/// shishya is approved.
+final granthIdsProvider = StreamProvider<List<String>>((ref) {
+  final approved = ref.watch(myShishyaProvider.select((s) => s.value?.isApproved ?? false));
+  if (!approved) return Stream.value(const []);
+  return ref.watch(guruRepoProvider).watchGranthIds();
+});
+
 /// A granth's chapter list; null until the shishya is approved.
 final granthProvider = StreamProvider.family<Granth?, String>((ref, id) {
   final approved = ref.watch(myShishyaProvider.select((s) => s.value?.isApproved ?? false));

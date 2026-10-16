@@ -17,6 +17,7 @@ BOOKS['kathakalpataru'] = {
     'subtitle': 'पूर्वार्ध – स्तबक १ ते ७',
     'author': 'कवी श्रीकृष्ण व मधुकर',
     'edition': 'सरळ गोष्टींच्या रूपाने सुलभ मराठी भाषांतर – दामोदर सावळाराम आणि मंडळी, मुंबई, इ.स. १९१०',
+    'order': 30,
     'note': 'मजकूर १९१० च्या छापील प्रतीवरून संगणकाने वाचला (OCR) आहे; "शुद्ध" खूण नसलेल्या अध्यायांत काही अक्षरचुका असू शकतात.',
 }
 
@@ -56,7 +57,7 @@ def book_meta(path):
     meta = dict(BOOKS.get(book, {}))
     if os.path.exists(meta_file):
         meta.update(json.load(open(meta_file, encoding='utf-8')))
-    return book, {k: v for k, v in meta.items() if k in ('title', 'subtitle', 'author', 'edition', 'note') and v}
+    return book, {k: v for k, v in meta.items() if k in ('title', 'subtitle', 'author', 'edition', 'note', 'order') and v}
 
 
 def main(path):

@@ -295,6 +295,7 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
       'moolstambh': {
         'title': 'मूळस्तंभ',
         'subtitle': 'शिव-पार्वती संवादरूप शिवपुराण – १९ अध्याय',
+        'order': 10,
         'chapters': [
           {
             'id': 'ms-a01', 'stabak': 0, 'adhyay': 1, 'adhyayTo': 1,
@@ -308,6 +309,7 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
         'subtitle': 'पूर्वार्ध – स्तबक १ ते ७',
         'author': 'कवी श्रीकृष्ण व मधुकर',
         'edition': 'सरळ गोष्टींच्या रूपाने सुलभ मराठी भाषांतर – मुंबई, इ.स. १९१०',
+        'order': 30,
         'chapters': [
           {'id': 'kk-s1-a01', 'stabak': 1, 'adhyay': 1, 'adhyayTo': 1, 'title': 'मंगलाचरण', 'topics': <String>[], 'proofread': false},
           {

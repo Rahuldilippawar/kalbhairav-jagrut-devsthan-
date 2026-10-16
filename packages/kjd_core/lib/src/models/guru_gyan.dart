@@ -219,6 +219,7 @@ class Granth {
     this.author,
     this.edition,
     this.note,
+    this.order = 100,
     this.chapters = const [],
   });
 
@@ -228,6 +229,9 @@ class Granth {
   final String? author;
   final String? edition;
   final String? note;
+
+  /// Place on the Guru Gyan home (smaller first).
+  final int order;
   final List<GranthChapter> chapters;
 
   List<int> get stabaks => {for (final c in chapters) c.stabak}.toList()..sort();
@@ -239,6 +243,7 @@ class Granth {
         author: asStringOrNull(m['author']),
         edition: asStringOrNull(m['edition']),
         note: asStringOrNull(m['note']),
+        order: m['order'] == null ? 100 : asInt(m['order']),
         chapters: [
           for (final c in (m['chapters'] as List? ?? const []))
             if (c is Map) GranthChapter.fromMap(Map<String, dynamic>.from(c)),

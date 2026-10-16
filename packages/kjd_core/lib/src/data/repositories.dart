@@ -383,6 +383,13 @@ class GuruGyanRepository {
           ..sort((a, b) => a.order.compareTo(b.order));
       });
 
+  /// Ids of every granth in Firestore, in Guru Gyan order.
+  Stream<List<String>> watchGranthIds() => store.watch(Col.granth).map((d) {
+        final all = [for (final x in d) Granth.fromMap(x.id, x.data)]
+          ..sort((a, b) => a.order != b.order ? a.order.compareTo(b.order) : a.title.compareTo(b.title));
+        return [for (final g in all) g.id];
+      });
+
   Stream<Granth?> watchGranth(String id) =>
       store.watchDoc(Col.granth, id).map((d) => d == null ? null : Granth.fromMap(d.id, d.data));
 

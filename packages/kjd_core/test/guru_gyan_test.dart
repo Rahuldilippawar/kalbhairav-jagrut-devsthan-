@@ -37,6 +37,16 @@ void main() {
     expect(lessons.any((l) => l.id == 'gg-shani'), isFalse);
   });
 
+  test('granth list follows each granth\'s order', () async {
+    final store = MemoryDataStore();
+    final repo = GuruGyanRepository(store);
+    await store.set(Col.granth, 'kathakalpataru', {'title': 'कथाकल्पतरू', 'order': 30});
+    await store.set(Col.granth, 'navnath', {'title': 'नवनाथ कथासार', 'order': 20});
+    await store.set(Col.granth, 'moolstambh', {'title': 'मूळस्तंभ', 'order': 10});
+    await store.set(Col.granth, 'new', {'title': 'नवा ग्रंथ'}); // no order: last
+    expect(await repo.watchGranthIds().first, ['moolstambh', 'navnath', 'kathakalpataru', 'new']);
+  });
+
   test('shishya request, progress and login email', () async {
     final store = MemoryDataStore();
     final repo = GuruGyanRepository(store);
