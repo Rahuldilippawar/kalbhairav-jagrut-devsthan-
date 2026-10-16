@@ -1180,4 +1180,52 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get gadhipatiOnly => 'फक्त गादीपतींसाठी';
+
+  @override
+  String get chatTitle => 'शिष्य परिवार चर्चा';
+
+  @override
+  String get chatHint =>
+      'सर्व मंजूर शिष्यांशी गप्पा – फोटो, व्हिडिओ व आवाज संदेश';
+
+  @override
+  String get chatTypeMessage => 'संदेश लिहा…';
+
+  @override
+  String get chatSend => 'पाठवा';
+
+  @override
+  String get chatVoice => 'आवाज संदेश';
+
+  @override
+  String get chatAttach => 'फोटो / व्हिडिओ';
+
+  @override
+  String get chatPhoto => 'गॅलरीतून फोटो';
+
+  @override
+  String get chatCamera => 'कॅमेऱ्याने फोटो';
+
+  @override
+  String get chatVideo => 'व्हिडिओ';
+
+  @override
+  String get chatRecording => 'रेकॉर्डिंग';
+
+  @override
+  String get chatEmpty => 'अजून एकही संदेश नाही. पहिला नमस्कार पाठवा 🙏';
+
+  @override
+  String get chatMicDenied => 'आवाज संदेशासाठी मायक्रोफोनची परवानगी द्या';
+
+  @override
+  String chatFileTooBig(int mb) {
+    return 'फाईल खूप मोठी आहे (मर्यादा $mb MB)';
+  }
+
+  @override
+  String get chatDeleteAsk => 'हा संदेश काढायचा?';
+
+  @override
+  String get chatDelete => 'काढा';
 }

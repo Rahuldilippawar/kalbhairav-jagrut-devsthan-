@@ -325,3 +325,46 @@ class GadhipatiAccount {
         assignedByName: asStringOrNull(m['assignedByName']),
       );
 }
+
+/// What a shishya chat message carries.
+enum ChatKind { text, image, video, voice }
+
+/// One message in the shishya parivar chat.
+class ChatMessage {
+  const ChatMessage({
+    required this.id,
+    required this.uid,
+    required this.name,
+    this.kind = ChatKind.text,
+    this.text,
+    this.mediaUrl,
+    this.durationMs,
+    this.createdAt,
+  });
+
+  final String id;
+  final String uid;
+  final String name;
+  final ChatKind kind;
+
+  /// The message, or a photo / video caption.
+  final String? text;
+
+  /// Photo, video or voice recording in Firebase Storage.
+  final String? mediaUrl;
+
+  /// Length of a voice message.
+  final int? durationMs;
+  final DateTime? createdAt;
+
+  factory ChatMessage.fromMap(String id, Map<String, dynamic> m) => ChatMessage(
+        id: id,
+        uid: asString(m['uid']),
+        name: asString(m['name']),
+        kind: ChatKind.values.asNameMap()[m['kind']] ?? ChatKind.text,
+        text: asStringOrNull(m['text']),
+        mediaUrl: asStringOrNull(m['mediaUrl']),
+        durationMs: m['durationMs'] == null ? null : asInt(m['durationMs']),
+        createdAt: asDate(m['createdAt']),
+      );
+}

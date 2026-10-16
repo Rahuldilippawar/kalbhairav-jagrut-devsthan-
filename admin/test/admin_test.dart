@@ -18,7 +18,7 @@ final _now = DateTime(2026, 10, 6, 9, 30);
 AuthUser _admin(AdminRole r) => AuthUser(uid: 'admin-${r.key}', email: '${r.key}@demo.kjd', displayName: r.label, role: r);
 
 Future<ProviderContainer> _start(WidgetTester tester, AuthUser? user, {List<Override> overrides = const []}) async {
-  tester.view.physicalSize = const Size(1600, 2300); // whole side menu fits
+  tester.view.physicalSize = const Size(1600, 2400); // whole side menu fits
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final c = ProviderContainer(overrides: [...demoOverrides(clock: () => _now, user: user), ...overrides]);
@@ -315,6 +315,25 @@ void main() {
     await tester.tap(find.textContaining('🕉️ Mantra'));
     await tester.pumpAndSettle();
     expect(find.text('मूळस्तंभ – अध्याय ४'), findsNothing);
+  });
+
+  testWidgets('temple admin reads the shishya chat and removes a message', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.templeAdmin));
+    final chat = ShishyaChatRepository(c.read(dataStoreProvider));
+    const s = Shishya(uid: 'u1', name: 'गणेश जाधव', mobile: '+919822012345', status: ShishyaStatus.approved);
+    await chat.send(s, ChatKind.text, text: 'जय काळभैरव 🙏');
+    await chat.send(s, ChatKind.voice, mediaUrl: 'https://firebasestorage.googleapis.com/v', durationMs: 5000);
+    await tester.tap(find.text('Shishya Chat'));
+    await tester.pumpAndSettle();
+    expect(find.text('जय काळभैरव 🙏'), findsOneWidget);
+    expect(find.textContaining('Voice 5 s'), findsOneWidget);
+    await tester.tap(find.byTooltip('Remove').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Remove'));
+    await tester.pumpAndSettle();
+    expect((await chat.watchMessages().first).length, 1);
+    final logs = await c.read(dataStoreProvider).list(Col.auditLogs);
+    expect(logs.any((l) => l.data['action'] == 'chat_message_removed'), isTrue);
   });
 
   testWidgets('event manager cannot see Guru Gyan', (tester) async {

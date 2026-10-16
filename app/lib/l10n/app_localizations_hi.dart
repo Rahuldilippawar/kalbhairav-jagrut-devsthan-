@@ -1182,4 +1182,53 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get gadhipatiOnly => 'Only for gadhipatis';
+
+  @override
+  String get chatTitle => 'Shishya Parivar Chat';
+
+  @override
+  String get chatHint =>
+      'Talk with all approved shishyas – photos, videos and voice messages';
+
+  @override
+  String get chatTypeMessage => 'Write a message…';
+
+  @override
+  String get chatSend => 'Send';
+
+  @override
+  String get chatVoice => 'Voice message';
+
+  @override
+  String get chatAttach => 'Photo / video';
+
+  @override
+  String get chatPhoto => 'Photo from gallery';
+
+  @override
+  String get chatCamera => 'Take a photo';
+
+  @override
+  String get chatVideo => 'Video';
+
+  @override
+  String get chatRecording => 'Recording';
+
+  @override
+  String get chatEmpty => 'No messages yet. Send the first namaskar 🙏';
+
+  @override
+  String get chatMicDenied =>
+      'Please allow the microphone to send voice messages';
+
+  @override
+  String chatFileTooBig(int mb) {
+    return 'File is too big (limit $mb MB)';
+  }
+
+  @override
+  String get chatDeleteAsk => 'Remove this message?';
+
+  @override
+  String get chatDelete => 'Remove';
 }

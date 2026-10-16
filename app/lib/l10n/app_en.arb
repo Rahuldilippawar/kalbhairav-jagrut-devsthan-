@@ -508,5 +508,27 @@
       }
     }
   },
-  "gadhipatiOnly": "Only for gadhipatis"
+  "gadhipatiOnly": "Only for gadhipatis",
+  "chatTitle": "Shishya Parivar Chat",
+  "chatHint": "Talk with all approved shishyas – photos, videos and voice messages",
+  "chatTypeMessage": "Write a message…",
+  "chatSend": "Send",
+  "chatVoice": "Voice message",
+  "chatAttach": "Photo / video",
+  "chatPhoto": "Photo from gallery",
+  "chatCamera": "Take a photo",
+  "chatVideo": "Video",
+  "chatRecording": "Recording",
+  "chatEmpty": "No messages yet. Send the first namaskar 🙏",
+  "chatMicDenied": "Please allow the microphone to send voice messages",
+  "chatFileTooBig": "File is too big (limit {mb} MB)",
+  "chatDeleteAsk": "Remove this message?",
+  "chatDelete": "Remove",
+  "@chatFileTooBig": {
+    "placeholders": {
+      "mb": {
+        "type": "int"
+      }
+    }
+  }
 }

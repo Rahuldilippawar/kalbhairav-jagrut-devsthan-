@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kjd_core/kjd_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../services/chat_media.dart';
 import '../services/photo_uploader.dart';
 import '../services/push_service.dart';
 
@@ -12,6 +13,10 @@ final dataStoreProvider = Provider<DataStore>((_) => throw UnimplementedError())
 final authServiceProvider = Provider<AuthService>((_) => throw UnimplementedError());
 final checkoutServiceProvider = Provider<CheckoutService>((_) => throw UnimplementedError());
 final photoUploaderProvider = Provider<PhotoUploader>((_) => DisabledPhotoUploader());
+final chatMediaUploaderProvider = Provider<ChatMediaUploader>((_) => DisabledChatMediaUploader());
+
+/// Makes a microphone recorder for voice messages; replaced in tests.
+final voiceRecorderProvider = Provider<VoiceRecorder Function()>((_) => MicVoiceRecorder.new);
 
 /// Admin panel address; null in demo mode.
 final adminPanelUrlProvider = Provider<String?>((_) => null);
@@ -107,6 +112,15 @@ final isGadhipatiProvider = StreamProvider<bool>((ref) {
 final shishyaActivityProvider = StreamProvider<List<ShishyaActivity>>((ref) {
   if (!(ref.watch(isGadhipatiProvider).value ?? false)) return Stream.value(const []);
   return ref.watch(guruRepoProvider).watchActivity();
+});
+
+final shishyaChatRepoProvider = Provider((ref) => ShishyaChatRepository(ref.watch(dataStoreProvider)));
+
+/// Shishya parivar chat, newest first; empty unless approved or gadhipati.
+final chatMessagesProvider = StreamProvider<List<ChatMessage>>((ref) {
+  final approved = ref.watch(myShishyaProvider.select((s) => s.value?.isApproved ?? false));
+  if (!approved && !(ref.watch(isGadhipatiProvider).value ?? false)) return Stream.value(const []);
+  return ref.watch(shishyaChatRepoProvider).watchMessages();
 });
 
 /// Granths on the Guru Gyan home, as listed in Firestore; empty until the

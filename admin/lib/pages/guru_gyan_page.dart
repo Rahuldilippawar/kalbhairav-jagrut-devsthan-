@@ -493,3 +493,79 @@ String _dur(int seconds) {
   final minutes = (seconds / 60).round();
   return minutes < 60 ? '$minutes min' : '${minutes ~/ 60} h ${minutes % 60} min';
 }
+
+final _chatProvider = StreamProvider((ref) => ShishyaChatRepository(ref.watch(dataStoreProvider)).watchMessages(limit: 500));
+
+/// Guru Gyan → Shishya Chat: read the shishya parivar chat and remove
+/// anything that should not be there.
+class ShishyaChatModerationPage extends ConsumerWidget {
+  const ShishyaChatModerationPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final msgs = ref.watch(_chatProvider).value ?? const <ChatMessage>[];
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      const Text(
+        'The shishya parivar group chat in the app (Guru Gyan → शिष्य परिवार चर्चा). Only approved shishyas can read '
+        'and write; blocking a shishya removes them. Remove any message that should not be there – gadhipatis can '
+        'also remove messages from the app by long-pressing them.',
+        style: TextStyle(color: KjdColors.inkMuted),
+      ),
+      const SizedBox(height: 12),
+      if (msgs.isEmpty) const Padding(padding: EdgeInsets.all(24), child: Center(child: Text('No messages yet 🙏'))),
+      for (final m in msgs)
+        Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            leading: Text(switch (m.kind) {
+              ChatKind.text => '💬',
+              ChatKind.image => '🖼️',
+              ChatKind.video => '🎥',
+              ChatKind.voice => '🎤',
+            }, style: const TextStyle(fontSize: 24)),
+            title: Text(m.name, style: const TextStyle(fontWeight: FontWeight.w800)),
+            subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (m.text != null) Text(m.text!),
+              if (m.mediaUrl != null && m.kind == ChatKind.image)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Image.network(m.mediaUrl!, height: 140, errorBuilder: (_, _, _) => const Text('🖼️ photo')),
+                ),
+              if (m.mediaUrl != null && m.kind != ChatKind.image)
+                SelectableText(
+                    '${m.kind == ChatKind.voice ? 'Voice ${((m.durationMs ?? 0) / 1000).round()} s' : 'Video'}: ${m.mediaUrl}',
+                    style: const TextStyle(fontSize: 12)),
+              Text(formatDateTime(m.createdAt, locale: 'en'), style: const TextStyle(fontSize: 12)),
+            ]),
+            trailing: IconButton(
+              tooltip: 'Remove',
+              icon: const Icon(Icons.delete_outline, color: KjdColors.kumkum),
+              onPressed: () async {
+                final ok = await showDialog<bool>(
+                  context: context,
+                  builder: (d) => AlertDialog(
+                    title: Text('Remove this message from ${m.name}?'),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(d, false), child: const Text('Cancel')),
+                      FilledButton(onPressed: () => Navigator.pop(d, true), child: const Text('Remove')),
+                    ],
+                  ),
+                );
+                if (ok != true) return;
+                final a = ref.read(currentAdminProvider)!;
+                await ShishyaChatRepository(ref.read(dataStoreProvider)).remove(m.id);
+                await ref.read(adminRepoProvider).log(
+                      actorId: a.uid,
+                      actorName: a.displayName ?? a.email ?? a.uid,
+                      action: 'chat_message_removed',
+                      collection: Col.shishyaChat,
+                      recordId: m.id,
+                      summary: '${m.name}: ${m.text ?? m.kind.name}',
+                    );
+              },
+            ),
+          ),
+        ),
+    ]);
+  }
+}

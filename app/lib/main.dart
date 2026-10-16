@@ -9,6 +9,7 @@ import 'package:kjd_core/kjd_core.dart';
 import 'app/app.dart';
 import 'app/providers.dart';
 import 'firebase_options.dart';
+import 'services/chat_media.dart';
 import 'services/photo_uploader.dart';
 import 'services/push_service.dart';
 import 'services/upi_gateway.dart';
@@ -54,6 +55,7 @@ Future<List<Override>> _bootstrap() async {
           fallback: const UnavailableCheckout(),
         )),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
+        chatMediaUploaderProvider.overrideWithValue(FirebaseChatMediaUploader()),
         adminPanelUrlProvider.overrideWithValue(DefaultFirebaseOptions.adminPanelUrl),
         // Web push needs a VAPID key and service worker; the web app relies on
         // the in-app notification list instead.

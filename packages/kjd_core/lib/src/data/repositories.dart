@@ -440,6 +440,33 @@ class GuruGyanRepository {
 }
 
 /// Admin-side writes go through here so every change is audit-logged.
+/// The shishya parivar group chat. Only approved shishyas read and write
+/// it (firestore.rules); gadhipatis and temple staff can remove messages.
+class ShishyaChatRepository {
+  ShishyaChatRepository(this.store);
+  final DataStore store;
+
+  /// Latest messages, newest first.
+  Stream<List<ChatMessage>> watchMessages({int limit = 300}) => store
+      .watch(Col.shishyaChat, Query(orderBy: 'createdAt', descending: true, limit: limit))
+      .map((d) => [for (final x in d) ChatMessage.fromMap(x.id, x.data)]);
+
+  Future<String> send(Shishya from, ChatKind kind, {String? text, String? mediaUrl, int? durationMs}) {
+    final t = text?.trim();
+    return store.add(Col.shishyaChat, {
+      'uid': from.uid,
+      'name': from.name,
+      'kind': kind.name,
+      if (t != null && t.isNotEmpty) 'text': t.length > 2000 ? t.substring(0, 2000) : t,
+      'mediaUrl': ?mediaUrl,
+      'durationMs': ?durationMs,
+      'createdAt': store.serverTimestamp,
+    });
+  }
+
+  Future<void> remove(String messageId) => store.delete(Col.shishyaChat, messageId);
+}
+
 class AdminRepository {
   AdminRepository(this.store);
   final DataStore store;

@@ -15,6 +15,7 @@ import '../features/gallery/gallery_screen.dart';
 import '../features/guru/granth_screens.dart';
 import '../features/guru/guru_gyan_screens.dart';
 import '../features/guru/shishya_activity_screen.dart';
+import '../features/guru/shishya_chat_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/mantra/mantra_screens.dart';
 import '../features/notifications/notifications_screen.dart';
@@ -70,6 +71,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/granth/:id/:chapter',
         builder: (_, s) => GranthChapterScreen(granthId: s.pathParameters['id']!, chapterId: s.pathParameters['chapter']!),
       ),
+      GoRoute(path: '/shishya-chat', builder: (_, _) => const ShishyaChatScreen()),
       GoRoute(path: '/shishya-activity', builder: (_, _) => const ShishyaActivityScreen()),
       GoRoute(path: '/guru/:id', builder: (_, s) => GuruLessonScreen(lessonId: s.pathParameters['id']!)),
       GoRoute(path: '/parampara', builder: (_, _) => const ParamparaScreen()),

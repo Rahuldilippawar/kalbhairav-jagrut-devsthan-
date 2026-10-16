@@ -2303,6 +2303,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only for gadhipatis'**
   String get gadhipatiOnly;
+
+  /// No description provided for @chatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shishya Parivar Chat'**
+  String get chatTitle;
+
+  /// No description provided for @chatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk with all approved shishyas – photos, videos and voice messages'**
+  String get chatHint;
+
+  /// No description provided for @chatTypeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a message…'**
+  String get chatTypeMessage;
+
+  /// No description provided for @chatSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get chatSend;
+
+  /// No description provided for @chatVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message'**
+  String get chatVoice;
+
+  /// No description provided for @chatAttach.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo / video'**
+  String get chatAttach;
+
+  /// No description provided for @chatPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo from gallery'**
+  String get chatPhoto;
+
+  /// No description provided for @chatCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get chatCamera;
+
+  /// No description provided for @chatVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get chatVideo;
+
+  /// No description provided for @chatRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get chatRecording;
+
+  /// No description provided for @chatEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet. Send the first namaskar 🙏'**
+  String get chatEmpty;
+
+  /// No description provided for @chatMicDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Please allow the microphone to send voice messages'**
+  String get chatMicDenied;
+
+  /// No description provided for @chatFileTooBig.
+  ///
+  /// In en, this message translates to:
+  /// **'File is too big (limit {mb} MB)'**
+  String chatFileTooBig(int mb);
+
+  /// No description provided for @chatDeleteAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this message?'**
+  String get chatDeleteAsk;
+
+  /// No description provided for @chatDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get chatDelete;
 }
 
 class _AppLocalizationsDelegate

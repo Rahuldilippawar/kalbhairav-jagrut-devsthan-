@@ -200,3 +200,33 @@ test("guru gyan: shishya reading activity is seen by gadhipatis only", async () 
   await assertSucceeds(deleteDoc(doc(admin("super_admin"), "gadhipatis/u2")));
   await assertFails(getDocs(collection(other(), "shishya_activity")));
 });
+
+test("guru gyan: shishya parivar chat is for approved shishyas only", async () => {
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), "shishyas/u1"), { name: "गणेश", mobile: "+919876543210", status: "approved" });
+    await setDoc(doc(ctx.firestore(), "shishyas/u2"), { name: "रमेश", mobile: "+919000000000", status: "pending" });
+  });
+  const msg = (extra = {}) => ({ uid: "u1", name: "गणेश", kind: "text", text: "जय काळभैरव 🙏", createdAt: serverTimestamp(), ...extra });
+  const media = "https://firebasestorage.googleapis.com/v0/b/x/o/shishya_chat%2Fu1%2Fa.jpg?alt=media";
+  const ref = await assertSucceeds(addDoc(collection(devotee(), "shishya_chat"), msg()));
+  await assertSucceeds(addDoc(collection(devotee(), "shishya_chat"), { uid: "u1", name: "गणेश", kind: "image", mediaUrl: media, createdAt: serverTimestamp() }));
+  await assertSucceeds(addDoc(collection(devotee(), "shishya_chat"), { uid: "u1", name: "गणेश", kind: "voice", mediaUrl: media, durationMs: 4200, createdAt: serverTimestamp() }));
+  // Not as someone else, no foreign links, no empty text, no edits.
+  await assertFails(addDoc(collection(devotee(), "shishya_chat"), msg({ uid: "u2" })));
+  await assertFails(addDoc(collection(devotee(), "shishya_chat"), { uid: "u1", name: "गणेश", kind: "image", mediaUrl: "https://evil.example/x.jpg", createdAt: serverTimestamp() }));
+  await assertFails(addDoc(collection(devotee(), "shishya_chat"), msg({ text: "" })));
+  await assertFails(addDoc(collection(devotee(), "shishya_chat"), msg({ kind: "text", mediaUrl: media })));
+  await assertFails(updateDoc(doc(devotee(), ref.path), { text: "बदल" }));
+  // Waiting shishyas, devotees and guests can neither read nor write.
+  await assertFails(getDocs(collection(other(), "shishya_chat")));
+  await assertFails(addDoc(collection(other(), "shishya_chat"), msg({ uid: "u2", name: "रमेश" })));
+  await assertFails(getDocs(collection(guest(), "shishya_chat")));
+  await assertSucceeds(getDocs(collection(devotee(), "shishya_chat")));
+  // Others' messages: only staff (or a gadhipati) remove them.
+  await assertFails(deleteDoc(doc(other(), ref.path)));
+  await assertSucceeds(getDocs(collection(admin("seva_manager"), "shishya_chat")));
+  await assertFails(deleteDoc(doc(admin("gallery_manager"), ref.path)));
+  await assertSucceeds(deleteDoc(doc(admin("temple_admin"), ref.path)));
+  const mine = await addDoc(collection(devotee(), "shishya_chat"), msg());
+  await assertSucceeds(deleteDoc(doc(devotee(), mine.path)));
+});

@@ -366,5 +366,20 @@
   "durationMinutes": "{minutes} મિ",
   "durationHours": "{hours} ક {minutes} મિ",
   "lastSeenAt": "છેલ્લે {time}",
-  "gadhipatiOnly": "ફક્ત ગાદીપતિઓ માટે"
+  "gadhipatiOnly": "ફક્ત ગાદીપતિઓ માટે",
+  "chatTitle": "શિષ્ય પરિવાર ચર્ચા",
+  "chatHint": "બધા મંજૂર શિષ્યો સાથે વાત – ફોટો, વિડિયો અને અવાજ સંદેશ",
+  "chatTypeMessage": "સંદેશ લખો…",
+  "chatSend": "મોકલો",
+  "chatVoice": "અવાજ સંદેશ",
+  "chatAttach": "ફોટો / વિડિયો",
+  "chatPhoto": "ગેલેરીમાંથી ફોટો",
+  "chatCamera": "કેમેરાથી ફોટો",
+  "chatVideo": "વિડિયો",
+  "chatRecording": "રેકોર્ડિંગ",
+  "chatEmpty": "હજી કોઈ સંદેશ નથી. પહેલો નમસ્કાર મોકલો 🙏",
+  "chatMicDenied": "અવાજ સંદેશ માટે માઇક્રોફોનની મંજૂરી આપો",
+  "chatFileTooBig": "ફાઇલ બહુ મોટી છે (મર્યાદા {mb} MB)",
+  "chatDeleteAsk": "આ સંદેશ દૂર કરવો?",
+  "chatDelete": "દૂર કરો"
 }

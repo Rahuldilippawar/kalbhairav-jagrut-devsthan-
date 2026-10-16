@@ -70,6 +70,26 @@ void main() {
     expect(await repo.watchIsGadhipati('g1').first, isFalse);
   });
 
+  test('shishya chat keeps text, photo and voice messages newest first', () async {
+    final store = MemoryDataStore();
+    var now = DateTime(2026, 10, 16, 10);
+    store.clock = () => now;
+    final chat = ShishyaChatRepository(store);
+    const s = Shishya(uid: 'u1', name: 'गणेश', mobile: '+919822012345', status: ShishyaStatus.approved);
+    await chat.send(s, ChatKind.text, text: '  जय काळभैरव 🙏  ');
+    now = now.add(const Duration(minutes: 1));
+    await chat.send(s, ChatKind.image, mediaUrl: 'https://x/p.jpg', text: '');
+    now = now.add(const Duration(minutes: 1));
+    final v = await chat.send(s, ChatKind.voice, mediaUrl: 'https://x/v.m4a', durationMs: 4200);
+    final all = await chat.watchMessages().first;
+    expect(all.map((m) => m.kind), [ChatKind.voice, ChatKind.image, ChatKind.text]);
+    expect(all.last.text, 'जय काळभैरव 🙏');
+    expect(all[1].text, isNull);
+    expect((all.first.durationMs, all.first.name), (4200, 'गणेश'));
+    await chat.remove(v);
+    expect((await chat.watchMessages().first).length, 2);
+  });
+
   test('shishya request, progress and login email', () async {
     final store = MemoryDataStore();
     final repo = GuruGyanRepository(store);

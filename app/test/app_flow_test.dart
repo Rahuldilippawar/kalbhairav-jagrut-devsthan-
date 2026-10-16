@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -11,6 +12,8 @@ import 'package:kjd_app/app/router.dart';
 import 'package:kjd_app/main.dart';
 import 'package:kjd_app/features/banner/festival_picker.dart';
 import 'package:kjd_app/features/guru/lesson_body.dart';
+import 'package:kjd_app/features/guru/shishya_chat_screen.dart';
+import 'package:kjd_app/services/chat_media.dart';
 import 'package:kjd_app/widgets/common.dart';
 import 'package:kjd_app/widgets/media_viewer.dart';
 import 'package:kjd_app/widgets/route_map.dart';
@@ -567,4 +570,88 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('पंचशून्य'), findsWidgets);
   });
+
+  testWidgets('shishya parivar chat: text, emoji, photo and voice, approved shishyas only', (tester) async {
+    final uploads = <String>[];
+    final c = await _start(tester, to: '/guru', extra: [
+      chatMediaUploaderProvider.overrideWithValue(_FakeChatUploader(uploads)),
+      voiceRecorderProvider.overrideWithValue(_FakeVoiceRecorder.new),
+      chatPickerProvider.overrideWithValue((_) async =>
+          (file: XFile.fromData(Uint8List(100), name: 'darshan.jpg', mimeType: 'image/jpeg'), isVideo: false)),
+    ]);
+    final store = c.read(dataStoreProvider);
+    final uid = c.read(uidProvider)!;
+    await store.set(Col.shishyas, uid, {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'pending'});
+    await tester.pumpAndSettle();
+    c.read(routerProvider).go('/shishya-chat');
+    await tester.pumpAndSettle();
+    expect(find.text('शिष्यांसाठी पाठ (मान्यतेनंतर उघडतील)'), findsOneWidget); // waiting: locked
+
+    await store.update(Col.shishyas, uid, {'status': 'approved'});
+    await store.add(Col.shishyaChat, {'uid': 'u9', 'name': 'रमेश', 'kind': 'text', 'text': 'जय काळभैरव', 'createdAt': DateTime(2026, 1, 1)});
+    await tester.pumpAndSettle();
+    expect(find.text('रमेश'), findsOneWidget);
+
+    // Text with an emoji from the quick row.
+    await tester.enterText(find.byType(TextField), 'नमस्कार');
+    await tester.tap(find.byIcon(Icons.emoji_emotions_outlined));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('🙏').first);
+    await tester.tap(find.byIcon(Icons.send));
+    await tester.pumpAndSettle();
+    expect(find.text('नमस्कार🙏'), findsOneWidget);
+
+    // Photo.
+    await tester.tap(find.byIcon(Icons.attach_file));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('गॅलरीतून फोटो'));
+    await tester.pumpAndSettle();
+
+    // Voice: tap the mic, then send.
+    await tester.tap(find.byIcon(Icons.mic));
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.textContaining('रेकॉर्डिंग'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.send));
+    await tester.pumpAndSettle();
+
+    final msgs = await c.read(shishyaChatRepoProvider).watchMessages().first;
+    // (The test clock stands still, so all three share one time.)
+    expect(msgs.where((m) => m.uid == uid).map((m) => m.kind).toSet(), {ChatKind.voice, ChatKind.image, ChatKind.text});
+    expect(msgs.firstWhere((m) => m.kind == ChatKind.voice).durationMs, 3000);
+    expect(uploads, ['$uid/jpg/image/jpeg', '$uid/m4a/audio/mp4']);
+
+    // Own message can be removed; others' only by a gadhipati.
+    await tester.longPress(find.text('जय काळभैरव'));
+    await tester.pumpAndSettle();
+    expect(find.text('हा संदेश काढायचा?'), findsNothing);
+    await tester.longPress(find.text('नमस्कार🙏'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('काढा'));
+    await tester.pumpAndSettle();
+    expect(find.text('नमस्कार🙏'), findsNothing);
+  });
+}
+
+class _FakeChatUploader implements ChatMediaUploader {
+  _FakeChatUploader(this.uploads);
+  final List<String> uploads;
+  @override
+  bool get enabled => true;
+  @override
+  Future<String> upload(String uid, Uint8List bytes, {required String extension, required String contentType}) async {
+    uploads.add('$uid/$extension/$contentType');
+    return 'https://firebasestorage.googleapis.com/v0/b/x/o/${uploads.length}?alt=media';
+  }
+}
+
+class _FakeVoiceRecorder implements VoiceRecorder {
+  @override
+  Future<bool> start() async => true;
+  @override
+  Future<VoiceClip?> stop() async =>
+      (bytes: Uint8List(50), extension: 'm4a', contentType: 'audio/mp4', durationMs: 3000);
+  @override
+  Future<void> cancel() async {}
+  @override
+  void dispose() {}
 }

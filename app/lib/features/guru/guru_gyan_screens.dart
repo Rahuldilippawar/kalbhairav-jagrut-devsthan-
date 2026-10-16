@@ -368,6 +368,19 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
             Text(l.lessonsProgress(done, all.length), style: const TextStyle(color: KjdColors.goldLight)),
           ]),
         ),
+        Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: Card(
+            color: const Color(0xFFFFF1DC),
+            child: ListTile(
+              leading: const Text('💬', style: TextStyle(fontSize: 28)),
+              title: Text(l.chatTitle, style: const TextStyle(fontWeight: FontWeight.w800)),
+              subtitle: Text(l.chatHint),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/shishya-chat'),
+            ),
+          ),
+        ),
         if (ref.watch(isGadhipatiProvider).value ?? false)
           Padding(
             padding: const EdgeInsets.only(top: 12),

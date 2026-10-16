@@ -52,6 +52,9 @@ abstract final class Col {
   /// the time they spent on it.
   static const shishyaActivity = 'shishya_activity';
 
+  /// The shishya parivar group chat (approved shishyas only).
+  static const shishyaChat = 'shishya_chat';
+
   /// Guru Gyan lessons (approved shishyas only).
   static const guruGyan = 'guru_gyan';
 

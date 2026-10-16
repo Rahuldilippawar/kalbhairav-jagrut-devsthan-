@@ -1176,4 +1176,52 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get gadhipatiOnly => 'ફક્ત ગાદીપતિઓ માટે';
+
+  @override
+  String get chatTitle => 'શિષ્ય પરિવાર ચર્ચા';
+
+  @override
+  String get chatHint =>
+      'બધા મંજૂર શિષ્યો સાથે વાત – ફોટો, વિડિયો અને અવાજ સંદેશ';
+
+  @override
+  String get chatTypeMessage => 'સંદેશ લખો…';
+
+  @override
+  String get chatSend => 'મોકલો';
+
+  @override
+  String get chatVoice => 'અવાજ સંદેશ';
+
+  @override
+  String get chatAttach => 'ફોટો / વિડિયો';
+
+  @override
+  String get chatPhoto => 'ગેલેરીમાંથી ફોટો';
+
+  @override
+  String get chatCamera => 'કેમેરાથી ફોટો';
+
+  @override
+  String get chatVideo => 'વિડિયો';
+
+  @override
+  String get chatRecording => 'રેકોર્ડિંગ';
+
+  @override
+  String get chatEmpty => 'હજી કોઈ સંદેશ નથી. પહેલો નમસ્કાર મોકલો 🙏';
+
+  @override
+  String get chatMicDenied => 'અવાજ સંદેશ માટે માઇક્રોફોનની મંજૂરી આપો';
+
+  @override
+  String chatFileTooBig(int mb) {
+    return 'ફાઇલ બહુ મોટી છે (મર્યાદા $mb MB)';
+  }
+
+  @override
+  String get chatDeleteAsk => 'આ સંદેશ દૂર કરવો?';
+
+  @override
+  String get chatDelete => 'દૂર કરો';
 }
