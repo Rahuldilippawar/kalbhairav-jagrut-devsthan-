@@ -62,6 +62,7 @@ final List<NavItem> navItems = [
   NavItem('gallery', 'Gallery', Icons.photo_library_outlined, AdminModule.gallery, () => CollectionListPage(spec: Specs.gallery, header: const GalleryUpload()), group: 'Temple'),
   NavItem('videos', 'Videos', Icons.video_library_outlined, AdminModule.gallery, () => CollectionListPage(spec: Specs.videos), group: 'Temple'),
   NavItem('shishyas', 'Shishya Requests', Icons.how_to_reg_outlined, AdminModule.devotees, () => const ShishyasPage(), group: 'Guru Gyan'),
+  NavItem('shishya_activity', 'Shishya Reading', Icons.insights_outlined, AdminModule.devotees, () => const ShishyaActivityPage(), group: 'Guru Gyan'),
   NavItem('guru_lessons', 'Lessons (पाठ)', Icons.menu_book_outlined, AdminModule.content, () => const GuruLessonsPage(), group: 'Guru Gyan'),
   NavItem('devotees', 'Devotees', Icons.people_outline, AdminModule.devotees, () => const DevoteesPage(), group: 'Admin'),
   NavItem('users', 'Admin Users & Roles', Icons.admin_panel_settings_outlined, AdminModule.users, () => const UsersPage(), group: 'Admin'),

@@ -275,3 +275,221 @@ class GuruLessonsPage extends ConsumerWidget {
     );
   }
 }
+
+final _activityProvider =
+    StreamProvider((ref) => GuruGyanRepository(ref.watch(dataStoreProvider)).watchActivity(limit: 3000));
+
+enum _Period { today, week, month, all }
+
+/// Guru Gyan → Shishya Reading: who read which lesson, granth chapter or
+/// mantra, when and for how long (what gadhipatis also see in the app).
+class ShishyaActivityPage extends ConsumerStatefulWidget {
+  const ShishyaActivityPage({super.key});
+
+  @override
+  ConsumerState<ShishyaActivityPage> createState() => _ShishyaActivityPageState();
+}
+
+class _ShishyaActivityPageState extends ConsumerState<ShishyaActivityPage> {
+  _Period _period = _Period.today;
+  ActivityKind? _kind;
+  String _q = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final now = ref.watch(clockProvider)();
+    final today = DateTime(now.year, now.month, now.day);
+    final from = switch (_period) {
+      _Period.today => today,
+      _Period.week => today.subtract(const Duration(days: 6)),
+      _Period.month => today.subtract(const Duration(days: 29)),
+      _Period.all => null,
+    };
+    final all = ref.watch(_activityProvider).value ?? const <ShishyaActivity>[];
+    final gadhipatis = ref.watch(_gadhipatisProvider).value ?? const <GadhipatiAccount>[];
+    final q = _q.trim().toLowerCase();
+    final live = <String, ShishyaActivity>{};
+    for (final a in all) {
+      if (a.isLive(now)) live.putIfAbsent(a.uid, () => a);
+    }
+    final shown = all
+        .where((a) => from == null || (a.startedAt ?? now).isAfter(from))
+        .where((a) => _kind == null || a.kind == _kind)
+        .where((a) => q.isEmpty || '${a.name} ${a.title}'.toLowerCase().contains(q))
+        .toList();
+    final byShishya = <String, List<ShishyaActivity>>{};
+    final byItem = <String, List<ShishyaActivity>>{};
+    for (final a in shown) {
+      (byShishya[a.uid] ??= []).add(a);
+      (byItem['${a.kind.name}:${a.itemId}'] ??= []).add(a);
+    }
+    final totalSeconds = shown.fold<int>(0, (t, a) => t + a.seconds);
+    final topItems = byItem.values.toList()
+      ..sort((a, b) => b.fold<int>(0, (t, x) => t + x.seconds).compareTo(a.fold<int>(0, (t, x) => t + x.seconds)));
+
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      const Text(
+        'What every approved shishya opens in Guru Gyan – lessons, granth chapters and mantras – and how long the '
+        'screen stayed open (only while the app is in front). Gadhipatis see the same in their app.',
+        style: TextStyle(color: KjdColors.inkMuted),
+      ),
+      const SizedBox(height: 12),
+      Wrap(spacing: 12, runSpacing: 12, children: [
+        _Stat('Reading now', '${live.length}', Icons.circle, KjdColors.success),
+        _Stat('Shishyas', '${byShishya.length}', Icons.people_outline, KjdColors.saffron),
+        _Stat('Opened', '${shown.length}', Icons.menu_book_outlined, KjdColors.kumkum),
+        _Stat('Total time', _dur(totalSeconds), Icons.timer_outlined, KjdColors.kumkumDark),
+      ]),
+      if (live.isNotEmpty) ...[
+        const SizedBox(height: 12),
+        Card(
+          color: KjdColors.success.withValues(alpha: 0.08),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('🟢 Reading now', style: TextStyle(fontWeight: FontWeight.w800, color: KjdColors.success)),
+              for (final a in live.values)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text('${a.name} – ${a.kind.emoji} ${a.title} (${_dur(a.seconds)})'),
+                ),
+            ]),
+          ),
+        ),
+      ],
+      const SizedBox(height: 12),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        for (final p in _Period.values)
+          ChoiceChip(
+            label: Text(switch (p) {
+              _Period.today => 'Today',
+              _Period.week => '7 days',
+              _Period.month => '30 days',
+              _Period.all => 'All',
+            }),
+            selected: _period == p,
+            onSelected: (_) => setState(() => _period = p),
+          ),
+        const SizedBox(width: 12),
+        ChoiceChip(label: const Text('All types'), selected: _kind == null, onSelected: (_) => setState(() => _kind = null)),
+        for (final k in ActivityKind.values)
+          ChoiceChip(
+            label: Text('${k.emoji} ${_kindLabel(k)}'),
+            selected: _kind == k,
+            onSelected: (_) => setState(() => _kind = k),
+          ),
+      ]),
+      const SizedBox(height: 8),
+      TextField(
+        decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search shishya or lesson / granth / mantra'),
+        onChanged: (v) => setState(() => _q = v),
+      ),
+      const SizedBox(height: 16),
+      const Text('Shishyas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 6),
+      if (byShishya.isEmpty) const Padding(padding: EdgeInsets.all(24), child: Center(child: Text('No reading recorded yet 🙏'))),
+      for (final visits in byShishya.values)
+        Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          clipBehavior: Clip.antiAlias,
+          child: ExpansionTile(
+            leading: CircleAvatar(
+              backgroundColor: live.containsKey(visits.first.uid) ? KjdColors.success : KjdColors.goldLight,
+              child: Text(visits.first.name.isEmpty ? '🙏' : visits.first.name.characters.first),
+            ),
+            title: Text(
+              gadhipatis.any((g) => g.uid == visits.first.uid) ? '${visits.first.name}  👁️ गादीपती' : visits.first.name,
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            subtitle: Text('${visits.length} opened • ${_dur(visits.fold<int>(0, (t, a) => t + a.seconds))} • last '
+                '${formatDateTime(visits.first.lastAt ?? visits.first.startedAt, locale: 'en')}'),
+            children: [
+              for (final a in visits)
+                ListTile(
+                  dense: true,
+                  leading: Text(a.kind.emoji, style: const TextStyle(fontSize: 22)),
+                  title: Text(a.title),
+                  subtitle: Text('${_kindLabel(a.kind)} • ${formatDateTime(a.startedAt, locale: 'en')}'),
+                  trailing: Text(_dur(a.seconds), style: const TextStyle(fontWeight: FontWeight.w700)),
+                ),
+            ],
+          ),
+        ),
+      if (topItems.isNotEmpty) ...[
+        const SizedBox(height: 16),
+        const Text('Most read', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 6),
+        Card(
+          child: Column(children: [
+            for (final visits in topItems.take(15))
+              ListTile(
+                dense: true,
+                leading: Text(visits.first.kind.emoji, style: const TextStyle(fontSize: 22)),
+                title: Text(visits.first.title),
+                subtitle: Text('${{for (final v in visits) v.uid}.length} shishyas • opened ${visits.length} times'),
+                trailing: Text(_dur(visits.fold<int>(0, (t, a) => t + a.seconds)),
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+              ),
+          ]),
+        ),
+      ],
+      const SizedBox(height: 16),
+      Text('Gadhipatis (${gadhipatis.length})', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 6),
+      if (gadhipatis.isEmpty)
+        const Text('None yet – the super admin assigns them under Shishya Requests → Approved → "Make gadhipati".',
+            style: TextStyle(color: KjdColors.inkMuted)),
+      for (final g in gadhipatis)
+        ListTile(
+          leading: const Text('👁️', style: TextStyle(fontSize: 22)),
+          title: Text(g.name),
+          subtitle: Text([
+            ?g.mobile,
+            if (g.assignedByName != null) 'by ${g.assignedByName}',
+            if (g.assignedAt != null) formatDateTime(g.assignedAt, locale: 'en'),
+          ].join(' • ')),
+        ),
+    ]);
+  }
+}
+
+class _Stat extends StatelessWidget {
+  const _Stat(this.label, this.value, this.icon, this.color);
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: 170,
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                  Text(label, style: const TextStyle(color: KjdColors.inkMuted, fontSize: 12)),
+                ]),
+              ),
+            ]),
+          ),
+        ),
+      );
+}
+
+String _kindLabel(ActivityKind k) => switch (k) {
+      ActivityKind.lesson => 'Lesson',
+      ActivityKind.granth => 'Granth',
+      ActivityKind.mantra => 'Mantra',
+    };
+
+/// "45 s", "12 min", "1 h 5 min".
+String _dur(int seconds) {
+  if (seconds < 60) return '$seconds s';
+  final minutes = (seconds / 60).round();
+  return minutes < 60 ? '$minutes min' : '${minutes ~/ 60} h ${minutes % 60} min';
+}

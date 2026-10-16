@@ -18,7 +18,7 @@ final _now = DateTime(2026, 10, 6, 9, 30);
 AuthUser _admin(AdminRole r) => AuthUser(uid: 'admin-${r.key}', email: '${r.key}@demo.kjd', displayName: r.label, role: r);
 
 Future<ProviderContainer> _start(WidgetTester tester, AuthUser? user, {List<Override> overrides = const []}) async {
-  tester.view.physicalSize = const Size(1600, 2000);
+  tester.view.physicalSize = const Size(1600, 2300); // whole side menu fits
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final c = ProviderContainer(overrides: [...demoOverrides(clock: () => _now, user: user), ...overrides]);
@@ -294,6 +294,27 @@ void main() {
     await tester.tap(find.text('Remove gadhipati'));
     await tester.pumpAndSettle();
     expect(await store2.get(Col.gadhipatis, 'demo-shishya-1'), isNull);
+  });
+
+  testWidgets('admin sees every shishya reading, its time and the gadhipatis', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.templeAdmin));
+    final store = c.read(dataStoreProvider);
+    final repo = GuruGyanRepository(store);
+    const s = Shishya(uid: 'u1', name: 'गणेश जाधव', mobile: '+919822012345', status: ShishyaStatus.approved);
+    final a = await repo.startActivity(s, ActivityKind.granth, 'ms-a04', 'मूळस्तंभ – अध्याय ४');
+    await repo.recordActivityTime(a, 25 * 60);
+    await repo.startActivity(s, ActivityKind.mantra, 'om', 'ॐ नमः शिवाय');
+    await repo.setGadhipati(const Shishya(uid: 'g1', name: 'महाराज', mobile: '+919800000000'), true, byName: 'Super');
+    await tester.tap(find.text('Shishya Reading'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('गणेश जाधव'), findsWidgets);
+    expect(find.textContaining('2 opened'), findsOneWidget);
+    expect(find.text('Gadhipatis (1)'), findsOneWidget);
+    expect(find.text('महाराज'), findsOneWidget);
+    expect(find.text('मूळस्तंभ – अध्याय ४'), findsOneWidget); // most read
+    await tester.tap(find.textContaining('🕉️ Mantra'));
+    await tester.pumpAndSettle();
+    expect(find.text('मूळस्तंभ – अध्याय ४'), findsNothing);
   });
 
   testWidgets('event manager cannot see Guru Gyan', (tester) async {
