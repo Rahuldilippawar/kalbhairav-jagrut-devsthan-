@@ -292,6 +292,17 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
     },
     // Demo only: two chapters; the live app imports the whole granth.
     Col.granth: {
+      'moolstambh': {
+        'title': 'मूळस्तंभ',
+        'subtitle': 'शिव-पार्वती संवादरूप शिवपुराण – १९ अध्याय',
+        'chapters': [
+          {
+            'id': 'ms-a01', 'stabak': 0, 'adhyay': 1, 'adhyayTo': 1,
+            'title': 'पंचशून्य, अठरा युगे, शक्तीचे दहा अवतार व बारा ब्रह्मदेव',
+            'topics': ['मंगलाचरण', 'पंचशून्य व मूळस्तंभाचा महिमा'], 'proofread': true,
+          },
+        ],
+      },
       'kathakalpataru': {
         'title': 'कथाकल्पतरू',
         'subtitle': 'पूर्वार्ध – स्तबक १ ते ७',
@@ -308,6 +319,7 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
       },
     },
     Col.granthText: {
+      'ms-a01': {'body': '## मंगलाचरण\n\nॐ नमोजी आद्या ॥ वेदासी प्रतिपाद्या ॥ जयजयाजी स्वयंवेद्या ॥ श्री आत्मस्वरुपा तुं ॥१॥'},
       'kk-s1-a01': {'body': 'हे मंगलमूर्ती गजानना, तुला मी साष्टांग नमस्कार करितो. (नमुना मजकूर)'},
       'kk-s2-a08': {
         'body': '## कपालेश्वराची कथा\n\nपूर्वी ब्रह्मदेवाला पाच मुखे असून ते चार मुखांनी चार वेदांचे पठण करीत असत, '

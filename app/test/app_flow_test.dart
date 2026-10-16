@@ -516,5 +516,14 @@ void main() {
     await tester.tap(find.text('वाचले ✓'));
     await tester.pumpAndSettle();
     expect((await c.read(dataStoreProvider).get(Col.shishyas, uid))!.data['completed'], ['kk-s2-a08']);
+
+    // Mulastambh: no stabaks, one list of adhyays.
+    c.read(routerProvider).go('/granth/moolstambh');
+    await tester.pumpAndSettle();
+    expect(find.text('स्तबक 1'), findsNothing);
+    await tester.tap(find.text('पंचशून्य, अठरा युगे, शक्तीचे दहा अवतार व बारा ब्रह्मदेव'));
+    await tester.pumpAndSettle();
+    expect(find.text('मंगलाचरण'), findsOneWidget);
+    expect(find.textContaining('ॐ नमोजी आद्या'), findsOneWidget);
   });
 }

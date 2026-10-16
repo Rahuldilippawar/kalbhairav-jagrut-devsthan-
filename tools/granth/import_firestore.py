@@ -11,8 +11,8 @@ import os
 import sys
 import urllib.request
 
-BOOK = {
-    'id': 'kathakalpataru',
+BOOKS = {}
+BOOKS['kathakalpataru'] = {
     'title': 'कथाकल्पतरू',
     'subtitle': 'पूर्वार्ध – स्तबक १ ते ७',
     'author': 'कवी श्रीकृष्ण व मधुकर',
@@ -49,11 +49,21 @@ def commit(project, token, writes):
     urllib.request.urlopen(req).read()
 
 
+def book_meta(path):
+    """Details of the book in <path>: built in, or <book>/book.json next to it."""
+    book = os.path.splitext(os.path.basename(path))[0]
+    meta_file = os.path.join(os.path.dirname(path), book, 'book.json')
+    meta = dict(BOOKS.get(book, {}))
+    if os.path.exists(meta_file):
+        meta.update(json.load(open(meta_file, encoding='utf-8')))
+    return book, {k: v for k, v in meta.items() if k in ('title', 'subtitle', 'author', 'edition', 'note') and v}
+
+
 def main(path):
     project, token = os.environ['PROJECT'], os.environ['TOKEN']
     chapters = json.load(open(path, encoding='utf-8'))
-    book = BOOK['id']
-    index = {**{k: v for k, v in BOOK.items() if k != 'id'}, 'chapters': [
+    book, meta = book_meta(path)
+    index = {**meta, 'chapters': [
         {k: c[k] for k in ('id', 'stabak', 'adhyay', 'adhyayTo', 'title', 'topics', 'proofread')} for c in chapters
     ]}
     writes = [(f'granth/{book}', index)] + [
@@ -68,4 +78,5 @@ def main(path):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    for p in sys.argv[1:]:
+        main(p)

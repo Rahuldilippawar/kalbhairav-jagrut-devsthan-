@@ -19,4 +19,4 @@ jobs:
           PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
         run: |
           export TOKEN=$(gcloud auth print-access-token)
-          python3 tools/granth/import_firestore.py data/granth/kathakalpataru.json | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 tools/granth/import_firestore.py data/granth/*.json | tee -a "$GITHUB_STEP_SUMMARY"
