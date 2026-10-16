@@ -389,6 +389,8 @@ void main() {
     expect(find.textContaining('गुरु ज्ञानात आपले स्वागत'), findsOneWidget);
     expect(find.textContaining('0 पाठ वाचले'), findsOneWidget);
     await tester.scrollUntilVisible(find.text('श्री काळभैरव – संपूर्ण चरित्र'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.ensureVisible(find.text('श्री काळभैरव – संपूर्ण चरित्र'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('श्री काळभैरव – संपूर्ण चरित्र'));
     await tester.pumpAndSettle();
     expect(find.text('५. काशी – कपालमोचन'), findsOneWidget); // section heading
