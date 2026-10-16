@@ -2201,6 +2201,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next adhyay'**
   String get nextAdhyay;
+
+  /// No description provided for @gadhipatiPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shishya reading'**
+  String get gadhipatiPanel;
+
+  /// No description provided for @gadhipatiPanelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Which shishya is reading what, and for how long'**
+  String get gadhipatiPanelHint;
+
+  /// No description provided for @readingNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading now'**
+  String get readingNow;
+
+  /// No description provided for @periodToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get periodToday;
+
+  /// No description provided for @period7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get period7Days;
+
+  /// No description provided for @periodAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get periodAll;
+
+  /// No description provided for @activityKindLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson'**
+  String get activityKindLesson;
+
+  /// No description provided for @activityKindGranth.
+  ///
+  /// In en, this message translates to:
+  /// **'Granth'**
+  String get activityKindGranth;
+
+  /// No description provided for @activityKindMantra.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra'**
+  String get activityKindMantra;
+
+  /// No description provided for @noActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No reading recorded yet'**
+  String get noActivity;
+
+  /// No description provided for @activityNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'What you read in Guru Gyan and for how long is visible to the temple\'s gadhipatis.'**
+  String get activityNotice;
+
+  /// No description provided for @activitySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} read • {time}'**
+  String activitySummary(int count, String time);
+
+  /// No description provided for @durationSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} s'**
+  String durationSeconds(int seconds);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// No description provided for @durationHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String durationHours(int hours, int minutes);
+
+  /// No description provided for @lastSeenAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Last {time}'**
+  String lastSeenAt(String time);
+
+  /// No description provided for @gadhipatiOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only for gadhipatis'**
+  String get gadhipatiOnly;
 }
 
 class _AppLocalizationsDelegate

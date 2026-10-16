@@ -44,6 +44,14 @@ abstract final class Col {
   /// Shishya parivar access requests, keyed by uid.
   static const shishyas = 'shishyas';
 
+  /// Shishyas the super admin made gadhipati (doc id = their uid); they see
+  /// what every shishya reads.
+  static const gadhipatis = 'gadhipatis';
+
+  /// One row per lesson / granth chapter / mantra a shishya opened, with
+  /// the time they spent on it.
+  static const shishyaActivity = 'shishya_activity';
+
   /// Guru Gyan lessons (approved shishyas only).
   static const guruGyan = 'guru_gyan';
 

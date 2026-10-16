@@ -10,6 +10,9 @@ import '../widgets/library_loader.dart';
 final shishyasProvider =
     StreamProvider((ref) => GuruGyanRepository(ref.watch(dataStoreProvider)).watchShishyas());
 
+final _gadhipatisProvider =
+    StreamProvider((ref) => GuruGyanRepository(ref.watch(dataStoreProvider)).watchGadhipatis());
+
 final _deitiesProvider = StreamProvider((ref) => ContentRepository(ref.watch(dataStoreProvider)).watchDeities());
 
 final guruLessonLibraryDocs = {for (final l in guruLessonLibrary) l.id: l.toMap()};
@@ -40,7 +43,9 @@ class _ShishyasPageState extends ConsumerState<ShishyasPage> {
       const Text(
         'Shishyas register from the app (Guru Gyan tab) with their mobile number and a password. '
         'Approve to open all Guru Gyan lessons for them – they get a notification. '
-        'Block to close access later. Lessons are managed under Guru Gyan → Lessons.',
+        'Block to close access later. Lessons are managed under Guru Gyan → Lessons. '
+        'The super admin can make an approved shishya a gadhipati (गादीपती): in their app they then see '
+        'which shishya reads which lesson, granth chapter or mantra, and for how long.',
         style: TextStyle(color: KjdColors.inkMuted),
       ),
       const SizedBox(height: 12),
@@ -130,6 +135,22 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
     );
   }
 
+  Future<void> _setGadhipati(bool on) async {
+    final a = ref.read(currentAdminProvider)!;
+    final by = a.displayName ?? a.email ?? a.uid;
+    await _run(() async {
+      await GuruGyanRepository(ref.read(dataStoreProvider)).setGadhipati(s, on, byName: by);
+      await ref.read(adminRepoProvider).log(
+            actorId: a.uid,
+            actorName: by,
+            action: on ? 'gadhipati_assigned' : 'gadhipati_removed',
+            collection: Col.gadhipatis,
+            recordId: s.uid,
+            summary: s.name,
+          );
+    }, on ? '${s.name} is now gadhipati' : '${s.name} is no longer gadhipati');
+  }
+
   Future<void> _resetPassword() async {
     final p = await _ask('New password for ${s.name}', 'At least 6 characters – tell it to the shishya');
     if (p == null) return;
@@ -140,6 +161,8 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
   @override
   Widget build(BuildContext context) {
     final lessons = guruLessonLibrary.length;
+    final canAssign = ref.watch(currentAdminProvider)?.role?.can(AdminModule.users) ?? false;
+    final gadhipati = (ref.watch(_gadhipatisProvider).value ?? const <GadhipatiAccount>[]).any((g) => g.uid == s.uid);
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
@@ -150,7 +173,8 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
             const SizedBox(width: 12),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(s.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                Text(gadhipati ? '${s.name}  👁️ गादीपती' : s.name,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                 Text([s.mobile, ?s.village].join(' • ')),
               ]),
             ),
@@ -189,6 +213,12 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
                 onPressed: _busy ? null : () => _review(ShishyaStatus.blocked),
                 icon: const Icon(Icons.block),
                 label: const Text('Block'),
+              ),
+            if (canAssign && (s.status == ShishyaStatus.approved || gadhipati))
+              OutlinedButton.icon(
+                onPressed: _busy ? null : () => _setGadhipati(!gadhipati),
+                icon: Icon(gadhipati ? Icons.visibility_off : Icons.visibility),
+                label: Text(gadhipati ? 'Remove gadhipati' : 'Make gadhipati'),
               ),
             TextButton.icon(
               onPressed: _busy ? null : _resetPassword,

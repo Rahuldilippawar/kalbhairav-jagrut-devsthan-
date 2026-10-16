@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/secure_screen.dart';
 import '../../widgets/youtube_view.dart';
 import '../gallery/gallery_screen.dart';
+import 'activity_tracker.dart';
 import 'granth_screens.dart';
 import 'lesson_body.dart';
 
@@ -285,6 +286,8 @@ class _ShishyaFormState extends ConsumerState<_ShishyaForm> {
               TextFormField(controller: _guru, decoration: InputDecoration(labelText: l.guruNameLabel)),
               const SizedBox(height: 10),
               TextFormField(controller: _note, maxLines: 2, decoration: InputDecoration(labelText: l.noteToTemple)),
+              const SizedBox(height: 8),
+              Text('ℹ️ ${l.activityNotice}', style: const TextStyle(color: KjdColors.inkMuted, fontSize: 12.5)),
             ],
             const SizedBox(height: 16),
             FilledButton.icon(
@@ -365,6 +368,20 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
             Text(l.lessonsProgress(done, all.length), style: const TextStyle(color: KjdColors.goldLight)),
           ]),
         ),
+        if (ref.watch(isGadhipatiProvider).value ?? false)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Card(
+              color: KjdColors.goldLight,
+              child: ListTile(
+                leading: const Text('👁️', style: TextStyle(fontSize: 28)),
+                title: Text(l.gadhipatiPanel, style: const TextStyle(fontWeight: FontWeight.w800)),
+                subtitle: Text(l.gadhipatiPanelHint),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/shishya-activity'),
+              ),
+            ),
+          ),
         for (final id in ref.watch(granthIdsProvider).value ?? granthIds) GranthCard(id: id, completed: s.completed),
         if (lessonDeities.isNotEmpty) ...[
           const SizedBox(height: 14),
@@ -517,7 +534,12 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
     final photos = lesson.allPhotos;
     final done = s.completed.contains(lesson.id);
     final poem = lesson.category == LessonCategory.stotra;
-    return SecureScreen(
+    return ActivityTracker(
+        key: ValueKey(lesson.id),
+        kind: ActivityKind.lesson,
+        itemId: lesson.id,
+        title: lesson.title,
+        child: SecureScreen(
         child: Scaffold(
       body: CustomScrollView(slivers: [
         SliverAppBar(
@@ -627,6 +649,6 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
           ]),
         ),
       ]),
-    ));
+    )));
   }
 }

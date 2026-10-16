@@ -91,6 +91,34 @@ service cloud.firestore {
       return signedIn() && exists(/databases/$(database)/documents/shishyas/$(uid()))
         && get(/databases/$(database)/documents/shishyas/$(uid())).data.status == 'approved';
     }
+    // Gadhipatis (set by the super admin) see what every shishya reads.
+    function gadhipati() {
+      return signedIn() && exists(/databases/$(database)/documents/gadhipatis/$(uid()));
+    }
+    match /gadhipatis/{userId} {
+      allow read: if (signedIn() && uid() == userId) || can('devotees');
+      allow write: if can('users');
+    }
+    // One row per lesson / granth chapter / mantra a shishya opened; the
+    // shishya's app adds it and then only reports the time spent.
+    match /shishya_activity/{id} {
+      allow read: if gadhipati() || can('devotees');
+      allow create: if approvedShishya()
+        && request.resource.data.keys().hasOnly(['uid','name','kind','itemId','title','startedAt','lastAt','seconds'])
+        && request.resource.data.uid == uid()
+        && request.resource.data.kind in ['lesson', 'granth', 'mantra']
+        && request.resource.data.title is string && request.resource.data.title.size() <= 300
+        && request.resource.data.name is string && request.resource.data.name.size() <= 100
+        && request.resource.data.seconds == 0
+        && request.resource.data.startedAt == request.time;
+      allow update: if signedIn() && resource.data.uid == uid()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seconds', 'lastAt'])
+        && request.resource.data.seconds is int
+        && request.resource.data.seconds >= resource.data.seconds
+        && request.resource.data.seconds <= 86400
+        && request.resource.data.lastAt == request.time;
+      allow delete: if can('devotees');
+    }
     match /guru_gyan/{id} {
       allow read: if approvedShishya() || can('content') || can('devotees');
       allow write: if can('content');

@@ -269,6 +269,33 @@ void main() {
     expect(find.textContaining('Starter lessons: ${guruLessonLibrary.length} ready to add'), findsOneWidget);
   });
 
+  testWidgets('only the super admin makes an approved shishya gadhipati', (tester) async {
+    var c = await _start(tester, _admin(AdminRole.templeAdmin));
+    final store = c.read(dataStoreProvider);
+    await store.update(Col.shishyas, 'demo-shishya-1', {'status': 'approved'});
+    await tester.tap(find.text('Shishya Requests'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('Approved'));
+    await tester.pumpAndSettle();
+    expect(find.text('Make gadhipati'), findsNothing); // temple admin cannot
+
+    c = await _start(tester, _admin(AdminRole.superAdmin));
+    final store2 = c.read(dataStoreProvider);
+    await store2.update(Col.shishyas, 'demo-shishya-1', {'status': 'approved'});
+    await tester.tap(find.text('Shishya Requests'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('Approved'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Make gadhipati'));
+    await tester.pumpAndSettle();
+    expect((await store2.get(Col.gadhipatis, 'demo-shishya-1'))!.data['name'], contains('नमुना शिष्य'));
+    expect(find.textContaining('👁️ गादीपती'), findsOneWidget);
+    expect((await store2.list(Col.auditLogs)).any((l) => l.data['action'] == 'gadhipati_assigned'), isTrue);
+    await tester.tap(find.text('Remove gadhipati'));
+    await tester.pumpAndSettle();
+    expect(await store2.get(Col.gadhipatis, 'demo-shishya-1'), isNull);
+  });
+
   testWidgets('event manager cannot see Guru Gyan', (tester) async {
     await _start(tester, _admin(AdminRole.eventManager));
     expect(find.text('Shishya Requests'), findsNothing);

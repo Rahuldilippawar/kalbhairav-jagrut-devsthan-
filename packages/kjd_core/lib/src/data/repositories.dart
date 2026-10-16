@@ -383,6 +383,43 @@ class GuruGyanRepository {
           ..sort((a, b) => a.order.compareTo(b.order));
       });
 
+  /// Records that [s] opened something; returns the id to report time to.
+  Future<String> startActivity(Shishya s, ActivityKind kind, String itemId, String title) =>
+      store.add(Col.shishyaActivity, {
+        'uid': s.uid,
+        'name': s.name,
+        'kind': kind.name,
+        'itemId': itemId,
+        'title': title,
+        'startedAt': store.serverTimestamp,
+        'lastAt': store.serverTimestamp,
+        'seconds': 0,
+      });
+
+  /// Time spent so far on a visit started with [startActivity].
+  Future<void> recordActivityTime(String activityId, int seconds) =>
+      store.update(Col.shishyaActivity, activityId, {'seconds': seconds, 'lastAt': store.serverTimestamp});
+
+  /// Gadhipati / admin: latest visits of all shishyas, newest first.
+  Stream<List<ShishyaActivity>> watchActivity({int limit = 500}) => store
+      .watch(Col.shishyaActivity, Query(orderBy: 'startedAt', descending: true, limit: limit))
+      .map((d) => [for (final x in d) ShishyaActivity.fromMap(x.id, x.data)]);
+
+  Stream<bool> watchIsGadhipati(String uid) => store.watchDoc(Col.gadhipatis, uid).map((d) => d != null);
+
+  Stream<List<GadhipatiAccount>> watchGadhipatis() =>
+      store.watch(Col.gadhipatis).map((d) => [for (final x in d) GadhipatiAccount.fromMap(x.id, x.data)]);
+
+  /// Super admin: make an approved shishya gadhipati, or undo it.
+  Future<void> setGadhipati(Shishya s, bool on, {required String byName}) => on
+      ? store.set(Col.gadhipatis, s.uid, {
+          'name': s.name,
+          'mobile': s.mobile,
+          'assignedAt': store.serverTimestamp,
+          'assignedByName': byName,
+        })
+      : store.delete(Col.gadhipatis, s.uid);
+
   /// Ids of every granth in Firestore, in Guru Gyan order.
   Stream<List<String>> watchGranthIds() => store.watch(Col.granth).map((d) {
         final all = [for (final x in d) Granth.fromMap(x.id, x.data)]

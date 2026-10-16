@@ -349,5 +349,22 @@
   "adhyayLabel": "અધ્યાય",
   "proofreadBadge": "શુદ્ધ",
   "ocrNote": "આ અધ્યાય 1910 ની છાપેલી પ્રતમાંથી કમ્પ્યુટરે વાંચ્યો છે; થોડી અક્ષરભૂલો હોઈ શકે.",
-  "nextAdhyay": "આગળનો અધ્યાય"
+  "nextAdhyay": "આગળનો અધ્યાય",
+  "gadhipatiPanel": "શિષ્ય વાંચન નોંધ",
+  "gadhipatiPanelHint": "કયો શિષ્ય શું અને કેટલો સમય વાંચે છે",
+  "readingNow": "હમણાં વાંચે છે",
+  "periodToday": "આજે",
+  "period7Days": "૭ દિવસ",
+  "periodAll": "બધું",
+  "activityKindLesson": "પાઠ",
+  "activityKindGranth": "ગ્રંથ",
+  "activityKindMantra": "મંત્ર",
+  "noActivity": "હજી કોઈ નોંધ નથી",
+  "activityNotice": "ગુરુ જ્ઞાનમાં તમે શું અને કેટલો સમય વાંચો છો તે મંદિરના ગાદીપતિઓ જોઈ શકે છે.",
+  "activitySummary": "{count} વાંચન • {time}",
+  "durationSeconds": "{seconds} સે",
+  "durationMinutes": "{minutes} મિ",
+  "durationHours": "{hours} ક {minutes} મિ",
+  "lastSeenAt": "છેલ્લે {time}",
+  "gadhipatiOnly": "ફક્ત ગાદીપતિઓ માટે"
 }

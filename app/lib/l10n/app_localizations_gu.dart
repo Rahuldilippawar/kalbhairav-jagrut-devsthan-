@@ -1114,4 +1114,66 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get nextAdhyay => 'આગળનો અધ્યાય';
+
+  @override
+  String get gadhipatiPanel => 'શિષ્ય વાંચન નોંધ';
+
+  @override
+  String get gadhipatiPanelHint => 'કયો શિષ્ય શું અને કેટલો સમય વાંચે છે';
+
+  @override
+  String get readingNow => 'હમણાં વાંચે છે';
+
+  @override
+  String get periodToday => 'આજે';
+
+  @override
+  String get period7Days => '૭ દિવસ';
+
+  @override
+  String get periodAll => 'બધું';
+
+  @override
+  String get activityKindLesson => 'પાઠ';
+
+  @override
+  String get activityKindGranth => 'ગ્રંથ';
+
+  @override
+  String get activityKindMantra => 'મંત્ર';
+
+  @override
+  String get noActivity => 'હજી કોઈ નોંધ નથી';
+
+  @override
+  String get activityNotice =>
+      'ગુરુ જ્ઞાનમાં તમે શું અને કેટલો સમય વાંચો છો તે મંદિરના ગાદીપતિઓ જોઈ શકે છે.';
+
+  @override
+  String activitySummary(int count, String time) {
+    return '$count વાંચન • $time';
+  }
+
+  @override
+  String durationSeconds(int seconds) {
+    return '$seconds સે';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes મિ';
+  }
+
+  @override
+  String durationHours(int hours, int minutes) {
+    return '$hours ક $minutes મિ';
+  }
+
+  @override
+  String lastSeenAt(String time) {
+    return 'છેલ્લે $time';
+  }
+
+  @override
+  String get gadhipatiOnly => 'ફક્ત ગાદીપતિઓ માટે';
 }

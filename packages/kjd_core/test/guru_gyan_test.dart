@@ -47,6 +47,29 @@ void main() {
     expect(await repo.watchGranthIds().first, ['moolstambh', 'navnath', 'kathakalpataru', 'new']);
   });
 
+  test('gadhipati sees each shishya visit with its time', () async {
+    final store = MemoryDataStore();
+    final repo = GuruGyanRepository(store);
+    const s = Shishya(uid: 'u1', name: 'गणेश', mobile: '+919822012345', status: ShishyaStatus.approved);
+    expect(await repo.watchIsGadhipati('g1').first, isFalse);
+    await repo.setGadhipati(const Shishya(uid: 'g1', name: 'महाराज', mobile: '+919800000000'), true, byName: 'Admin');
+    expect(await repo.watchIsGadhipati('g1').first, isTrue);
+    expect((await repo.watchGadhipatis().first).single.name, 'महाराज');
+
+    final a = await repo.startActivity(s, ActivityKind.granth, 'ms-a04', 'मूळस्तंभ – अध्याय ४');
+    await repo.recordActivityTime(a, 95);
+    await repo.startActivity(s, ActivityKind.mantra, 'om', 'ॐ नमः शिवाय');
+    final all = await repo.watchActivity().first;
+    expect(all.length, 2);
+    final g = all.firstWhere((x) => x.id == a);
+    expect((g.uid, g.name, g.kind, g.title, g.seconds), ('u1', 'गणेश', ActivityKind.granth, 'मूळस्तंभ – अध्याय ४', 95));
+    expect(g.isLive(DateTime.now()), isTrue);
+    expect(g.isLive(DateTime.now().add(const Duration(minutes: 5))), isFalse);
+
+    await repo.setGadhipati(const Shishya(uid: 'g1', name: 'महाराज', mobile: '+919800000000'), false, byName: 'Admin');
+    expect(await repo.watchIsGadhipati('g1').first, isFalse);
+  });
+
   test('shishya request, progress and login email', () async {
     final store = MemoryDataStore();
     final repo = GuruGyanRepository(store);

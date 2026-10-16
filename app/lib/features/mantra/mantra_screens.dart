@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
+import '../guru/activity_tracker.dart';
 
 class MantrasScreen extends ConsumerStatefulWidget {
   const MantrasScreen({super.key});
@@ -177,7 +178,12 @@ class _MantraScreenState extends ConsumerState<MantraScreen> {
         .firstOrNull;
     if (mantra == null) return Scaffold(appBar: AppBar(), body: const EmptyState());
     final progress = _count / mantra.japaCount;
-    return Scaffold(
+    return ActivityTracker(
+        key: ValueKey(mantra.id),
+        kind: ActivityKind.mantra,
+        itemId: mantra.id,
+        title: mantra.title,
+        child: Scaffold(
       appBar: AppBar(title: Text(mantra.title), actions: [
         IconButton(
           tooltip: l.share,
@@ -249,6 +255,6 @@ class _MantraScreenState extends ConsumerState<MantraScreen> {
           TextButton.icon(onPressed: _reset, icon: const Icon(Icons.restart_alt), label: Text(l.reset)),
         ]),
       ]),
-    );
+    ));
   }
 }

@@ -250,3 +250,78 @@ class Granth {
         ],
       );
 }
+
+/// What a shishya had open.
+enum ActivityKind { lesson, granth, mantra }
+
+extension ActivityKindEmoji on ActivityKind {
+  String get emoji => switch (this) {
+        ActivityKind.lesson => '📖',
+        ActivityKind.granth => '📚',
+        ActivityKind.mantra => '🕉️',
+      };
+}
+
+/// One visit of a shishya to a lesson, granth chapter or mantra.
+class ShishyaActivity {
+  const ShishyaActivity({
+    required this.id,
+    required this.uid,
+    required this.name,
+    required this.kind,
+    required this.itemId,
+    required this.title,
+    this.startedAt,
+    this.lastAt,
+    this.seconds = 0,
+  });
+
+  final String id;
+  final String uid;
+  final String name;
+  final ActivityKind kind;
+  final String itemId;
+  final String title;
+  final DateTime? startedAt;
+
+  /// Last time the app reported this visit (about every half minute while
+  /// the screen is open).
+  final DateTime? lastAt;
+
+  /// Time the screen was open in the foreground.
+  final int seconds;
+
+  /// Still on this screen right now.
+  bool isLive(DateTime now) => lastAt != null && now.difference(lastAt!) < const Duration(minutes: 2);
+
+  factory ShishyaActivity.fromMap(String id, Map<String, dynamic> m) => ShishyaActivity(
+        id: id,
+        uid: asString(m['uid']),
+        name: asString(m['name']),
+        kind: ActivityKind.values.asNameMap()[m['kind']] ?? ActivityKind.lesson,
+        itemId: asString(m['itemId']),
+        title: asString(m['title']),
+        startedAt: asDate(m['startedAt']),
+        lastAt: asDate(m['lastAt']),
+        seconds: m['seconds'] == null ? 0 : asInt(m['seconds']),
+      );
+}
+
+/// A shishya login the super admin made gadhipati (not the parampara list).
+class GadhipatiAccount {
+  const GadhipatiAccount({required this.uid, required this.name, this.mobile, this.assignedAt, this.assignedByName});
+
+  final String uid;
+  final String name;
+  final String? mobile;
+  final DateTime? assignedAt;
+  final String? assignedByName;
+
+  factory GadhipatiAccount.fromMap(String uid, Map<String, dynamic> m) => GadhipatiAccount(
+        uid: uid,
+        name: asString(m['name']),
+        mobile: asStringOrNull(m['mobile']),
+        assignedAt: asDate(m['assignedAt']),
+        assignedByName: asStringOrNull(m['assignedByName']),
+      );
+}

@@ -450,5 +450,63 @@
   "adhyayLabel": "Adhyay",
   "proofreadBadge": "Checked",
   "ocrNote": "This chapter was read by computer from the 1910 printed book and may have spelling mistakes.",
-  "nextAdhyay": "Next adhyay"
+  "nextAdhyay": "Next adhyay",
+  "gadhipatiPanel": "Shishya reading",
+  "gadhipatiPanelHint": "Which shishya is reading what, and for how long",
+  "readingNow": "Reading now",
+  "periodToday": "Today",
+  "period7Days": "7 days",
+  "periodAll": "All",
+  "activityKindLesson": "Lesson",
+  "activityKindGranth": "Granth",
+  "activityKindMantra": "Mantra",
+  "noActivity": "No reading recorded yet",
+  "activityNotice": "What you read in Guru Gyan and for how long is visible to the temple's gadhipatis.",
+  "activitySummary": "{count} read • {time}",
+  "@activitySummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "durationSeconds": "{seconds} s",
+  "@durationSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "durationMinutes": "{minutes} min",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHours": "{hours} h {minutes} min",
+  "@durationHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "lastSeenAt": "Last {time}",
+  "@lastSeenAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "gadhipatiOnly": "Only for gadhipatis"
 }

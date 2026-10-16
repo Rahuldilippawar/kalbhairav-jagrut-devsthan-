@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { after, before, beforeEach, test } from "node:test";
 
 import { assertFails, assertSucceeds, initializeTestEnvironment } from "@firebase/rules-unit-testing";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 
 let env;
 const devotee = () => env.authenticatedContext("u1", { phone_number: "+919876543210" }).firestore();
@@ -166,4 +166,37 @@ test("guru gyan: shishya requests and lessons need approval", async () => {
   await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { status: "pending" }));
   await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), "shishyas/u1"), { status: "rejected" }));
   await assertSucceeds(setDoc(doc(devotee(), "shishyas/u1"), { ...req, note: "पुन्हा" }, { merge: true }));
+});
+
+test("guru gyan: shishya reading activity is seen by gadhipatis only", async () => {
+  const shishya = { name: "गणेश", mobile: "+919876543210", status: "approved" };
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), "shishyas/u1"), shishya);
+    await setDoc(doc(ctx.firestore(), "shishyas/u2"), { ...shishya, name: "महाराज", mobile: "+919000000000" });
+  });
+  const visit = (uid = "u1") => ({
+    uid, name: "गणेश", kind: "granth", itemId: "ms-a04", title: "मूळस्तंभ – अध्याय ४",
+    startedAt: serverTimestamp(), lastAt: serverTimestamp(), seconds: 0,
+  });
+  // Approved shishya records their own visit, not someone else's.
+  const ref = await assertSucceeds(addDoc(collection(devotee(), "shishya_activity"), visit()));
+  await assertFails(addDoc(collection(devotee(), "shishya_activity"), visit("u2")));
+  await assertFails(addDoc(collection(devotee(), "shishya_activity"), { ...visit(), seconds: 500 }));
+  await assertFails(addDoc(collection(guest(), "shishya_activity"), visit()));
+  // Only the time can change, only upwards, only by its owner.
+  await assertSucceeds(updateDoc(doc(devotee(), ref.path), { seconds: 60, lastAt: serverTimestamp() }));
+  await assertFails(updateDoc(doc(devotee(), ref.path), { seconds: 30, lastAt: serverTimestamp() }));
+  await assertFails(updateDoc(doc(devotee(), ref.path), { seconds: 90, lastAt: serverTimestamp(), title: "x" }));
+  await assertFails(updateDoc(doc(other(), ref.path), { seconds: 90, lastAt: serverTimestamp() }));
+  // Shishyas cannot read the log, nor make themselves gadhipati.
+  await assertFails(getDocs(collection(devotee(), "shishya_activity")));
+  await assertFails(setDoc(doc(other(), "gadhipatis/u2"), { name: "महाराज" }));
+  await assertFails(setDoc(doc(admin("temple_admin"), "gadhipatis/u2"), { name: "महाराज" }));
+  // Super admin assigns a gadhipati, who then sees everyone's reading.
+  await assertSucceeds(setDoc(doc(admin("super_admin"), "gadhipatis/u2"), { name: "महाराज" }));
+  await assertSucceeds(getDoc(doc(other(), "gadhipatis/u2")));
+  await assertSucceeds(getDocs(collection(other(), "shishya_activity")));
+  await assertSucceeds(getDocs(collection(admin("seva_manager"), "shishya_activity")));
+  await assertSucceeds(deleteDoc(doc(admin("super_admin"), "gadhipatis/u2")));
+  await assertFails(getDocs(collection(other(), "shishya_activity")));
 });

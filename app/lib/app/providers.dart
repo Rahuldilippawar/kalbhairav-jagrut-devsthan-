@@ -96,6 +96,19 @@ final guruLessonsProvider = StreamProvider<List<GuruLesson>>((ref) {
   if (!approved) return Stream.value(const []);
   return ref.watch(guruRepoProvider).watchLessons();
 });
+/// This account was made gadhipati by the super admin.
+final isGadhipatiProvider = StreamProvider<bool>((ref) {
+  final uid = ref.watch(uidProvider);
+  if (uid == null) return Stream.value(false);
+  return ref.watch(guruRepoProvider).watchIsGadhipati(uid);
+});
+
+/// Gadhipati: every shishya's latest reading, newest first.
+final shishyaActivityProvider = StreamProvider<List<ShishyaActivity>>((ref) {
+  if (!(ref.watch(isGadhipatiProvider).value ?? false)) return Stream.value(const []);
+  return ref.watch(guruRepoProvider).watchActivity();
+});
+
 /// Granths on the Guru Gyan home, as listed in Firestore; empty until the
 /// shishya is approved.
 final granthIdsProvider = StreamProvider<List<String>>((ref) {

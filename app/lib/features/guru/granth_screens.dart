@@ -6,6 +6,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
 import '../../widgets/secure_screen.dart';
+import 'activity_tracker.dart';
 import 'lesson_body.dart';
 
 /// Granths shown on the Guru Gyan home until the list loads from Firestore
@@ -232,7 +233,12 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
     final c = g.chapters[i];
     final next = i + 1 < g.chapters.length ? g.chapters[i + 1] : null;
     final done = s.completed.contains(c.id);
-    return SecureScreen(
+    return ActivityTracker(
+      key: ValueKey(c.id),
+      kind: ActivityKind.granth,
+      itemId: c.id,
+      title: '${g.title} – ${l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
+      child: SecureScreen(
       child: Scaffold(
         appBar: AppBar(
           title: Text(c.stabak == 0 ? g.title : '${g.title} • ${l.stabakLabel} ${c.stabak}'),
@@ -311,6 +317,6 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

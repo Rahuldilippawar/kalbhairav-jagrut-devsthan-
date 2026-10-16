@@ -408,7 +408,8 @@ void main() {
     await c.read(authServiceProvider).ensureSignedIn();
     await tester.pumpAndSettle();
     expect(find.text('शिष्य नोंदणी'), findsOneWidget);
-    await tester.ensureVisible(find.text('आधीच नोंदणी केली आहे? लॉगिन करा'));
+    // Mid-screen, clear of the bottom navigation bar.
+    Scrollable.ensureVisible(tester.element(find.text('आधीच नोंदणी केली आहे? लॉगिन करा')), alignment: 0.5);
     await tester.pumpAndSettle();
     await tester.tap(find.text('आधीच नोंदणी केली आहे? लॉगिन करा'));
     await tester.pumpAndSettle();
@@ -527,5 +528,43 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('मंगलाचरण'), findsOneWidget);
     expect(find.textContaining('ॐ नमोजी आद्या'), findsOneWidget);
+  });
+
+  testWidgets('gadhipati sees what each shishya reads and for how long', (tester) async {
+    final c = await _start(tester, to: '/guru');
+    final store = c.read(dataStoreProvider);
+    final uid = c.read(uidProvider)!;
+    await store.set(Col.shishyas, uid, {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
+    await tester.pumpAndSettle();
+    expect(find.text('शिष्य वाचन नोंदी'), findsNothing); // not a gadhipati yet
+
+    // A shishya reads a granth chapter; the visit is recorded.
+    c.read(routerProvider).go('/granth/moolstambh/ms-a01');
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 31));
+    var visits = await store.list(Col.shishyaActivity);
+    expect(visits.single.data['kind'], 'granth');
+    expect(visits.single.data['title'], contains('पंचशून्य'));
+    c.read(routerProvider).go('/guru');
+    await tester.pumpAndSettle();
+    visits = await store.list(Col.shishyaActivity);
+    expect(visits.single.data['uid'], uid);
+
+    // Not a gadhipati: the page stays locked.
+    c.read(routerProvider).go('/shishya-activity');
+    await tester.pumpAndSettle();
+    expect(find.text('फक्त गादीपतींसाठी'), findsOneWidget);
+
+    // The super admin makes this account gadhipati.
+    await store.set(Col.gadhipatis, uid, {'name': 'गणेश'});
+    c.read(routerProvider).go('/guru');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('शिष्य वाचन नोंदी'));
+    await tester.pumpAndSettle();
+    expect(find.text('गणेश'), findsWidgets);
+    expect(find.textContaining('1 वाचन'), findsOneWidget);
+    await tester.tap(find.text('गणेश').last);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('पंचशून्य'), findsWidgets);
   });
 }

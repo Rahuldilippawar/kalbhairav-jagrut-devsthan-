@@ -1119,4 +1119,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nextAdhyay => 'Next adhyay';
+
+  @override
+  String get gadhipatiPanel => 'Shishya reading';
+
+  @override
+  String get gadhipatiPanelHint =>
+      'Which shishya is reading what, and for how long';
+
+  @override
+  String get readingNow => 'Reading now';
+
+  @override
+  String get periodToday => 'Today';
+
+  @override
+  String get period7Days => '7 days';
+
+  @override
+  String get periodAll => 'All';
+
+  @override
+  String get activityKindLesson => 'Lesson';
+
+  @override
+  String get activityKindGranth => 'Granth';
+
+  @override
+  String get activityKindMantra => 'Mantra';
+
+  @override
+  String get noActivity => 'No reading recorded yet';
+
+  @override
+  String get activityNotice =>
+      'What you read in Guru Gyan and for how long is visible to the temple\'s gadhipatis.';
+
+  @override
+  String activitySummary(int count, String time) {
+    return '$count read • $time';
+  }
+
+  @override
+  String durationSeconds(int seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String durationHours(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String lastSeenAt(String time) {
+    return 'Last $time';
+  }
+
+  @override
+  String get gadhipatiOnly => 'Only for gadhipatis';
 }
