@@ -49,6 +49,13 @@ test("content writes need the right module", async () => {
   await assertFails(setDoc(doc(admin("not_a_role"), "temple_info/main"), { name: "x" }));
 });
 
+test("gadhipati vanshavali: everyone reads, temple staff write", async () => {
+  await assertSucceeds(getDoc(doc(guest(), "gadhipati_vanshavali/v1")));
+  await assertFails(setDoc(doc(devotee(), "gadhipati_vanshavali/v1"), { name: "x" }));
+  await assertFails(setDoc(doc(admin("volunteer"), "gadhipati_vanshavali/v1"), { name: "x" }));
+  await assertSucceeds(setDoc(doc(admin("temple_admin"), "gadhipati_vanshavali/v1"), { name: "x", parentId: null }));
+});
+
 test("money documents are never client-writable", async () => {
   for (const db of [devotee(), admin("super_admin")]) {
     await assertFails(setDoc(doc(db, "donations/new"), { userId: "u1", amountPaise: 1 }));

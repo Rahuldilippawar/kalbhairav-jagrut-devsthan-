@@ -1266,4 +1266,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String chatSeenBy(int count) {
     return '$count seen';
   }
+
+  @override
+  String get vanshavali => 'Gadhipati vanshavali';
+
+  @override
+  String get vanshavaliHint =>
+      'Who is whose son or daughter, generation by generation';
+
+  @override
+  String get vanshTree => 'Tree';
+
+  @override
+  String get vanshByGeneration => 'By generation';
+
+  @override
+  String sonOf(String name) {
+    return 'Son of $name';
+  }
+
+  @override
+  String daughterOf(String name) {
+    return 'Daughter of $name';
+  }
+
+  @override
+  String generationN(int n) {
+    return 'Generation $n';
+  }
+
+  @override
+  String get spouseLabel => 'Wife / husband';
+
+  @override
+  String get deathLabel => 'Death / samadhi';
+
+  @override
+  String get vanshLineage => 'Lineage';
+
+  @override
+  String get childrenLabel => 'Sons and daughters';
+
+  @override
+  String descendantsCount(int n) {
+    return '$n descendants';
+  }
+
+  @override
+  String get heldGadiLabel => 'Gadhipati';
+
+  @override
+  String get viewVanshavali => 'View family tree';
+
+  @override
+  String get expandAll => 'Open all';
+
+  @override
+  String get collapseAll => 'Close all';
 }

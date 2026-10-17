@@ -39,6 +39,9 @@ abstract final class Col {
   static const gallery = 'gallery';
   static const deities = 'deities';
   static const parampara = 'gadhipati_parampara';
+
+  /// Gadhipati family tree (sons, daughters and their descendants).
+  static const vanshavali = 'gadhipati_vanshavali';
   static const darshanPhotos = 'darshan_photos';
 
   /// Shishya parivar access requests, keyed by uid.

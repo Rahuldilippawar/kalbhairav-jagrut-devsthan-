@@ -178,6 +178,147 @@ class Gadhipati {
       };
 }
 
+/// `gadhipati_vanshavali` – one person in the gadhipati family tree. The
+/// tree hangs off [parentId]: a person without one starts a branch.
+class VanshMember {
+  const VanshMember({
+    required this.id,
+    required this.name,
+    this.parentId,
+    this.female = false,
+    this.gadhipatiId,
+    this.isGadhipati = false,
+    this.spouse,
+    this.birth,
+    this.death,
+    this.photoUrl,
+    this.note,
+    this.active = true,
+    this.order = 0,
+  });
+
+  final String id;
+  final String name;
+
+  /// Father or mother in the tree; null at the top.
+  final String? parentId;
+
+  /// Daughter (मुलगी) rather than son (मुलगा).
+  final bool female;
+
+  /// The matching `gadhipati_parampara` entry, if this person held the गादी.
+  final String? gadhipatiId;
+  final bool isGadhipati;
+
+  /// Wife / husband, free text.
+  final String? spouse;
+  final String? birth;
+
+  /// Death / samadhi, free text.
+  final String? death;
+  final String? photoUrl;
+  final String? note;
+  final bool active;
+
+  /// Order among brothers and sisters (1 = eldest).
+  final int order;
+
+  bool get heldGadi => isGadhipati || (gadhipatiId?.isNotEmpty ?? false);
+
+  factory VanshMember.fromMap(String id, Map<String, dynamic> m) => VanshMember(
+        id: id,
+        name: asString(m['name']),
+        parentId: asStringOrNull(m['parentId']),
+        female: asBool(m['female']),
+        gadhipatiId: asStringOrNull(m['gadhipatiId']),
+        isGadhipati: asBool(m['isGadhipati']),
+        spouse: asStringOrNull(m['spouse']),
+        birth: asStringOrNull(m['birth']),
+        death: asStringOrNull(m['death']),
+        photoUrl: asStringOrNull(m['photoUrl']),
+        note: asStringOrNull(m['note']),
+        active: asBool(m['active'], true),
+        order: asInt(m['order']),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'name': name,
+        'parentId': parentId,
+        'female': female,
+        'gadhipatiId': gadhipatiId,
+        'isGadhipati': isGadhipati,
+        'spouse': spouse,
+        'birth': birth,
+        'death': death,
+        'photoUrl': photoUrl,
+        'note': note,
+        'active': active,
+        'order': order,
+      };
+}
+
+/// The vanshavali as a tree: who is whose son or daughter.
+class VanshTree {
+  VanshTree(Iterable<VanshMember> members) {
+    for (final m in members) {
+      byId[m.id] = m;
+    }
+    for (final m in byId.values) {
+      // A missing parent, or one that would close a loop, starts a branch.
+      final p = m.parentId;
+      final top = p == null || p.isEmpty || !byId.containsKey(p) || _loops(m);
+      if (top) {
+        roots.add(m);
+      } else {
+        (_children[p] ??= []).add(m);
+        _parent[m.id] = byId[p]!;
+      }
+    }
+    int cmp(VanshMember a, VanshMember b) => a.order != b.order ? a.order.compareTo(b.order) : a.name.compareTo(b.name);
+    roots.sort(cmp);
+    for (final c in _children.values) {
+      c.sort(cmp);
+    }
+  }
+
+  final byId = <String, VanshMember>{};
+  final roots = <VanshMember>[];
+  final _children = <String, List<VanshMember>>{};
+  final _parent = <String, VanshMember>{};
+
+  bool _loops(VanshMember m) {
+    final seen = {m.id};
+    for (var p = m.parentId; p != null && byId.containsKey(p); p = byId[p]!.parentId) {
+      if (!seen.add(p)) return true;
+    }
+    return false;
+  }
+
+  bool get isEmpty => byId.isEmpty;
+
+  List<VanshMember> childrenOf(String id) => _children[id] ?? const [];
+
+  VanshMember? parentOf(VanshMember m) => _parent[m.id];
+
+  /// From the top of the branch down to [m]: "A → his son B → his son m".
+  List<VanshMember> lineage(VanshMember m) {
+    final path = <VanshMember>[m];
+    for (var p = parentOf(m); p != null; p = parentOf(p)) {
+      path.insert(0, p);
+    }
+    return path;
+  }
+
+  /// 1 for the top of a branch, 2 for their children, …
+  int generation(VanshMember m) => lineage(m).length;
+
+  /// Everyone below [m].
+  int descendantCount(String id) => childrenOf(id).fold(0, (n, c) => n + 1 + descendantCount(c.id));
+
+  /// The person linked to a parampara entry, if any.
+  VanshMember? forGadhipati(String gadhipatiId) => byId.values.where((m) => m.gadhipatiId == gadhipatiId).firstOrNull;
+}
+
 /// Common deities with general (scriptural, not temple-specific)
 /// descriptions. The admin adds one in a tap, then adds photos and the
 /// temple's own history.

@@ -1259,4 +1259,60 @@ class AppLocalizationsGu extends AppLocalizations {
   String chatSeenBy(int count) {
     return '$count એ જોયું';
   }
+
+  @override
+  String get vanshavali => 'ગાદીપતિ વંશાવળી';
+
+  @override
+  String get vanshavaliHint => 'કોનો પુત્ર કોણ, તેનો પુત્ર કોણ – પેઢી દર પેઢી';
+
+  @override
+  String get vanshTree => 'વંશવૃક્ષ';
+
+  @override
+  String get vanshByGeneration => 'પેઢી પ્રમાણે';
+
+  @override
+  String sonOf(String name) {
+    return '$nameના પુત્ર';
+  }
+
+  @override
+  String daughterOf(String name) {
+    return '$nameની પુત્રી';
+  }
+
+  @override
+  String generationN(int n) {
+    return 'પેઢી $n';
+  }
+
+  @override
+  String get spouseLabel => 'પત્ની / પતિ';
+
+  @override
+  String get deathLabel => 'અવસાન / સમાધિ';
+
+  @override
+  String get vanshLineage => 'વંશ પરંપરા';
+
+  @override
+  String get childrenLabel => 'પુત્રો અને પુત્રીઓ';
+
+  @override
+  String descendantsCount(int n) {
+    return '$n વંશજ';
+  }
+
+  @override
+  String get heldGadiLabel => 'ગાદીપતિ';
+
+  @override
+  String get viewVanshavali => 'વંશાવળી જુઓ';
+
+  @override
+  String get expandAll => 'બધું ખોલો';
+
+  @override
+  String get collapseAll => 'બધું બંધ કરો';
 }

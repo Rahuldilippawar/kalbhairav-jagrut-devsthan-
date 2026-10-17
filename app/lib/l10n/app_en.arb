@@ -554,5 +554,49 @@
         "type": "int"
       }
     }
-  }
+  },
+  "vanshavali": "Gadhipati vanshavali",
+  "vanshavaliHint": "Who is whose son or daughter, generation by generation",
+  "vanshTree": "Tree",
+  "vanshByGeneration": "By generation",
+  "sonOf": "Son of {name}",
+  "@sonOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "daughterOf": "Daughter of {name}",
+  "@daughterOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "generationN": "Generation {n}",
+  "@generationN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "spouseLabel": "Wife / husband",
+  "deathLabel": "Death / samadhi",
+  "vanshLineage": "Lineage",
+  "childrenLabel": "Sons and daughters",
+  "descendantsCount": "{n} descendants",
+  "@descendantsCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "heldGadiLabel": "Gadhipati",
+  "viewVanshavali": "View family tree",
+  "expandAll": "Open all",
+  "collapseAll": "Close all"
 }

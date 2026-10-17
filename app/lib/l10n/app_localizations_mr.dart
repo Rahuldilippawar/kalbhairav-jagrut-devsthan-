@@ -1263,4 +1263,61 @@ class AppLocalizationsMr extends AppLocalizations {
   String chatSeenBy(int count) {
     return '$count जणांनी पाहिले';
   }
+
+  @override
+  String get vanshavali => 'गादीपती वंशावळ';
+
+  @override
+  String get vanshavaliHint =>
+      'कोणाचा मुलगा कोण, त्याचा मुलगा कोण – पिढी दर पिढी';
+
+  @override
+  String get vanshTree => 'वंशवृक्ष';
+
+  @override
+  String get vanshByGeneration => 'पिढीनुसार';
+
+  @override
+  String sonOf(String name) {
+    return '$name यांचा मुलगा';
+  }
+
+  @override
+  String daughterOf(String name) {
+    return '$name यांची मुलगी';
+  }
+
+  @override
+  String generationN(int n) {
+    return 'पिढी $n';
+  }
+
+  @override
+  String get spouseLabel => 'पत्नी / पती';
+
+  @override
+  String get deathLabel => 'निधन / समाधी';
+
+  @override
+  String get vanshLineage => 'वंश परंपरा';
+
+  @override
+  String get childrenLabel => 'मुले व मुली';
+
+  @override
+  String descendantsCount(int n) {
+    return '$n वंशज';
+  }
+
+  @override
+  String get heldGadiLabel => 'गादीपती';
+
+  @override
+  String get viewVanshavali => 'वंशावळ पहा';
+
+  @override
+  String get expandAll => 'सर्व उघडा';
+
+  @override
+  String get collapseAll => 'सर्व बंद करा';
 }

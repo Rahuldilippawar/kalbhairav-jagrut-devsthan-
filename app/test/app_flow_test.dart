@@ -282,6 +282,32 @@ void main() {
     expect(find.text('जीवन परिचय'), findsOneWidget);
   });
 
+  testWidgets('gadhipati vanshavali tree: sons, daughters and lineage', (tester) async {
+    final c = await _start(tester, to: '/parampara/g1');
+    // The first gadhipati's page lists his sons and daughters.
+    await tester.scrollUntilVisible(find.text('नमुना – मुलगी'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.text('नमुना – पहिले गादीपती यांची मुलगी'), findsOneWidget);
+
+    c.read(routerProvider).go('/vanshavali');
+    await tester.pumpAndSettle();
+    for (final name in ['नमुना – थोरला मुलगा', 'नमुना – मुलगी', 'नमुना – नातू', 'नमुना – पणतू']) {
+      expect(find.text(name), findsOneWidget);
+    }
+    expect(find.text('पिढी 4 • नमुना – नातू यांचा मुलगा'), findsOneWidget);
+
+    await tester.tap(find.text('नमुना – पणतू'));
+    await tester.pumpAndSettle();
+    expect(find.text('वंश परंपरा'), findsOneWidget);
+    expect(find.text('1. नमुना – पहिले गादीपती 🚩'), findsOneWidget);
+    expect(find.text('4. नमुना – पणतू'), findsOneWidget);
+    Navigator.of(tester.element(find.text('वंश परंपरा'))).pop();
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('पिढीनुसार'));
+    await tester.pumpAndSettle();
+    expect(find.text('पिढी 3'), findsOneWidget);
+  });
+
   testWidgets('100+ mantras filter by deity and search', (tester) async {
     await _start(tester, to: '/mantras');
     expect(find.textContaining('सर्व ('), findsOneWidget);

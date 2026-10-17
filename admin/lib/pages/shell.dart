@@ -21,6 +21,7 @@ import 'reports_page.dart';
 import 'tithi_page.dart';
 import 'upi_page.dart';
 import 'users_page.dart';
+import 'vanshavali_page.dart';
 
 class NavItem {
   const NavItem(this.id, this.label, this.icon, this.module, this.builder, {this.group = ''});
@@ -56,6 +57,7 @@ final List<NavItem> navItems = [
   NavItem('deities', 'Deities (देवता)', Icons.self_improvement_outlined, AdminModule.temple, () => const DeitiesPage(), group: 'Temple'),
   NavItem('parampara', 'Gadhipati Parampara', Icons.account_tree_outlined, AdminModule.temple,
       () => CollectionListPage(spec: Specs.parampara, subtitle: 'One row per gadhipati, in order. Mark the present one as current.'), group: 'Temple'),
+  NavItem('vanshavali', 'Gadhipati Vanshavali', Icons.family_restroom, AdminModule.temple, () => const VanshavaliPage(), group: 'Temple'),
   NavItem('darshan', 'Darshan Timings', Icons.access_time, AdminModule.darshan, () => CollectionListPage(spec: Specs.darshan), group: 'Temple'),
   NavItem('live', 'Live Darshan', Icons.live_tv, AdminModule.live, () => SingletonPage(spec: Specs.live), group: 'Temple'),
   NavItem('darshan_photos', "Today's Darshan", Icons.add_photo_alternate_outlined, AdminModule.live, () => const DarshanPhotosPage(), group: 'Temple'),

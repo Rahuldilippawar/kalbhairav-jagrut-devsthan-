@@ -317,6 +317,16 @@ void main() {
     expect(find.text('मूळस्तंभ – अध्याय ४'), findsNothing);
   });
 
+  testWidgets('temple admin sees the gadhipati vanshavali as a tree', (tester) async {
+    await _start(tester, _admin(AdminRole.templeAdmin));
+    await tester.tap(find.text('Gadhipati Vanshavali'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tree preview (5 people)'), findsOneWidget);
+    expect(find.text('🌳 नमुना – पहिले गादीपती 🚩'), findsOneWidget);
+    expect(find.text('└ नमुना – मुलगी  (मुलगी)'), findsOneWidget);
+    expect(find.text('└ नमुना – पणतू  (मुलगा)'), findsOneWidget);
+  });
+
   testWidgets('temple admin reads the shishya chat and removes a message', (tester) async {
     final c = await _start(tester, _admin(AdminRole.templeAdmin));
     final chat = ShishyaChatRepository(c.read(dataStoreProvider));

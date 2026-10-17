@@ -391,5 +391,21 @@
   "chatInfo": "संदेशाची माहिती",
   "chatSeenTitle": "कोणी पाहिले",
   "chatNotSeen": "अजून कोणी पाहिले नाही",
-  "chatSeenBy": "{count} जणांनी पाहिले"
+  "chatSeenBy": "{count} जणांनी पाहिले",
+  "vanshavali": "गादीपती वंशावळ",
+  "vanshavaliHint": "कोणाचा मुलगा कोण, त्याचा मुलगा कोण – पिढी दर पिढी",
+  "vanshTree": "वंशवृक्ष",
+  "vanshByGeneration": "पिढीनुसार",
+  "sonOf": "{name} यांचा मुलगा",
+  "daughterOf": "{name} यांची मुलगी",
+  "generationN": "पिढी {n}",
+  "spouseLabel": "पत्नी / पती",
+  "deathLabel": "निधन / समाधी",
+  "vanshLineage": "वंश परंपरा",
+  "childrenLabel": "मुले व मुली",
+  "descendantsCount": "{n} वंशज",
+  "heldGadiLabel": "गादीपती",
+  "viewVanshavali": "वंशावळ पहा",
+  "expandAll": "सर्व उघडा",
+  "collapseAll": "सर्व बंद करा"
 }

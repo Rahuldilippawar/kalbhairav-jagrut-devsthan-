@@ -39,6 +39,7 @@ service cloud.firestore {
     match /darshan_schedule/{id} { allow read: if true; allow write: if can('darshan'); }
     match /deities/{id} { allow read: if true; allow write: if can('temple'); }
     match /gadhipati_parampara/{id} { allow read: if true; allow write: if can('temple'); }
+    match /gadhipati_vanshavali/{id} { allow read: if true; allow write: if can('temple'); }
     match /festival_dates/{id} { allow read: if true; allow write: if can('content'); }
     match /darshan_photos/{id} { allow read: if true; allow write: if can('live') || can('darshan') || can('gallery'); }
     match /live_darshan/{id} { allow read: if true; allow write: if can('live'); }

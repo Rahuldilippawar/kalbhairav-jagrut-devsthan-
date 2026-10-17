@@ -6,6 +6,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
 import '../gallery/gallery_screen.dart';
+import 'vanshavali_screen.dart';
 
 Widget _portrait(Gadhipati g, double size, {bool ring = false}) => Container(
       width: size,
@@ -43,6 +44,7 @@ class ParamparaScreen extends ConsumerWidget {
                 child: Text(intro, style: const TextStyle(fontSize: 15.5, height: 1.7)),
               ),
             ),
+          const VanshavaliLink(),
           const SizedBox(height: 8),
           for (final (i, g) in all.indexed) _TimelineTile(g: g, first: i == 0, last: i == all.length - 1),
         ]);
@@ -199,6 +201,7 @@ class GadhipatiScreen extends ConsumerWidget {
                 ),
               ),
             ],
+          VanshavaliLink(gadhipatiId: g.id),
           if (photos.length > 1) ...[
             SectionHeader(l.photos, icon: '📸'),
             PhotoGrid(urls: photos, captions: [for (final _ in photos) g.name]),

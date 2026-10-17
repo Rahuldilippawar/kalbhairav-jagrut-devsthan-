@@ -83,6 +83,7 @@ final announcementsProvider = StreamProvider(
 final deitiesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchDeities());
 final deityProvider = StreamProvider.family<Deity?, String>((ref, id) => ref.watch(contentRepoProvider).watchDeity(id));
 final paramparaProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchParampara());
+final vanshavaliProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchVanshavali());
 final gadhipatiProvider =
     StreamProvider.family<Gadhipati?, String>((ref, id) => ref.watch(contentRepoProvider).watchGadhipati(id));
 // ---- Guru Gyan (shishya parivar) ----

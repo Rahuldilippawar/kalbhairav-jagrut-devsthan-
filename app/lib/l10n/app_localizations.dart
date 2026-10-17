@@ -2453,6 +2453,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} seen'**
   String chatSeenBy(int count);
+
+  /// No description provided for @vanshavali.
+  ///
+  /// In en, this message translates to:
+  /// **'Gadhipati vanshavali'**
+  String get vanshavali;
+
+  /// No description provided for @vanshavaliHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is whose son or daughter, generation by generation'**
+  String get vanshavaliHint;
+
+  /// No description provided for @vanshTree.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree'**
+  String get vanshTree;
+
+  /// No description provided for @vanshByGeneration.
+  ///
+  /// In en, this message translates to:
+  /// **'By generation'**
+  String get vanshByGeneration;
+
+  /// No description provided for @sonOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Son of {name}'**
+  String sonOf(String name);
+
+  /// No description provided for @daughterOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Daughter of {name}'**
+  String daughterOf(String name);
+
+  /// No description provided for @generationN.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation {n}'**
+  String generationN(int n);
+
+  /// No description provided for @spouseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wife / husband'**
+  String get spouseLabel;
+
+  /// No description provided for @deathLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Death / samadhi'**
+  String get deathLabel;
+
+  /// No description provided for @vanshLineage.
+  ///
+  /// In en, this message translates to:
+  /// **'Lineage'**
+  String get vanshLineage;
+
+  /// No description provided for @childrenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sons and daughters'**
+  String get childrenLabel;
+
+  /// No description provided for @descendantsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} descendants'**
+  String descendantsCount(int n);
+
+  /// No description provided for @heldGadiLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gadhipati'**
+  String get heldGadiLabel;
+
+  /// No description provided for @viewVanshavali.
+  ///
+  /// In en, this message translates to:
+  /// **'View family tree'**
+  String get viewVanshavali;
+
+  /// No description provided for @expandAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Open all'**
+  String get expandAll;
+
+  /// No description provided for @collapseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Close all'**
+  String get collapseAll;
 }
 
 class _AppLocalizationsDelegate

@@ -32,6 +32,7 @@ import '../features/splash/onboarding_screen.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/temple/deity_screens.dart';
 import '../features/temple/parampara_screens.dart';
+import '../features/temple/vanshavali_screen.dart';
 import '../features/temple/temple_info_screen.dart';
 import '../services/upi_gateway.dart';
 import 'shell.dart';
@@ -75,6 +76,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/shishya-activity', builder: (_, _) => const ShishyaActivityScreen()),
       GoRoute(path: '/guru/:id', builder: (_, s) => GuruLessonScreen(lessonId: s.pathParameters['id']!)),
       GoRoute(path: '/parampara', builder: (_, _) => const ParamparaScreen()),
+      GoRoute(path: '/vanshavali', builder: (_, _) => const VanshavaliScreen()),
       GoRoute(path: '/parampara/:id', builder: (_, s) => GadhipatiScreen(id: s.pathParameters['id']!)),
       GoRoute(path: '/gallery', builder: (_, _) => const GalleryScreen()),
       GoRoute(path: '/tithi', builder: (_, _) => const TithiScreen()),

@@ -282,6 +282,13 @@ Map<String, Map<String, Map<String, dynamic>>> buildDemoSeed(DateTime now) {
           bio: 'ही नमुना नोंद आहे. खरी माहिती मंदिर व्यवस्थापन ॲडमिन पॅनेलमधून भरेल.', isCurrent: true, order: 2,
           photoUrl: 'asset:logo').toMap(),
     },
+    Col.vanshavali: {
+      'v1': const VanshMember(id: 'v1', name: 'नमुना – पहिले गादीपती', gadhipatiId: 'g1', spouse: 'नमुना पत्नी', order: 1).toMap(),
+      'v2': const VanshMember(id: 'v2', name: 'नमुना – थोरला मुलगा', parentId: 'v1', gadhipatiId: 'g2', order: 1).toMap(),
+      'v3': const VanshMember(id: 'v3', name: 'नमुना – मुलगी', parentId: 'v1', female: true, order: 2).toMap(),
+      'v4': const VanshMember(id: 'v4', name: 'नमुना – नातू', parentId: 'v2', order: 1).toMap(),
+      'v5': const VanshMember(id: 'v5', name: 'नमुना – पणतू', parentId: 'v4', order: 1).toMap(),
+    },
     Col.shishyas: {
       'demo-shishya-1': {
         ...const Shishya(uid: 'demo-shishya-1', name: 'नमुना शिष्य – श्री. गणेश जाधव', mobile: '+919800000001',

@@ -112,6 +112,10 @@ class ContentRepository {
   Stream<Gadhipati?> watchGadhipati(String id) =>
       store.watchDoc(Col.parampara, id).map((d) => d == null ? null : Gadhipati.fromMap(d.id, d.data));
 
+  /// Gadhipati vanshavali (family tree), shown members only.
+  Stream<VanshTree> watchVanshavali() =>
+      store.watch(Col.vanshavali).map((d) => VanshTree(_map(d, VanshMember.fromMap).where((x) => x.active)));
+
   /// Admin date corrections for computed festivals, keyed by doc id.
   Stream<Map<String, FestivalOverride>> watchFestivalOverrides() => store
       .watch(Col.festivalDates)
