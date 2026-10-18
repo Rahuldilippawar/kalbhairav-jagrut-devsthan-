@@ -495,6 +495,19 @@ void main() {
     expect(find.textContaining('- ', findRichText: true), findsNothing); // markers are not shown
   });
 
+  testWidgets('havan lessons show each mantra in its own box', (tester) async {
+    final lesson = guruLessonLibrary.firstWhere((l) => l.id == 'gg-havan-mahadev');
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(body: SingleChildScrollView(child: LessonBody(text: lesson.body, fontSize: 16))),
+    ));
+    expect(find.text('महामृत्युंजय मंत्र (108 आहुती)'), findsOneWidget);
+    expect(
+      find.text('ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्।\nउर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात् स्वाहा॥'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('> '), findsNothing);
+  });
+
   testWidgets('wide screens (web on a laptop) get a side menu and today panel', (tester) async {
     final c = await _start(tester, size: const Size(1440 * 2.5, 900 * 2.5));
     expect(find.byType(NavigationBar), findsNothing);

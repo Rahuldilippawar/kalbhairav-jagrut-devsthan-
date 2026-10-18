@@ -24,6 +24,20 @@ void main() {
     }
   });
 
+  test('havan lessons: the vidhi in order and every deity\'s ahuti mantras', () {
+    final havan = guruLessonLibrary.where((l) => l.category == LessonCategory.havan).toList();
+    expect(havan.length, greaterThanOrEqualTo(12));
+    for (final l in havan.skip(1)) {
+      final mantras = l.body.split('\n').where((x) => x.startsWith('> '));
+      expect(mantras, isNotEmpty, reason: l.id);
+    }
+    for (final id in ['kalbhairav', 'ganpati', 'jogeshwari', 'mahadev', 'datta', 'hanuman', 'khandoba']) {
+      expect(havan.any((l) => l.deityId == id), isTrue, reason: id);
+    }
+    expect(havan.first.id, 'gg-havan-mahiti');
+    expect(havan.last.body, contains('पूर्णमदः'));
+  });
+
   test('temple lessons override or hide starter lessons by id', () async {
     final store = MemoryDataStore();
     final repo = GuruGyanRepository(store);

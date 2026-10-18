@@ -3,7 +3,8 @@ import 'package:kjd_core/kjd_core.dart';
 
 /// Lesson text with a little structure: `## ` lines are headings and
 /// `- name – note` lines (two spaces of indent per generation) are drawn as
-/// a family tree; every other line is a paragraph.
+/// a family tree; consecutive `> ` lines are a mantra in a box; every other
+/// line is a paragraph.
 class LessonBody extends StatelessWidget {
   const LessonBody({super.key, required this.text, required this.fontSize, this.poem = false});
   final String text;
@@ -17,8 +18,18 @@ class LessonBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
-    for (final line in text.split('\n')) {
+    // Consecutive "> " lines form one mantra box.
+    List<String>? mantra;
+    for (final line in [...text.split('\n'), '']) {
       final trimmed = line.trim();
+      if (trimmed.startsWith('> ')) {
+        (mantra ??= []).add(trimmed.substring(2).trim());
+        continue;
+      }
+      if (mantra != null) {
+        children.add(_Mantra(mantra, fontSize));
+        mantra = null;
+      }
       final node = _node.firstMatch(line);
       if (trimmed.isEmpty) {
         children.add(SizedBox(height: fontSize * .6));
@@ -41,6 +52,35 @@ class LessonBody extends StatelessWidget {
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children);
   }
+}
+
+class _Mantra extends StatelessWidget {
+  const _Mantra(this.lines, this.fontSize);
+  final List<String> lines;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        margin: EdgeInsets.symmetric(vertical: fontSize * .4),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF3E0),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: KjdColors.saffronLight),
+        ),
+        child: SelectableText(
+          lines.join('\n'),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: fontSize + 1,
+            height: 1.8,
+            fontWeight: FontWeight.w600,
+            color: KjdColors.kumkumDark,
+            fontFamily: bannerFontFamily('tiroMarathi'),
+            locale: bannerTextLocale,
+          ),
+        ),
+      );
 }
 
 class _Heading extends StatelessWidget {

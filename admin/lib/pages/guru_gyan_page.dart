@@ -259,7 +259,7 @@ class GuruLessonsPage extends ConsumerWidget {
         const FieldSpec('summary', 'Short summary (one line)'),
         const FieldSpec('body', 'Lesson text (कथा / माहिती)', type: FieldType.multiline, required: true,
             help: 'A line starting with "## " is a heading. Family tree (वंशावळ): one person per line as '
-                '"- नाव – माहिती", with two more spaces before "-" for each next generation.'),
+                '"- नाव – माहिती", with two more spaces before "-" for each next generation. A line starting with "> " is a mantra (shown in a box).'),
         const FieldSpec('photoUrl', 'Main photo', type: FieldType.image),
         const FieldSpec('photos', 'More photos', type: FieldType.imageList),
         const FieldSpec('videoUrl', 'YouTube video link', type: FieldType.url),

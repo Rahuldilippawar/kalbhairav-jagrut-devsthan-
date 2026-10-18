@@ -1,5 +1,6 @@
 import '../models/guru_gyan.dart';
 import 'guru_gyan_charitra.dart';
+import 'guru_gyan_havan.dart';
 import 'guru_gyan_vanshavali.dart';
 
 /// Starter Guru Gyan lessons: well-known puranic kathas and general
@@ -9,6 +10,7 @@ import 'guru_gyan_vanshavali.dart';
 const guruLessonLibrary = <GuruLesson>[
   ...charitraLessons,
   ...vanshavaliLessons,
+  ...havanLessons,
   ..._shortLessons,
 ];
 
