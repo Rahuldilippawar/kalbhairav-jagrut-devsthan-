@@ -44,6 +44,8 @@ class AndroidApkInstaller implements ApkInstaller {
           if (total > 0) onProgress?.call(got / total);
         }
         await sink.close();
+        // A dropped connection leaves a broken APK ("problem parsing the package").
+        if (total > 0 && got != total) return InstallResult.failed;
         await part.rename(file.path);
       } finally {
         client.close();
