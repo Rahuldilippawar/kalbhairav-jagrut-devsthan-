@@ -121,6 +121,35 @@ void main() {
     expect(find.textContaining('🛕 महाप्रसाद'), findsWidgets);
   });
 
+  testWidgets('banner studio: smart suggestions, message ideas and colour themes', (tester) async {
+    final c = await _start(tester, to: '/banner');
+    await c.read(dataStoreProvider).set(Col.calendarEvents, 'p1', {'title': 'भंडारा', 'date': _now, 'location': 'मंदिर'});
+    await tester.pumpAndSettle();
+    expect(find.text('आजसाठी स्मार्ट सूचना'), findsOneWidget);
+    // Today's programme becomes an invitation banner in one tap.
+    await tester.tap(find.text('भंडारा'));
+    await tester.pumpAndSettle();
+    expect(find.text('🙏 सस्नेह निमंत्रण'), findsWidgets);
+    expect(find.textContaining('📍 मंदिर'), findsWidgets);
+    // Morning greeting (09:30) with today's built-in message.
+    final strip = find.ancestor(of: find.text('भंडारा').first, matching: find.byType(Scrollable)).first;
+    await tester.scrollUntilVisible(find.text('शुभ प्रभात'), 200, scrollable: strip);
+    await tester.tap(find.text('शुभ प्रभात'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining(builtInGreeting(_now).message), findsWidgets);
+    // Suggest another message.
+    final list = find.byType(Scrollable).first;
+    await tester.scrollUntilVisible(find.text('नवीन संदेश सुचवा'), 300, scrollable: list);
+    await tester.tap(find.text('नवीन संदेश सुचवा'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining(builtInGreeting(_now).message), findsNothing);
+    // Colour themes.
+    await tester.scrollUntilVisible(find.text('केशरी'), -300, scrollable: list);
+    await tester.tap(find.text('केशरी'));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.check), findsOneWidget);
+  });
+
   testWidgets('events archive filters by year', (tester) async {
     await _start(tester, to: '/events');
     expect(find.text('नवरात्र उत्सव 2026'), findsOneWidget);

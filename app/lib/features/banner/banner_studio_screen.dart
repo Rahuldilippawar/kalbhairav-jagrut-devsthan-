@@ -9,6 +9,7 @@ import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
 import 'banner_canvas.dart';
+import 'banner_smart.dart';
 import 'festival_picker.dart';
 
 /// Banner Studio → Category → Template → Details → Photo → Preview → Share.
@@ -53,6 +54,10 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
   String? _headFont;
   String? _bodyFont;
   double _textScale = 1;
+
+  /// Colour theme over the template's own gradient (key of [bannerPalettes]).
+  String? _palette;
+  int _idea = 0;
   bool _senderPrefilled = false;
   bool _includeDate = true;
   bool _busy = false;
@@ -124,22 +129,54 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
     return list.isEmpty ? [fallbackTemplate(_category)] : list;
   }
 
-  BannerTemplate _withLayout(BannerTemplate t) => _layout == null && _headFont == null && _bodyFont == null
-      ? t
-      : BannerTemplate.fromMap(t.id, {
-          ...t.toMap(),
-          'layout': ?_layout,
-          'headlineFont': ?_headFont,
-          'bodyFont': ?_bodyFont,
-        });
+  BannerTemplate _withLayout(BannerTemplate t) =>
+      _layout == null && _headFont == null && _bodyFont == null && _palette == null
+          ? t
+          : BannerTemplate.fromMap(t.id, {
+              ...t.toMap(),
+              'layout': ?_layout,
+              'headlineFont': ?_headFont,
+              'bodyFont': ?_bodyFont,
+              if (bannerPalettes[_palette] case final g?) ...{
+                'gradient': g,
+                'textColor': 0xFFFFFFFF,
+                'accentColor': 0xFFFFD54F,
+              },
+            });
 
-  Future<Uint8List?> _pick({double maxWidth = 1080}) async {
-    final file = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: maxWidth, imageQuality: 85);
+  /// Fills the banner from a smart suggestion.
+  void _applySuggestion(BannerSuggestion s) {
+    _layout = _headFont = _bodyFont = null;
+    if (s.festival != null) {
+      _selectFestival(s.festival!);
+      return;
+    }
+    _festival = null;
+    _category = s.category;
+    if (s.name != null) _name.text = s.name!;
+    _applyTemplate(_templatesFor(ref.read(bannerTemplatesProvider).value ?? const []).first);
+    if (s.headline != null) _headline.text = s.headline!;
+    if (s.message != null) _message.text = s.message!;
+  }
+
+  /// Next ready-made message for the category (the daily list starts at
+  /// today's greeting).
+  void _nextIdea() {
+    final ideas = messageIdeas(_category);
+    final now = ref.read(clockProvider)();
+    final start = identical(ideas, dailySubhechha) ? dailySubhechha.indexOf(builtInGreeting(now).message) : 0;
+    _idea++;
+    final text = ideas[(start + _idea) % ideas.length];
+    _message.text = BannerTemplate.fill(text, {'name': _name.text.isEmpty ? '______' : _name.text});
+  }
+
+  Future<Uint8List?> _pick({double maxWidth = 1080, ImageSource source = ImageSource.gallery}) async {
+    final file = await ImagePicker().pickImage(source: source, maxWidth: maxWidth, imageQuality: 85);
     return file?.readAsBytes();
   }
 
-  Future<void> _pickPhoto() async {
-    final bytes = await _pick();
+  Future<void> _pickPhoto({ImageSource source = ImageSource.gallery}) async {
+    final bytes = await _pick(source: source);
     if (bytes != null) setState(() => _photo = bytes);
   }
 
@@ -217,6 +254,8 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          _Suggestions(onPick: (s) => setState(() => _applySuggestion(s))),
+          const SizedBox(height: 12),
           Center(
             child: ConstrainedBox(
               // Keep tall Status banners within the screen.
@@ -335,6 +374,22 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
               ],
             ),
           ),
+          SectionHeader(l.colorTheme, icon: '🎨'),
+          SizedBox(
+            height: 66,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                for (final k in [null, ...bannerPalettes.keys])
+                  _Swatch(
+                    label: k ?? l.originalColors,
+                    colors: [for (final c in bannerPalettes[k] ?? (_template ?? templates.first).gradient) Color(c)],
+                    selected: _palette == k,
+                    onTap: () => setState(() => _palette = k),
+                  ),
+              ],
+            ),
+          ),
           SectionHeader(l.headlineFontLabel),
           _FontPicker(
             sample: 'शुभेच्छा',
@@ -386,15 +441,29 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
             decoration: InputDecoration(labelText: l.message),
             onChanged: (_) => setState(() {}),
           ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => setState(_nextIdea),
+              icon: const Icon(Icons.auto_awesome, size: 18),
+              label: Text(l.newMessageIdea),
+            ),
+          ),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _pickPhoto,
-                  icon: const Icon(Icons.add_a_photo),
+                  icon: const Icon(Icons.photo_library_outlined),
                   label: Text(l.addPhoto),
                 ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: () => _pickPhoto(source: ImageSource.camera),
+                icon: const Icon(Icons.photo_camera_outlined),
+                label: Text(l.camera),
               ),
               if (_photo != null) ...[
                 const SizedBox(width: 8),
@@ -545,4 +614,113 @@ class _FontPicker extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Today's tap-ready banners: festivals, temple programmes, family
+/// birthdays, tomorrow's festival and a greeting for the time of day.
+class _Suggestions extends ConsumerWidget {
+  const _Suggestions({required this.onPick});
+  final ValueChanged<BannerSuggestion> onPick;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(clockProvider)();
+    final today = dateOnly(now);
+    final list = smartSuggestions(
+      now: now,
+      festivals: [
+        for (var y = today.year; y <= today.add(const Duration(days: 1)).year; y++) ...ref.watch(festivalYearProvider(y)),
+      ],
+      programmes: ref.watch(calendarEventsProvider).value ?? const [],
+      tithi: ref.watch(tithiProvider(today)).value ?? computeTithi(now),
+      profile: ref.watch(profileProvider).value,
+      family: ref.watch(familyProvider).value ?? const [],
+    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        const Icon(Icons.auto_awesome, color: KjdColors.saffron, size: 20),
+        const SizedBox(width: 6),
+        Text(context.l10n.smartSuggestions, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+      ]),
+      const SizedBox(height: 8),
+      SizedBox(
+        height: 64,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: list.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
+          itemBuilder: (_, i) {
+            final s = list[i];
+            return Material(
+              color: KjdColors.goldLight,
+              borderRadius: BorderRadius.circular(14),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () => onPick(s),
+                child: Container(
+                  constraints: const BoxConstraints(minWidth: 120, maxWidth: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Text(s.icon, style: const TextStyle(fontSize: 24)),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(s.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5)),
+                          Text(s.subtitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 11.5, color: KjdColors.kumkumDark)),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ]);
+  }
+}
+
+/// Round gradient swatch for the colour-theme picker.
+class _Swatch extends StatelessWidget {
+  const _Swatch({required this.label, required this.colors, required this.selected, required this.onTap});
+  final String label;
+  final List<Color> colors;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 58,
+          margin: const EdgeInsets.only(right: 6),
+          child: Column(children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: colors.length < 2 ? [...colors, ...colors, Colors.white].take(2).toList() : colors),
+                border: Border.all(color: selected ? KjdColors.gold : Colors.black12, width: selected ? 3 : 1),
+              ),
+              child: selected ? const Icon(Icons.check, color: Colors.white, size: 20) : null,
+            ),
+            const SizedBox(height: 4),
+            Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 10.5)),
+          ]),
+        ),
+      );
 }

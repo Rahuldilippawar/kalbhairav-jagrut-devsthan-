@@ -439,5 +439,10 @@
   "templeEventsOnDay": "देवस्थानातील कार्यक्रम",
   "sunAndMoon": "सूर्य व चंद्र",
   "nameSamvatsara": "{name} नाम संवत्सर",
-  "untilTime": "{time} पर्यंत"
+  "untilTime": "{time} पर्यंत",
+  "smartSuggestions": "आजसाठी स्मार्ट सूचना",
+  "newMessageIdea": "नवीन संदेश सुचवा",
+  "colorTheme": "रंगसंगती",
+  "originalColors": "मूळ",
+  "camera": "कॅमेरा"
 }

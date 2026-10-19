@@ -654,5 +654,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "smartSuggestions": "Suggested for today",
+  "newMessageIdea": "Suggest a message",
+  "colorTheme": "Colours",
+  "originalColors": "Original",
+  "camera": "Camera"
 }

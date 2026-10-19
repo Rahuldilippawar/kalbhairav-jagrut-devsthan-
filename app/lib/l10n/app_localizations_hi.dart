@@ -1423,4 +1423,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String untilTime(String time) {
     return '$time तक';
   }
+
+  @override
+  String get smartSuggestions => 'आज के लिए सुझाव';
+
+  @override
+  String get newMessageIdea => 'नया संदेश सुझाएँ';
+
+  @override
+  String get colorTheme => 'रंग';
+
+  @override
+  String get originalColors => 'मूल';
+
+  @override
+  String get camera => 'कैमरा';
 }

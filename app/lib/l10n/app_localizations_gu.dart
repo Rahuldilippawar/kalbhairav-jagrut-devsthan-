@@ -1417,4 +1417,19 @@ class AppLocalizationsGu extends AppLocalizations {
   String untilTime(String time) {
     return '$time સુધી';
   }
+
+  @override
+  String get smartSuggestions => 'આજ માટે સૂચનો';
+
+  @override
+  String get newMessageIdea => 'નવો સંદેશ સૂચવો';
+
+  @override
+  String get colorTheme => 'રંગ';
+
+  @override
+  String get originalColors => 'મૂળ';
+
+  @override
+  String get camera => 'કેમેરા';
 }

@@ -2741,6 +2741,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'till {time}'**
   String untilTime(String time);
+
+  /// No description provided for @smartSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested for today'**
+  String get smartSuggestions;
+
+  /// No description provided for @newMessageIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest a message'**
+  String get newMessageIdea;
+
+  /// No description provided for @colorTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Colours'**
+  String get colorTheme;
+
+  /// No description provided for @originalColors.
+  ///
+  /// In en, this message translates to:
+  /// **'Original'**
+  String get originalColors;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
 }
 
 class _AppLocalizationsDelegate

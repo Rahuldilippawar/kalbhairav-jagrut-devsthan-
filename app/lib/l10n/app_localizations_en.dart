@@ -1425,4 +1425,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String untilTime(String time) {
     return 'till $time';
   }
+
+  @override
+  String get smartSuggestions => 'Suggested for today';
+
+  @override
+  String get newMessageIdea => 'Suggest a message';
+
+  @override
+  String get colorTheme => 'Colours';
+
+  @override
+  String get originalColors => 'Original';
+
+  @override
+  String get camera => 'Camera';
 }

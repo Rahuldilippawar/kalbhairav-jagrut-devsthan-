@@ -439,5 +439,10 @@
   "templeEventsOnDay": "મંદિરના કાર્યક્રમો",
   "sunAndMoon": "સૂર્ય અને ચંદ્ર",
   "nameSamvatsara": "{name} નામ સંવત્સર",
-  "untilTime": "{time} સુધી"
+  "untilTime": "{time} સુધી",
+  "smartSuggestions": "આજ માટે સૂચનો",
+  "newMessageIdea": "નવો સંદેશ સૂચવો",
+  "colorTheme": "રંગ",
+  "originalColors": "મૂળ",
+  "camera": "કેમેરા"
 }
