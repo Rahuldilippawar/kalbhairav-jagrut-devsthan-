@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/providers.dart';
 import '../../services/share_service.dart';
 import '../../widgets/common.dart';
+import '../../widgets/secure_screen.dart';
 import '../guru/activity_tracker.dart';
 
 class MantrasScreen extends ConsumerStatefulWidget {
@@ -24,9 +25,12 @@ class _MantrasScreenState extends ConsumerState<MantrasScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final mantras = ref.watch(mantrasProvider);
-    return Scaffold(
+    final approved = ref.watch(myShishyaProvider).value?.isApproved ?? false;
+    return SecureScreen(
+      title: l.mantras,
+      child: Scaffold(
       appBar: AppBar(title: Text(l.mantras)),
-      body: AsyncView(mantras, data: (all) {
+      body: !approved ? EmptyState(message: l.lessonsLocked, icon: Icons.lock_outline) : AsyncView(mantras, data: (all) {
         if (all.isEmpty) return const EmptyState();
         final deities = <String>[];
         for (final m in all) {
@@ -76,7 +80,7 @@ class _MantrasScreenState extends ConsumerState<MantrasScreen> {
           ),
         ]);
       }),
-    );
+    ));
   }
 }
 
@@ -176,12 +180,20 @@ class _MantraScreenState extends ConsumerState<MantraScreen> {
     final mantra = (ref.watch(mantrasProvider).value ?? const <Mantra>[])
         .where((m) => m.id == widget.mantraId)
         .firstOrNull;
-    if (mantra == null) return Scaffold(appBar: AppBar(), body: const EmptyState());
+    if (mantra == null) {
+      final approved = ref.watch(myShishyaProvider).value?.isApproved ?? false;
+      return Scaffold(
+        appBar: AppBar(),
+        body: approved ? const EmptyState() : EmptyState(message: l.lessonsLocked, icon: Icons.lock_outline),
+      );
+    }
     final progress = _count / mantra.japaCount;
     return ActivityTracker(
         key: ValueKey(mantra.id),
         kind: ActivityKind.mantra,
         itemId: mantra.id,
+        title: mantra.title,
+        child: SecureScreen(
         title: mantra.title,
         child: Scaffold(
       appBar: AppBar(title: Text(mantra.title), actions: [
@@ -255,6 +267,6 @@ class _MantraScreenState extends ConsumerState<MantraScreen> {
           TextButton.icon(onPressed: _reset, icon: const Icon(Icons.restart_alt), label: Text(l.reset)),
         ]),
       ]),
-    ));
+    )));
   }
 }

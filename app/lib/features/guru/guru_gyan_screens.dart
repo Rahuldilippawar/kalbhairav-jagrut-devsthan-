@@ -404,6 +404,18 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
               ),
             ),
           ),
+        Card(
+          margin: const EdgeInsets.only(top: 12),
+          color: KjdColors.goldLight,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            leading: const Text('🕉️', style: TextStyle(fontSize: 32)),
+            title: Text(l.mantras, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17)),
+            subtitle: Text(l.mantraJapaCta),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/mantras'),
+          ),
+        ),
         for (final c in GranthCollection.values) GranthCollectionCard(collection: c),
         for (final id in ref.watch(granthIdsProvider).value ?? granthIds)
           if (!collectionGranthIds.contains(id)) GranthCard(id: id, completed: s.completed),

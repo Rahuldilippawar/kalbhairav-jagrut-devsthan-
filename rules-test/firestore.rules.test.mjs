@@ -116,7 +116,10 @@ test("notifications visibility and creation", async () => {
 });
 
 test("mantras and public greetings", async () => {
-  await assertSucceeds(getDoc(doc(guest(), "mantras/m1")));
+  // Mantras are Guru Gyan content: not for guests or unapproved devotees.
+  await assertFails(getDoc(doc(guest(), "mantras/m1")));
+  await assertFails(getDoc(doc(devotee(), "mantras/m1")));
+  await assertSucceeds(getDoc(doc(admin("content_manager"), "mantras/m1")));
   await assertSucceeds(setDoc(doc(admin("content_manager"), "mantras/m1"), { text: "ॐ" }));
   await assertFails(setDoc(doc(admin("event_manager"), "mantras/m1"), { text: "ॐ" }));
   await assertSucceeds(getDoc(doc(guest(), "public_greetings/2026-10-06")));

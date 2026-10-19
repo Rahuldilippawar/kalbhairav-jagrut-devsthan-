@@ -165,7 +165,6 @@ class _SideMenu extends StatelessWidget {
       ('📺', l.liveDarshan, '/live'),
       ('🛕', l.templeDeities, '/deities'),
       ('🚩', l.gadhipatiParampara, '/parampara'),
-      ('🕉️', l.mantras, '/mantras'),
       ('📅', l.tithi, '/tithi'),
       ('🖼️', l.gallery, '/gallery'),
       ('🎨', l.makeBanner, '/banner'),

@@ -56,7 +56,8 @@ service cloud.firestore {
     match /daily_quotes/{id} { allow read: if true; allow write: if can('content'); }
     match /daily_greetings/{id} { allow read: if true; allow write: if can('content'); }
     match /tithi_content/{id} { allow read: if true; allow write: if can('content'); }
-    match /mantras/{id} { allow read: if true; allow write: if can('content'); }
+    // Mantras are part of Guru Gyan: approved shishyas and staff only.
+    match /mantras/{id} { allow read: if approvedShishya() || can('content'); allow write: if can('content'); }
     // Built daily by Cloud Functions from devotees who chose "Public".
     match /public_greetings/{id} { allow read: if true; allow write: if false; }
     match /announcements/{id} { allow read: if true; allow write: if can('content') || can('notifications'); }

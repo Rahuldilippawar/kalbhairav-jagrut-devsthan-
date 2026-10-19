@@ -309,7 +309,12 @@ void main() {
   });
 
   testWidgets('100+ mantras filter by deity and search', (tester) async {
-    await _start(tester, to: '/mantras');
+    final c = await _start(tester, to: '/mantras');
+    // Mantras are part of Guru Gyan: locked until the shishya is approved.
+    expect(find.text('नवग्रह'), findsNothing);
+    await c.read(dataStoreProvider).set(Col.shishyas, c.read(uidProvider)!,
+        {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
+    await tester.pumpAndSettle();
     expect(find.textContaining('सर्व ('), findsOneWidget);
     await tester.dragUntilVisible(find.text('नवग्रह'), find.byType(ListView).first, const Offset(-200, 0));
     await tester.pumpAndSettle();
@@ -358,7 +363,10 @@ void main() {
   });
 
   testWidgets('mantra japa counter completes a mala and persists', (tester) async {
-    await _start(tester, to: '/mantra/m-naam');
+    final c = await _start(tester, to: '/mantra/m-naam');
+    await c.read(dataStoreProvider).set(Col.shishyas, c.read(uidProvider)!,
+        {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
+    await tester.pumpAndSettle();
     expect(find.text('ॐ कालभैरवाय नमः'), findsOneWidget);
     final counter = find.text('/ 108');
     await tester.scrollUntilVisible(counter, 200, scrollable: find.byType(Scrollable).first);
@@ -539,11 +547,8 @@ void main() {
     await tester.tap(find.text('गुरु ज्ञान').first);
     await tester.pumpAndSettle();
     expect(c.read(routerProvider).routerDelegate.currentConfiguration.uri.path, '/guru');
-    await tester.ensureVisible(find.widgetWithText(InkWell, 'मंत्र').first);
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(InkWell, 'मंत्र').first);
-    await tester.pumpAndSettle();
-    expect(find.text('ॐ नमः शिवाय'), findsWidgets); // the mantra list opened
+    // Mantras are only inside Guru Gyan now, not in the public side menu.
+    expect(find.widgetWithText(InkWell, 'मंत्र'), findsNothing);
   });
 
   testWidgets('an older app offers the new version; a too-old one must update', (tester) async {

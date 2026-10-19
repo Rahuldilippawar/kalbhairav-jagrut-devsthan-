@@ -53,16 +53,6 @@ class GreetingsScreen extends ConsumerWidget {
             ),
           ),
         ],
-        Card(
-          margin: const EdgeInsets.only(top: 12),
-          child: ListTile(
-            leading: const Text('🕉️', style: TextStyle(fontSize: 26)),
-            title: Text(l.mantras, style: const TextStyle(fontWeight: FontWeight.w800)),
-            subtitle: Text(l.mantraJapaCta),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/mantras'),
-          ),
-        ),
         if (quotes.length > 1) ...[
           SectionHeader('संग्रह (${quotes.length})', icon: '📜'),
           _QuoteCollection(

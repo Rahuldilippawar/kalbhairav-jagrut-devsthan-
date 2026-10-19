@@ -76,7 +76,6 @@ final greetingsTodayProvider =
     StreamProvider((ref) => ref.watch(contentRepoProvider).watchGreetings(_today(ref)));
 final quoteTodayProvider =
     StreamProvider((ref) => ref.watch(contentRepoProvider).watchQuoteOfDay(_today(ref)));
-final mantrasProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchMantras());
 final publicGreetingsProvider =
     StreamProvider((ref) => ref.watch(contentRepoProvider).watchPublicGreetings(_today(ref)));
 final quotesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchQuotes());
@@ -108,6 +107,12 @@ final guruLessonsProvider = StreamProvider<List<GuruLesson>>((ref) {
   final access = ref.watch(myShishyaProvider.select((s) => (s.value?.deities ?? const <String>[]).join(',')));
   final me = Shishya(uid: '', name: '', mobile: '', deities: access.isEmpty ? const [] : access.split(','));
   return ref.watch(guruRepoProvider).watchLessons().map((all) => all.where(me.canSee).toList());
+});
+/// Mantras live in Guru Gyan: approved shishyas only.
+final mantrasProvider = StreamProvider<List<Mantra>>((ref) {
+  final approved = ref.watch(myShishyaProvider.select((s) => s.value?.isApproved ?? false));
+  if (!approved) return Stream.value(const []);
+  return ref.watch(contentRepoProvider).watchMantras();
 });
 /// This account was made gadhipati by the super admin.
 final isGadhipatiProvider = StreamProvider<bool>((ref) {

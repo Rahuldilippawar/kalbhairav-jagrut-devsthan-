@@ -71,7 +71,6 @@ class HomeScreen extends ConsumerWidget {
           const SliverToBoxAdapter(child: _DonateCta()),
           SliverToBoxAdapter(child: SectionHeader(l.todaysQuote, icon: '💬')),
           const SliverToBoxAdapter(child: _QuoteCard()),
-          const SliverToBoxAdapter(child: _MantraCard()),
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ]),
       ),
@@ -264,7 +263,6 @@ class _QuickActions extends StatelessWidget {
       ('🔱', l.quickDeities, () => context.push('/deities')),
       ('🚩', l.quickParampara, () => context.push('/parampara')),
       ('📅', l.quickTithi, () => context.push('/tithi')),
-      ('🕉️', l.quickMantras, () => context.push('/mantras')),
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
@@ -508,23 +506,3 @@ class _PublicWishes extends ConsumerWidget {
   }
 }
 
-class _MantraCard extends StatelessWidget {
-  const _MantraCard();
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l10n;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Card(
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          leading: const Text('🕉️', style: TextStyle(fontSize: 30)),
-          title: Text(l.mantraJapa, style: const TextStyle(fontWeight: FontWeight.w800)),
-          subtitle: Text(l.mantraJapaCta),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => context.push('/mantras'),
-        ),
-      ),
-    );
-  }
-}
