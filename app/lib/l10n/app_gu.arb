@@ -407,5 +407,12 @@
   "heldGadiLabel": "ગાદીપતિ",
   "viewVanshavali": "વંશાવળી જુઓ",
   "expandAll": "બધું ખોલો",
-  "collapseAll": "બધું બંધ કરો"
+  "collapseAll": "બધું બંધ કરો",
+  "puranasTitle": "૧૮ મહાપુરાણ",
+  "puranasHint": "બધાં પુરાણ – મૂળ સંસ્કૃત પાઠ",
+  "darshanasTitle": "ષડ્દર્શન (૬ શાસ્ત્ર)",
+  "darshanasHint": "ભારતીય તત્ત્વજ્ઞાનનાં છ દર્શનોનાં સૂત્રો",
+  "collectionAvailable": "{total} માંથી {available} ઉપલબ્ધ",
+  "comingSoonText": "ટૂંક સમયમાં",
+  "partialText": "આંશિક ઉપલબ્ધ"
 }

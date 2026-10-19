@@ -9,6 +9,7 @@ import '../../widgets/secure_screen.dart';
 import '../../widgets/youtube_view.dart';
 import '../gallery/gallery_screen.dart';
 import 'activity_tracker.dart';
+import 'granth_collections.dart';
 import 'granth_screens.dart';
 import 'lesson_body.dart';
 
@@ -403,7 +404,9 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
               ),
             ),
           ),
-        for (final id in ref.watch(granthIdsProvider).value ?? granthIds) GranthCard(id: id, completed: s.completed),
+        for (final c in GranthCollection.values) GranthCollectionCard(collection: c),
+        for (final id in ref.watch(granthIdsProvider).value ?? granthIds)
+          if (!collectionGranthIds.contains(id)) GranthCard(id: id, completed: s.completed),
         if (lessonDeities.isNotEmpty) ...[
           const SizedBox(height: 14),
           SizedBox(

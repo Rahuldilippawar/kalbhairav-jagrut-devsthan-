@@ -407,5 +407,12 @@
   "heldGadiLabel": "गादीपती",
   "viewVanshavali": "वंशावळ पहा",
   "expandAll": "सर्व उघडा",
-  "collapseAll": "सर्व बंद करा"
+  "collapseAll": "सर्व बंद करा",
+  "puranasTitle": "१८ महापुराणे",
+  "puranasHint": "सर्व पुराणे – मूळ संस्कृत मजकूर",
+  "darshanasTitle": "षड्दर्शने (६ शास्त्रे)",
+  "darshanasHint": "भारतीय तत्त्वज्ञानाच्या सहा दर्शनांची सूत्रे",
+  "collectionAvailable": "{total} पैकी {available} उपलब्ध",
+  "comingSoonText": "लवकरच",
+  "partialText": "काही भाग उपलब्ध"
 }

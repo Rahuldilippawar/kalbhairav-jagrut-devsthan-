@@ -1315,4 +1315,27 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get collapseAll => 'બધું બંધ કરો';
+
+  @override
+  String get puranasTitle => '૧૮ મહાપુરાણ';
+
+  @override
+  String get puranasHint => 'બધાં પુરાણ – મૂળ સંસ્કૃત પાઠ';
+
+  @override
+  String get darshanasTitle => 'ષડ્દર્શન (૬ શાસ્ત્ર)';
+
+  @override
+  String get darshanasHint => 'ભારતીય તત્ત્વજ્ઞાનનાં છ દર્શનોનાં સૂત્રો';
+
+  @override
+  String collectionAvailable(int available, int total) {
+    return '$total માંથી $available ઉપલબ્ધ';
+  }
+
+  @override
+  String get comingSoonText => 'ટૂંક સમયમાં';
+
+  @override
+  String get partialText => 'આંશિક ઉપલબ્ધ';
 }

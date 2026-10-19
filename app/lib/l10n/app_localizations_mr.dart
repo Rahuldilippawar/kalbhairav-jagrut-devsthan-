@@ -1320,4 +1320,27 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get collapseAll => 'सर्व बंद करा';
+
+  @override
+  String get puranasTitle => '१८ महापुराणे';
+
+  @override
+  String get puranasHint => 'सर्व पुराणे – मूळ संस्कृत मजकूर';
+
+  @override
+  String get darshanasTitle => 'षड्दर्शने (६ शास्त्रे)';
+
+  @override
+  String get darshanasHint => 'भारतीय तत्त्वज्ञानाच्या सहा दर्शनांची सूत्रे';
+
+  @override
+  String collectionAvailable(int available, int total) {
+    return '$total पैकी $available उपलब्ध';
+  }
+
+  @override
+  String get comingSoonText => 'लवकरच';
+
+  @override
+  String get partialText => 'काही भाग उपलब्ध';
 }

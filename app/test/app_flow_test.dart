@@ -617,6 +617,41 @@ void main() {
     expect(find.textContaining('ॐ नमोजी आद्या'), findsOneWidget);
   });
 
+  testWidgets('18 Puranas and the six Darshanas open as their own lists', (tester) async {
+    final c = await _start(tester, to: '/guru');
+    final store = c.read(dataStoreProvider);
+    final uid = c.read(uidProvider)!;
+    await store.set(Col.shishyas, uid, {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
+    await store.set(Col.granth, 'yogasutra', {
+      'title': 'योगसूत्र (पतंजलि)',
+      'subtitle': 'षड्दर्शन – योग दर्शन • मूळ संस्कृत • 195 सूत्रे',
+      'order': 64,
+      'chapterLabel': 'पाद',
+      'chapters': [
+        {'id': 'yogasutra-0-1', 'stabak': 0, 'adhyay': 1, 'adhyayTo': 1, 'title': 'पाद 1', 'topics': [], 'proofread': false},
+      ],
+    });
+    await store.set(Col.granthText, 'yogasutra-0-1', {'body': 'अथ योगानुशासनम् ॥ १ ॥'});
+    await tester.pumpAndSettle();
+    // The darshana granth is not listed on its own on the Guru Gyan home.
+    expect(find.text('योगसूत्र (पतंजलि)'), findsNothing);
+    await tester.scrollUntilVisible(find.text('१८ महापुराणे'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.text('१८ महापुराणे'));
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).state.uri.path, '/puranas');
+    expect(find.text('ब्रह्म पुराण'), findsOneWidget);
+    expect(find.text('पद्म पुराण'), findsOneWidget);
+    expect(find.text('लवकरच'), findsWidgets);
+
+    c.read(routerProvider).go('/darshanas');
+    await tester.pumpAndSettle();
+    expect(find.text('योग दर्शन'), findsOneWidget);
+    await tester.tap(find.text('योग दर्शन'));
+    await tester.pumpAndSettle();
+    expect(c.read(routerProvider).state.uri.path, '/granth/yogasutra');
+    expect(find.text('पाद 1'), findsWidgets);
+  });
+
   testWidgets('gadhipati sees what each shishya reads and for how long', (tester) async {
     final c = await _start(tester, to: '/guru');
     final store = c.read(dataStoreProvider);

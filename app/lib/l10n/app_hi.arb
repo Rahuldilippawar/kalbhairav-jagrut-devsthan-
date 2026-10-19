@@ -407,5 +407,12 @@
   "heldGadiLabel": "गादीपति",
   "viewVanshavali": "वंशावली देखें",
   "expandAll": "सब खोलें",
-  "collapseAll": "सब बंद करें"
+  "collapseAll": "सब बंद करें",
+  "puranasTitle": "१८ महापुराण",
+  "puranasHint": "सभी पुराण – मूल संस्कृत पाठ",
+  "darshanasTitle": "षड्दर्शन (६ शास्त्र)",
+  "darshanasHint": "भारतीय दर्शन के छह दर्शनों के सूत्र",
+  "collectionAvailable": "{total} में से {available} उपलब्ध",
+  "comingSoonText": "जल्द ही",
+  "partialText": "आंशिक रूप से उपलब्ध"
 }

@@ -2549,6 +2549,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close all'**
   String get collapseAll;
+
+  /// No description provided for @puranasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'18 Mahapuranas'**
+  String get puranasTitle;
+
+  /// No description provided for @puranasHint.
+  ///
+  /// In en, this message translates to:
+  /// **'All Puranas – original Sanskrit text'**
+  String get puranasHint;
+
+  /// No description provided for @darshanasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shad-darshanas (6 shastras)'**
+  String get darshanasTitle;
+
+  /// No description provided for @darshanasHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sutras of the six schools of Indian philosophy'**
+  String get darshanasHint;
+
+  /// No description provided for @collectionAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{available} of {total} available'**
+  String collectionAvailable(int available, int total);
+
+  /// No description provided for @comingSoonText.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoonText;
+
+  /// No description provided for @partialText.
+  ///
+  /// In en, this message translates to:
+  /// **'Partly available'**
+  String get partialText;
 }
 
 class _AppLocalizationsDelegate

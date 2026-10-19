@@ -1323,4 +1323,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get collapseAll => 'Close all';
+
+  @override
+  String get puranasTitle => '18 Mahapuranas';
+
+  @override
+  String get puranasHint => 'All Puranas – original Sanskrit text';
+
+  @override
+  String get darshanasTitle => 'Shad-darshanas (6 shastras)';
+
+  @override
+  String get darshanasHint => 'Sutras of the six schools of Indian philosophy';
+
+  @override
+  String collectionAvailable(int available, int total) {
+    return '$available of $total available';
+  }
+
+  @override
+  String get comingSoonText => 'Coming soon';
+
+  @override
+  String get partialText => 'Partly available';
 }

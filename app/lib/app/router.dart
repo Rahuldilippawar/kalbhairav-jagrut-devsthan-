@@ -12,6 +12,7 @@ import '../features/donation/receipt_screen.dart';
 import '../features/events/event_detail_screen.dart';
 import '../features/events/events_screen.dart';
 import '../features/gallery/gallery_screen.dart';
+import '../features/guru/granth_collections.dart';
 import '../features/guru/granth_screens.dart';
 import '../features/guru/guru_gyan_screens.dart';
 import '../features/guru/shishya_activity_screen.dart';
@@ -67,6 +68,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/temple', builder: (_, _) => const TempleInfoScreen()),
       GoRoute(path: '/deities', builder: (_, _) => const DeitiesScreen()),
       GoRoute(path: '/deity/:id', builder: (_, s) => DeityDetailScreen(deityId: s.pathParameters['id']!)),
+      GoRoute(path: '/puranas', builder: (_, _) => const GranthCollectionScreen(collection: GranthCollection.puranas)),
+      GoRoute(path: '/darshanas', builder: (_, _) => const GranthCollectionScreen(collection: GranthCollection.darshanas)),
       GoRoute(path: '/granth/:id', builder: (_, s) => GranthScreen(id: s.pathParameters['id']!)),
       GoRoute(
         path: '/granth/:id/:chapter',

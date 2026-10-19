@@ -598,5 +598,22 @@
   "heldGadiLabel": "Gadhipati",
   "viewVanshavali": "View family tree",
   "expandAll": "Open all",
-  "collapseAll": "Close all"
+  "collapseAll": "Close all",
+  "puranasTitle": "18 Mahapuranas",
+  "puranasHint": "All Puranas – original Sanskrit text",
+  "darshanasTitle": "Shad-darshanas (6 shastras)",
+  "darshanasHint": "Sutras of the six schools of Indian philosophy",
+  "collectionAvailable": "{available} of {total} available",
+  "comingSoonText": "Coming soon",
+  "partialText": "Partly available",
+  "@collectionAvailable": {
+    "placeholders": {
+      "available": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }
