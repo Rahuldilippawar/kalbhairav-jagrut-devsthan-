@@ -592,6 +592,7 @@ void main() {
     final uid = c.read(uidProvider)!;
     await c.read(dataStoreProvider).set(Col.shishyas, uid, {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('कथाकल्पतरू'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.text('कथाकल्पतरू'), findsOneWidget);
     await tester.tap(find.text('कथाकल्पतरू'));
     await tester.pumpAndSettle();
