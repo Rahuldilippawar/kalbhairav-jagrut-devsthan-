@@ -444,5 +444,8 @@
   "newMessageIdea": "नया संदेश सुझाएँ",
   "colorTheme": "रंग",
   "originalColors": "मूल",
-  "camera": "कैमरा"
+  "camera": "कैमरा",
+  "completeProfileTitle": "अपनी जानकारी भरें",
+  "completeProfileHint": "ऐप का उपयोग शुरू करने के लिए कृपया अपना नाम, मोबाइल नंबर और गाँव भरें। यह जानकारी केवल मंदिर के लिए है।",
+  "continueText": "आगे बढ़ें"
 }

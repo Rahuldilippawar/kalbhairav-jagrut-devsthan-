@@ -1437,4 +1437,14 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get camera => 'कॅमेरा';
+
+  @override
+  String get completeProfileTitle => 'आपली माहिती भरा';
+
+  @override
+  String get completeProfileHint =>
+      'ॲप वापरण्यास सुरुवात करण्यासाठी कृपया आपले नाव, मोबाईल नंबर व गाव भरा. ही माहिती फक्त देवस्थानासाठी वापरली जाते.';
+
+  @override
+  String get continueText => 'पुढे चला';
 }

@@ -1438,4 +1438,14 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get camera => 'कैमरा';
+
+  @override
+  String get completeProfileTitle => 'अपनी जानकारी भरें';
+
+  @override
+  String get completeProfileHint =>
+      'ऐप का उपयोग शुरू करने के लिए कृपया अपना नाम, मोबाइल नंबर और गाँव भरें। यह जानकारी केवल मंदिर के लिए है।';
+
+  @override
+  String get continueText => 'आगे बढ़ें';
 }

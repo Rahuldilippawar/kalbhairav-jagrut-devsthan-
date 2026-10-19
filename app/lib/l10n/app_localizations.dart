@@ -2771,6 +2771,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Camera'**
   String get camera;
+
+  /// No description provided for @completeProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get completeProfileTitle;
+
+  /// No description provided for @completeProfileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'To start using the app, please enter your name, mobile number and village. This is used only by the temple.'**
+  String get completeProfileHint;
+
+  /// No description provided for @continueText.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueText;
 }
 
 class _AppLocalizationsDelegate

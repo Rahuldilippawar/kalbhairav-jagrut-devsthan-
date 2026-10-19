@@ -1440,4 +1440,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get camera => 'Camera';
+
+  @override
+  String get completeProfileTitle => 'Complete your profile';
+
+  @override
+  String get completeProfileHint =>
+      'To start using the app, please enter your name, mobile number and village. This is used only by the temple.';
+
+  @override
+  String get continueText => 'Continue';
 }

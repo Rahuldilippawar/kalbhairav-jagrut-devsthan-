@@ -322,3 +322,20 @@ class DailyQuotePopupController extends Notifier<bool> {
 }
 
 final dailyQuotePopupProvider = NotifierProvider<DailyQuotePopupController, bool>(DailyQuotePopupController.new);
+
+/// Devotees must fill in name, mobile and village before using the app
+/// (not in the offline demo).
+final requireProfileProvider = Provider<bool>((ref) => !ref.watch(demoModeProvider));
+
+bool profileComplete(DevoteeProfile? p) =>
+    p != null && p.name.trim().length >= 2 && p.mobile.isNotEmpty && (p.village?.trim().isNotEmpty ?? false);
+
+/// True once the profile has loaded and is missing required details.
+final needsProfileProvider = Provider<bool>((ref) {
+  final user = ref.watch(authStateProvider).value;
+  if (!ref.watch(requireProfileProvider) || user == null) return false;
+  // Shishya logins already gave their details in the shishya request.
+  if (user.email?.endsWith('@shishya.kalbhairav.app') ?? false) return false;
+  final p = ref.watch(profileProvider);
+  return p.hasValue && !profileComplete(p.value);
+});

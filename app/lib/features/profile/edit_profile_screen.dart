@@ -10,7 +10,10 @@ import '../../app/shell.dart';
 import '../../widgets/common.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
-  const EditProfileScreen({super.key});
+  const EditProfileScreen({super.key, this.setup = false});
+
+  /// First-run mode: required, no way back until saved.
+  final bool setup;
   @override
   ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
@@ -98,7 +101,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     await ref.read(userRepoProvider).saveProfile(updated);
     if (mounted) {
       context.toast(context.l10n.saved);
-      context.pop();
+      widget.setup ? context.go('/home') : context.pop();
     }
   }
 
@@ -107,11 +110,28 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final l = context.l10n;
     final profile = ref.watch(profileProvider).value;
     if (_loaded == null && profile != null) _load(profile);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.editProfile)),
+    return PopScope(
+      canPop: !widget.setup,
+      child: Scaffold(
+      appBar: AppBar(
+        title: Text(widget.setup ? l.completeProfileTitle : l.editProfile),
+        automaticallyImplyLeading: !widget.setup,
+      ),
       body: Form(
         key: _form,
         child: ListView(padding: const EdgeInsets.all(16), children: [
+          if (widget.setup) ...[
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(color: KjdColors.goldLight, borderRadius: BorderRadius.circular(16)),
+              child: Row(children: [
+                const TempleLogo(size: 44),
+                const SizedBox(width: 12),
+                Expanded(child: Text(l.completeProfileHint, style: const TextStyle(height: 1.45))),
+              ]),
+            ),
+            const SizedBox(height: 16),
+          ],
           Center(
             child: Stack(children: [
               CircleAvatar(
@@ -136,7 +156,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           const SizedBox(height: 16),
           TextFormField(
             controller: _name,
-            decoration: InputDecoration(labelText: l.name),
+            decoration: InputDecoration(labelText: '${l.name} *'),
             validator: (v) => (v ?? '').trim().length < 2 ? l.required : null,
           ),
           const SizedBox(height: 12),
@@ -144,13 +164,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             controller: _mobile,
             keyboardType: TextInputType.phone,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
-            decoration: InputDecoration(labelText: l.mobile, prefixText: '+91 '),
-            validator: (v) => (v ?? '').isEmpty || normaliseIndianMobile(v!) != null ? null : l.invalidMobile,
+            decoration: InputDecoration(labelText: '${l.mobile} *', prefixText: '+91 '),
+            validator: (v) => (v ?? '').isEmpty
+                ? l.required
+                : normaliseIndianMobile(v!) != null
+                    ? null
+                    : l.invalidMobile,
           ),
           const SizedBox(height: 12),
           TextFormField(controller: _email, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: l.email)),
           const SizedBox(height: 12),
-          TextFormField(controller: _village, decoration: InputDecoration(labelText: l.village)),
+          TextFormField(
+            controller: _village,
+            decoration: InputDecoration(labelText: '${l.village} *'),
+            validator: (v) => (v ?? '').trim().isEmpty ? l.required : null,
+          ),
           const SizedBox(height: 12),
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -192,9 +220,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               child: Text(l.privacyPublicHelp, style: const TextStyle(color: KjdColors.inkMuted, fontSize: 13)),
             ),
           const SizedBox(height: 24),
-          FilledButton(onPressed: _save, child: Text(l.save)),
+          FilledButton(onPressed: _save, child: Text(widget.setup ? l.continueText : l.save)),
         ]),
       ),
-    );
+    ));
   }
 }

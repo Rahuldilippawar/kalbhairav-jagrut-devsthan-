@@ -150,6 +150,33 @@ void main() {
     expect(find.byIcon(Icons.check), findsOneWidget);
   });
 
+  testWidgets('a new install must fill in the profile before using the app', (tester) async {
+    final c = await _start(tester, user: _devotee, extra: [requireProfileProvider.overrideWithValue(true)]);
+    expect(find.text('आपली माहिती भरा'), findsOneWidget);
+    // Name, mobile and village are required.
+    await tester.scrollUntilVisible(find.text('पुढे चला'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('पुढे चला'));
+    await tester.pumpAndSettle();
+    expect(find.text('आवश्यक'), findsNWidgets(3));
+    // Leaving for another screen brings the form back.
+    c.read(routerProvider).go('/events');
+    await tester.pumpAndSettle();
+    expect(find.text('आपली माहिती भरा'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextFormField, 'नाव *'), 'राहुल पवार');
+    await tester.enterText(find.widgetWithText(TextFormField, 'मोबाईल नंबर *'), '9876543210');
+    await tester.enterText(find.widgetWithText(TextFormField, 'गाव *'), 'रुंधाटी');
+    await tester.scrollUntilVisible(find.text('पुढे चला'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -300));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('पुढे चला'));
+    await tester.pumpAndSettle();
+    expect(find.text('आपली माहिती भरा'), findsNothing);
+    expect(find.text('शुभ प्रभात 🙏'), findsOneWidget);
+    expect(c.read(profileProvider).value?.village, 'रुंधाटी');
+  });
+
   testWidgets('events archive filters by year', (tester) async {
     await _start(tester, to: '/events');
     expect(find.text('नवरात्र उत्सव 2026'), findsOneWidget);

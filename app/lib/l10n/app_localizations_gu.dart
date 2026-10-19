@@ -1432,4 +1432,14 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get camera => 'કેમેરા';
+
+  @override
+  String get completeProfileTitle => 'તમારી માહિતી ભરો';
+
+  @override
+  String get completeProfileHint =>
+      'એપનો ઉપયોગ શરૂ કરવા કૃપા કરીને તમારું નામ, મોબાઇલ નંબર અને ગામ ભરો. આ માહિતી ફક્ત મંદિર માટે છે.';
+
+  @override
+  String get continueText => 'આગળ વધો';
 }

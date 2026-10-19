@@ -107,6 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/book/:sevaId', builder: (_, s) => SevaBookingScreen(sevaId: s.pathParameters['sevaId']!)),
       GoRoute(path: '/pass/:id', builder: (_, s) => SevaPassScreen(bookingId: s.pathParameters['id']!)),
       GoRoute(path: '/profile/edit', builder: (_, _) => const EditProfileScreen()),
+      GoRoute(path: '/profile/setup', builder: (_, _) => const EditProfileScreen(setup: true)),
       GoRoute(path: '/profile/family', builder: (_, _) => const FamilyScreen()),
       GoRoute(path: '/profile/seva', builder: (_, _) => const MySevaScreen()),
       GoRoute(path: '/profile/donations', builder: (_, _) => const MyDonationsScreen()),

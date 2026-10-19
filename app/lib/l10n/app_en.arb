@@ -659,5 +659,8 @@
   "newMessageIdea": "Suggest a message",
   "colorTheme": "Colours",
   "originalColors": "Original",
-  "camera": "Camera"
+  "camera": "Camera",
+  "completeProfileTitle": "Complete your profile",
+  "completeProfileHint": "To start using the app, please enter your name, mobile number and village. This is used only by the temple.",
+  "continueText": "Continue"
 }

@@ -16,6 +16,12 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final demo = ref.watch(demoModeProvider);
+    // A new install must fill in the profile first.
+    if (ref.watch(needsProfileProvider)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted && ref.read(needsProfileProvider)) context.go('/profile/setup');
+      });
+    }
     return UpdatePrompt(
         child: Scaffold(
       body: Column(children: [

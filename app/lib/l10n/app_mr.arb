@@ -444,5 +444,8 @@
   "newMessageIdea": "नवीन संदेश सुचवा",
   "colorTheme": "रंगसंगती",
   "originalColors": "मूळ",
-  "camera": "कॅमेरा"
+  "camera": "कॅमेरा",
+  "completeProfileTitle": "आपली माहिती भरा",
+  "completeProfileHint": "ॲप वापरण्यास सुरुवात करण्यासाठी कृपया आपले नाव, मोबाईल नंबर व गाव भरा. ही माहिती फक्त देवस्थानासाठी वापरली जाते.",
+  "continueText": "पुढे चला"
 }
