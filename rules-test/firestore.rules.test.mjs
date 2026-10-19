@@ -193,6 +193,10 @@ test("guru gyan: shishya reading activity is seen by gadhipatis only", async () 
   await assertFails(addDoc(collection(devotee(), "shishya_activity"), visit("u2")));
   await assertFails(addDoc(collection(devotee(), "shishya_activity"), { ...visit(), seconds: 500 }));
   await assertFails(addDoc(collection(guest(), "shishya_activity"), visit()));
+  // Phone name and approximate place may come with the visit.
+  await assertSucceeds(addDoc(collection(devotee(), "shishya_activity"), { ...visit(), device: "Redmi Note 12", place: "शेवगाव", lat: 19.35, lng: 75.22 }));
+  await assertFails(addDoc(collection(devotee(), "shishya_activity"), { ...visit(), place: "x".repeat(200) }));
+  await assertFails(addDoc(collection(devotee(), "shishya_activity"), { ...visit(), lat: "19" }));
   // Only the time can change, only upwards, only by its owner.
   await assertSucceeds(updateDoc(doc(devotee(), ref.path), { seconds: 60, lastAt: serverTimestamp() }));
   await assertFails(updateDoc(doc(devotee(), ref.path), { seconds: 30, lastAt: serverTimestamp() }));

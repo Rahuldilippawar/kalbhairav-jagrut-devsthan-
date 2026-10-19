@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/chat_media.dart';
 import '../services/photo_uploader.dart';
 import '../services/push_service.dart';
+import '../services/reading_context.dart';
 
 /// Overridden in `main.dart` once we know whether Firebase is available.
 final demoModeProvider = Provider<bool>((_) => true);
@@ -14,6 +15,9 @@ final authServiceProvider = Provider<AuthService>((_) => throw UnimplementedErro
 final checkoutServiceProvider = Provider<CheckoutService>((_) => throw UnimplementedError());
 final photoUploaderProvider = Provider<PhotoUploader>((_) => DisabledPhotoUploader());
 final chatMediaUploaderProvider = Provider<ChatMediaUploader>((_) => DisabledChatMediaUploader());
+
+/// Phone name and town a shishya reads from; real one set in `main.dart`.
+final readingContextProvider = Provider<ReadingContext>((_) => NoReadingContext());
 
 /// Makes a microphone recorder for voice messages; replaced in tests.
 final voiceRecorderProvider = Provider<VoiceRecorder Function()>((_) => MicVoiceRecorder.new);

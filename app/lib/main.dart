@@ -12,6 +12,7 @@ import 'firebase_options.dart';
 import 'services/chat_media.dart';
 import 'services/photo_uploader.dart';
 import 'services/push_service.dart';
+import 'services/reading_context.dart';
 import 'services/upi_gateway.dart';
 import 'widgets/route_map.dart';
 
@@ -56,6 +57,7 @@ Future<List<Override>> _bootstrap() async {
         )),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
         chatMediaUploaderProvider.overrideWithValue(FirebaseChatMediaUploader()),
+        readingContextProvider.overrideWithValue(DeviceReadingContext()),
         adminPanelUrlProvider.overrideWithValue(DefaultFirebaseOptions.adminPanelUrl),
         // Web push needs a VAPID key and service worker; the web app relies on
         // the in-app notification list instead.

@@ -1152,7 +1152,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get activityNotice =>
-      'गुरु ज्ञान में आप क्या और कितनी देर पढ़ते हैं, यह मंदिर के गादीपतियों को दिखता है।';
+      'गुरु ज्ञान में आप क्या, कितनी देर, किस फ़ोन पर और किस गाँव से (अनुमति देने पर अनुमानित स्थान) पढ़ते हैं, यह मंदिर के गादीपतियों को दिखता है।';
 
   @override
   String activitySummary(int count, String time) {

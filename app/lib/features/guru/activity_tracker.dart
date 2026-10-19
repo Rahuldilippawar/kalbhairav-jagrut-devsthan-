@@ -59,7 +59,14 @@ class _ActivityTrackerState extends ConsumerState<ActivityTracker> with WidgetsB
     final repo = ref.read(guruRepoProvider);
     _repo = repo;
     final title = widget.title.length > 300 ? widget.title.substring(0, 300) : widget.title;
-    repo.startActivity(s, widget.kind, widget.itemId, title).then((id) {
+    ref
+        .read(readingContextProvider)
+        .current()
+        .timeout(const Duration(seconds: 20), onTimeout: () => (device: null, place: null, lat: null, lng: null))
+        .catchError((Object _) => (device: null, place: null, lat: null, lng: null))
+        .then((at) => repo.startActivity(s, widget.kind, widget.itemId, title,
+            device: at.device, place: at.place, lat: at.lat, lng: at.lng))
+        .then((id) {
       _id = id;
       if (!mounted) return _flush();
       _timer = Timer.periodic(_flushEvery, (_) => _flush());

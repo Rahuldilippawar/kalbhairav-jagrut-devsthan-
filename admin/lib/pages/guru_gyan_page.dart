@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kjd_core/kjd_core.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../providers.dart';
 import '../schema.dart';
@@ -495,8 +496,13 @@ class _ShishyaActivityPageState extends ConsumerState<ShishyaActivityPage> {
                   dense: true,
                   leading: Text(a.kind.emoji, style: const TextStyle(fontSize: 22)),
                   title: Text(a.title),
-                  subtitle: Text('${_kindLabel(a.kind)} • ${formatDateTime(a.startedAt, locale: 'en')}'),
+                  subtitle: Text([
+                    '${_kindLabel(a.kind)} • ${formatDateTime(a.startedAt, locale: 'en')}',
+                    if (a.device != null) '📱 ${a.device}',
+                    if (a.where != null) '📍 ${a.where}',
+                  ].join('\n')),
                   trailing: Text(_dur(a.seconds), style: const TextStyle(fontWeight: FontWeight.w700)),
+                  onTap: a.mapUrl == null ? null : () => launchUrl(Uri.parse(a.mapUrl!)),
                 ),
             ],
           ),

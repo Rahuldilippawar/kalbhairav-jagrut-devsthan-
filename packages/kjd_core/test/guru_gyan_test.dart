@@ -70,13 +70,18 @@ void main() {
     expect(await repo.watchIsGadhipati('g1').first, isTrue);
     expect((await repo.watchGadhipatis().first).single.name, 'महाराज');
 
-    final a = await repo.startActivity(s, ActivityKind.granth, 'ms-a04', 'मूळस्तंभ – अध्याय ४');
+    final a = await repo.startActivity(s, ActivityKind.granth, 'ms-a04', 'मूळस्तंभ – अध्याय ४',
+        device: 'Samsung SM-A155F (Android 14)', place: 'शेवगाव, अहिल्यानगर, महाराष्ट्र', lat: 19.35, lng: 75.22);
     await repo.recordActivityTime(a, 95);
     await repo.startActivity(s, ActivityKind.mantra, 'om', 'ॐ नमः शिवाय');
     final all = await repo.watchActivity().first;
     expect(all.length, 2);
     final g = all.firstWhere((x) => x.id == a);
     expect((g.uid, g.name, g.kind, g.title, g.seconds), ('u1', 'गणेश', ActivityKind.granth, 'मूळस्तंभ – अध्याय ४', 95));
+    expect((g.device, g.where), ('Samsung SM-A155F (Android 14)', 'शेवगाव, अहिल्यानगर, महाराष्ट्र'));
+    expect(g.mapUrl, 'https://www.google.com/maps?q=19.35,75.22');
+    final m = all.firstWhere((x) => x.id != a);
+    expect((m.device, m.where, m.mapUrl), (null, null, null)); // location not allowed
     expect(g.isLive(DateTime.now()), isTrue);
     expect(g.isLive(DateTime.now().add(const Duration(minutes: 5))), isFalse);
 

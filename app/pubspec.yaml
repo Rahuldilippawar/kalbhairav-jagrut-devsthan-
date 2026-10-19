@@ -63,6 +63,9 @@ dependencies:
   record: ^7.1.2
   audioplayers: ^6.8.1
   cross_file: ^0.3.5+5
+  geolocator: ^14.1.1
+  geocoding: ^5.0.0
+  device_info_plus: ^13.3.0
 
 dev_dependencies:
   flutter_test:

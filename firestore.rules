@@ -105,7 +105,11 @@ service cloud.firestore {
     match /shishya_activity/{id} {
       allow read: if gadhipati() || can('devotees');
       allow create: if approvedShishya()
-        && request.resource.data.keys().hasOnly(['uid','name','kind','itemId','title','startedAt','lastAt','seconds'])
+        && request.resource.data.keys().hasOnly(['uid','name','kind','itemId','title','startedAt','lastAt','seconds','device','place','lat','lng'])
+        && (!('device' in request.resource.data) || (request.resource.data.device is string && request.resource.data.device.size() <= 100))
+        && (!('place' in request.resource.data) || (request.resource.data.place is string && request.resource.data.place.size() <= 150))
+        && (!('lat' in request.resource.data) || request.resource.data.lat is number)
+        && (!('lng' in request.resource.data) || request.resource.data.lng is number)
         && request.resource.data.uid == uid()
         && request.resource.data.kind in ['lesson', 'granth', 'mantra']
         && request.resource.data.title is string && request.resource.data.title.size() <= 300

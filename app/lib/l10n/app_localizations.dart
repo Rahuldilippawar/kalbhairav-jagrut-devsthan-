@@ -2265,7 +2265,7 @@ abstract class AppLocalizations {
   /// No description provided for @activityNotice.
   ///
   /// In en, this message translates to:
-  /// **'What you read in Guru Gyan and for how long is visible to the temple\'s gadhipatis.'**
+  /// **'What you read in Guru Gyan, for how long, on which phone and from which town (approximate location, if you allow it) is visible to the temple\'s gadhipatis.'**
   String get activityNotice;
 
   /// No description provided for @activitySummary.

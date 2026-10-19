@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kjd_core/kjd_core.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -64,7 +65,8 @@ class _ShishyaActivityScreenState extends ConsumerState<ShishyaActivityScreen> {
                               for (final a in live.values)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 6),
-                                  child: Text('${a.name} – ${a.kind.emoji} ${a.title} (${duration(l, a.seconds)})'),
+                                  child: Text('${a.name} – ${a.kind.emoji} ${a.title} (${duration(l, a.seconds)})'
+                                      '${a.where == null ? '' : '\n   📍 ${a.where}'}'),
                                 ),
                             ],
                           ),
@@ -125,10 +127,15 @@ class _ShishyaCard extends StatelessWidget {
               dense: true,
               leading: Text(a.kind.emoji, style: const TextStyle(fontSize: 22)),
               title: Text(a.title),
-              subtitle: Text(
+              subtitle: Text([
                 '${kindLabel(l, a.kind)} • ${a.startedAt == null ? '' : formatDateTime(a.startedAt!, locale: context.lang)}',
-              ),
+                if (a.device != null) '📱 ${a.device}',
+                if (a.where != null) '📍 ${a.where}',
+              ].join('\n')),
               trailing: Text(duration(l, a.seconds), style: const TextStyle(fontWeight: FontWeight.w700)),
+              onTap: a.mapUrl == null
+                  ? null
+                  : () => launchUrl(Uri.parse(a.mapUrl!), mode: LaunchMode.externalApplication),
             ),
         ],
       ),

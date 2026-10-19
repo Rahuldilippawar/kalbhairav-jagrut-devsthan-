@@ -284,6 +284,10 @@ class ShishyaActivity {
     this.startedAt,
     this.lastAt,
     this.seconds = 0,
+    this.device,
+    this.place,
+    this.lat,
+    this.lng,
   });
 
   final String id;
@@ -301,6 +305,20 @@ class ShishyaActivity {
   /// Time the screen was open in the foreground.
   final int seconds;
 
+  /// Phone the shishya read on, e.g. "Samsung SM-A155F (Android 14)".
+  final String? device;
+
+  /// Approximate (town-level) place and position, when location was allowed.
+  final String? place;
+  final double? lat;
+  final double? lng;
+
+  /// Google Maps link for the position.
+  String? get mapUrl => lat == null || lng == null ? null : 'https://www.google.com/maps?q=$lat,$lng';
+
+  /// "Village, district" or the rounded position.
+  String? get where => place ?? (lat == null || lng == null ? null : '${lat!.toStringAsFixed(3)}, ${lng!.toStringAsFixed(3)}');
+
   /// Still on this screen right now.
   bool isLive(DateTime now) => lastAt != null && now.difference(lastAt!) < const Duration(minutes: 2);
 
@@ -314,6 +332,10 @@ class ShishyaActivity {
         startedAt: asDate(m['startedAt']),
         lastAt: asDate(m['lastAt']),
         seconds: m['seconds'] == null ? 0 : asInt(m['seconds']),
+        device: asStringOrNull(m['device']),
+        place: asStringOrNull(m['place']),
+        lat: (m['lat'] as num?)?.toDouble(),
+        lng: (m['lng'] as num?)?.toDouble(),
       );
 }
 

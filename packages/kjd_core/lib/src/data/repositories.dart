@@ -392,7 +392,8 @@ class GuruGyanRepository {
       });
 
   /// Records that [s] opened something; returns the id to report time to.
-  Future<String> startActivity(Shishya s, ActivityKind kind, String itemId, String title) =>
+  Future<String> startActivity(Shishya s, ActivityKind kind, String itemId, String title,
+          {String? device, String? place, double? lat, double? lng}) =>
       store.add(Col.shishyaActivity, {
         'uid': s.uid,
         'name': s.name,
@@ -402,6 +403,9 @@ class GuruGyanRepository {
         'startedAt': store.serverTimestamp,
         'lastAt': store.serverTimestamp,
         'seconds': 0,
+        if (device != null) 'device': device.length > 100 ? device.substring(0, 100) : device,
+        if (place != null) 'place': place.length > 150 ? place.substring(0, 150) : place,
+        if (lat != null && lng != null) ...{'lat': lat, 'lng': lng},
       });
 
   /// Time spent so far on a visit started with [startActivity].

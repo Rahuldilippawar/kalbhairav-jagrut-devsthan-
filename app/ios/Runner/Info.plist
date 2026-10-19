@@ -6,6 +6,8 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>शिष्य परिवार चर्चेत आवाज संदेश पाठवण्यासाठी.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>गुरु ज्ञान वाचताना तुम्ही कोणत्या गावातून वाचत आहात हे गादीपतींना दिसण्यासाठी.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>शिष्य परिवार चर्चेत फोटो पाठवण्यासाठी.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

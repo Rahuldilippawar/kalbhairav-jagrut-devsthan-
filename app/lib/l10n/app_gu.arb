@@ -360,7 +360,7 @@
   "activityKindGranth": "ગ્રંથ",
   "activityKindMantra": "મંત્ર",
   "noActivity": "હજી કોઈ નોંધ નથી",
-  "activityNotice": "ગુરુ જ્ઞાનમાં તમે શું અને કેટલો સમય વાંચો છો તે મંદિરના ગાદીપતિઓ જોઈ શકે છે.",
+  "activityNotice": "ગુરુ જ્ઞાનમાં તમે શું, કેટલો સમય, કયા ફોન પર અને કયા ગામથી (પરવાનગી આપો તો અંદાજિત સ્થળ) વાંચો છો તે મંદિરના ગાદીપતિઓ જોઈ શકે છે.",
   "activitySummary": "{count} વાંચન • {time}",
   "durationSeconds": "{seconds} સે",
   "durationMinutes": "{minutes} મિ",

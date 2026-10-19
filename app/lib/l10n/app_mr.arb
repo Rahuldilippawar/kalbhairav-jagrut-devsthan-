@@ -360,7 +360,7 @@
   "activityKindGranth": "ग्रंथ",
   "activityKindMantra": "मंत्र",
   "noActivity": "अजून वाचनाची नोंद नाही",
-  "activityNotice": "गुरु ज्ञानमध्ये तुम्ही काय वाचता व किती वेळ, हे मंदिराच्या गादीपतींना दिसते.",
+  "activityNotice": "गुरु ज्ञानमध्ये तुम्ही काय वाचता, किती वेळ, कोणत्या फोनवर आणि कोणत्या गावातून (परवानगी दिल्यास अंदाजे ठिकाण), हे मंदिराच्या गादीपतींना दिसते.",
   "activitySummary": "{count} वाचन • {time}",
   "durationSeconds": "{seconds} से",
   "durationMinutes": "{minutes} मि",

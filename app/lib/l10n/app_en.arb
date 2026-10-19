@@ -461,7 +461,7 @@
   "activityKindGranth": "Granth",
   "activityKindMantra": "Mantra",
   "noActivity": "No reading recorded yet",
-  "activityNotice": "What you read in Guru Gyan and for how long is visible to the temple's gadhipatis.",
+  "activityNotice": "What you read in Guru Gyan, for how long, on which phone and from which town (approximate location, if you allow it) is visible to the temple's gadhipatis.",
   "activitySummary": "{count} read • {time}",
   "@activitySummary": {
     "placeholders": {

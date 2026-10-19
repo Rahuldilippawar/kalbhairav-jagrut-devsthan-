@@ -1153,7 +1153,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get activityNotice =>
-      'What you read in Guru Gyan and for how long is visible to the temple\'s gadhipatis.';
+      'What you read in Guru Gyan, for how long, on which phone and from which town (approximate location, if you allow it) is visible to the temple\'s gadhipatis.';
 
   @override
   String activitySummary(int count, String time) {

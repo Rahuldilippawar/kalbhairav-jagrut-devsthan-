@@ -324,7 +324,8 @@ void main() {
     final store = c.read(dataStoreProvider);
     final repo = GuruGyanRepository(store);
     const s = Shishya(uid: 'u1', name: 'गणेश जाधव', mobile: '+919822012345', status: ShishyaStatus.approved);
-    final a = await repo.startActivity(s, ActivityKind.granth, 'ms-a04', 'मूळस्तंभ – अध्याय ४');
+    final a = await repo.startActivity(s, ActivityKind.granth, 'ms-a04', 'मूळस्तंभ – अध्याय ४',
+        device: 'Redmi Note 12 (Android 14)', place: 'शेवगाव, अहिल्यानगर');
     await repo.recordActivityTime(a, 25 * 60);
     await repo.startActivity(s, ActivityKind.mantra, 'om', 'ॐ नमः शिवाय');
     await repo.setGadhipati(const Shishya(uid: 'g1', name: 'महाराज', mobile: '+919800000000'), true, byName: 'Super');
@@ -332,6 +333,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('गणेश जाधव'), findsWidgets);
     expect(find.textContaining('2 opened'), findsOneWidget);
+    await tester.tap(find.textContaining('2 opened'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('📱 Redmi Note 12 (Android 14)\n📍 शेवगाव, अहिल्यानगर'), findsOneWidget);
+    await tester.tap(find.textContaining('2 opened'));
+    await tester.pumpAndSettle();
     expect(find.text('Gadhipatis (1)'), findsOneWidget);
     expect(find.text('महाराज'), findsOneWidget);
     expect(find.text('मूळस्तंभ – अध्याय ४'), findsOneWidget); // most read
