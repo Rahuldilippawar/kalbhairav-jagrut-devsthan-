@@ -43,7 +43,7 @@ class _ShishyasPageState extends ConsumerState<ShishyasPage> {
       const Text(
         'Shishyas register from the app (Guru Gyan tab) with their mobile number and a password. '
         'Approve to open all Guru Gyan lessons for them – they get a notification. '
-        'Block to close access later. Lessons are managed under Guru Gyan → Lessons. '
+        'Block to close access later. "Deity access" limits a shishya to the lessons of chosen deities. Lessons are managed under Guru Gyan → Lessons. '
         'The super admin can make an approved shishya a gadhipati (गादीपती): in their app they then see '
         'which shishya reads which lesson, granth chapter or mantra, and for how long.',
         style: TextStyle(color: KjdColors.inkMuted),
@@ -151,6 +151,75 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
     }, on ? '${s.name} is now gadhipati' : '${s.name} is no longer gadhipati');
   }
 
+  /// Temple deities plus the preset ones the built-in lessons use.
+  List<(String, String)> _deityChoices() {
+    final out = <String, String>{
+      for (final d in ref.read(_deitiesProvider).value ?? const <Deity>[]) d.id: d.name,
+    };
+    for (final d in deityPresets) {
+      out.putIfAbsent(d.id, () => d.name);
+    }
+    return [for (final e in out.entries) (e.key, e.value)];
+  }
+
+  Future<void> _editDeityAccess() async {
+    final choices = _deityChoices();
+    var all = s.deities.isEmpty;
+    final picked = {...s.deities};
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (d) => StatefulBuilder(
+        builder: (d, set) => AlertDialog(
+          title: Text('Deity access – ${s.name}'),
+          content: SizedBox(
+            width: 420,
+            child: ListView(shrinkWrap: true, children: [
+              const Text('Which deities\' lessons (kathas, charitra, mantras, havan) this shishya can read. '
+                  'General lessons without a deity are always open.',
+                  style: TextStyle(color: KjdColors.inkMuted)),
+              SwitchListTile(
+                title: const Text('All deities', style: TextStyle(fontWeight: FontWeight.w800)),
+                value: all,
+                onChanged: (v) => set(() => all = v),
+              ),
+              const Divider(),
+              for (final (id, name) in choices)
+                CheckboxListTile(
+                  dense: true,
+                  enabled: !all,
+                  title: Text(name),
+                  value: all || picked.contains(id),
+                  onChanged: (v) => set(() => v == true ? picked.add(id) : picked.remove(id)),
+                ),
+            ]),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(d, false), child: const Text('Cancel')),
+            FilledButton(
+              onPressed: !all && picked.isEmpty ? null : () => Navigator.pop(d, true),
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (ok != true) return;
+    final ids = all ? <String>[] : [for (final (id, _) in choices) if (picked.contains(id)) id];
+    final a = ref.read(currentAdminProvider)!;
+    final by = a.displayName ?? a.email ?? a.uid;
+    await _run(() async {
+      await GuruGyanRepository(ref.read(dataStoreProvider)).setDeityAccess(s.uid, ids);
+      await ref.read(adminRepoProvider).log(
+            actorId: a.uid,
+            actorName: by,
+            action: 'shishya_deity_access',
+            collection: Col.shishyas,
+            recordId: s.uid,
+            summary: '${s.name}: ${ids.isEmpty ? 'all deities' : ids.join(', ')}',
+          );
+    }, '${s.name}: deity access saved');
+  }
+
   Future<void> _resetPassword() async {
     final p = await _ask('New password for ${s.name}', 'At least 6 characters – tell it to the shishya');
     if (p == null) return;
@@ -161,6 +230,7 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
   @override
   Widget build(BuildContext context) {
     final lessons = guruLessonLibrary.length;
+    ref.watch(_deitiesProvider); // names in "Deity access"
     final canAssign = ref.watch(currentAdminProvider)?.role?.can(AdminModule.users) ?? false;
     final gadhipati = (ref.watch(_gadhipatisProvider).value ?? const <GadhipatiAccount>[]).any((g) => g.uid == s.uid);
     return Card(
@@ -191,6 +261,16 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
               child: Text('Lessons read: ${s.completed.length} (built-in library has $lessons)',
                   style: const TextStyle(color: KjdColors.success)),
             ),
+          if (s.status == ShishyaStatus.approved)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                s.deities.isEmpty
+                    ? 'Deity access: all deities'
+                    : 'Deity access: ${[for (final (id, name) in _deityChoices()) if (s.deities.contains(id)) name].join(', ')}',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
           if (s.reviewedByName != null)
             Text('Reviewed by ${s.reviewedByName}', style: const TextStyle(color: KjdColors.inkMuted, fontSize: 12)),
           const SizedBox(height: 10),
@@ -219,6 +299,12 @@ class _ShishyaCardState extends ConsumerState<_ShishyaCard> {
                 onPressed: _busy ? null : () => _setGadhipati(!gadhipati),
                 icon: Icon(gadhipati ? Icons.visibility_off : Icons.visibility),
                 label: Text(gadhipati ? 'Remove gadhipati' : 'Make gadhipati'),
+              ),
+            if (s.status == ShishyaStatus.approved)
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _editDeityAccess,
+                icon: const Icon(Icons.temple_hindu_outlined),
+                label: const Text('Deity access'),
               ),
             TextButton.icon(
               onPressed: _busy ? null : _resetPassword,

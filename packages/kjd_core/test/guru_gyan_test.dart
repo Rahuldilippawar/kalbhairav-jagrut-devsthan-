@@ -126,6 +126,26 @@ void main() {
     expect(first.seenBy(reads).map((r) => r.name), ['रमेश']); // not the sender
   });
 
+  test('deity access: admin opens only some deities to a shishya', () async {
+    final store = MemoryDataStore();
+    final repo = GuruGyanRepository(store);
+    const s = Shishya(uid: 'u1', name: 'गणेश', mobile: '+919822012345', status: ShishyaStatus.approved);
+    await repo.request(s);
+    final all = await repo.watchLessons().first;
+    expect(all.where(s.canSee).length, all.length); // nothing set = all
+
+    await repo.setDeityAccess('u1', ['kalbhairav']);
+    final me = (await repo.watchShishya('u1').first)!;
+    expect(me.deities, ['kalbhairav']);
+    final shown = all.where(me.canSee).toList();
+    expect(shown.any((l) => l.deityId == 'kalbhairav'), isTrue);
+    expect(shown.any((l) => l.deityId == 'ganpati'), isFalse);
+    expect(shown.any((l) => l.deityId == null), isTrue); // general lessons stay open
+
+    await repo.setDeityAccess('u1', const []);
+    expect((await repo.watchShishya('u1').first)!.deities, isEmpty);
+  });
+
   test('shishya request, progress and login email', () async {
     final store = MemoryDataStore();
     final repo = GuruGyanRepository(store);

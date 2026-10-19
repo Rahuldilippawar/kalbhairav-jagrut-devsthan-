@@ -379,6 +379,10 @@ class GuruGyanRepository {
         'completed': done ? {...s.completed, lessonId}.toList() : s.completed.where((id) => id != lessonId).toList(),
       });
 
+  /// Admin: which deities' lessons this shishya may read (empty = all).
+  Future<void> setDeityAccess(String uid, List<String> deityIds) =>
+      store.update(Col.shishyas, uid, {'deities': deityIds});
+
   /// The temple's lessons plus the built-in library (same id = override).
   Stream<List<GuruLesson>> watchLessons() => store.watch(Col.guruGyan).map((d) {
         final own = [for (final x in d) GuruLesson.fromMap(x.id, x.data)];

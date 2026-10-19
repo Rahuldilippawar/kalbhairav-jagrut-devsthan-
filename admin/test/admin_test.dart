@@ -269,6 +269,29 @@ void main() {
     expect(find.textContaining('Starter lessons: ${guruLessonLibrary.length} ready to add'), findsOneWidget);
   });
 
+  testWidgets('admin chooses which deities an approved shishya can read', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.templeAdmin));
+    final store = c.read(dataStoreProvider);
+    await store.update(Col.shishyas, 'demo-shishya-1', {'status': 'approved'});
+    await tester.tap(find.text('Shishya Requests'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('Approved ('));
+    await tester.pumpAndSettle();
+    expect(find.text('Deity access: all deities'), findsOneWidget);
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Deity access'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('All deities'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(CheckboxListTile, 'श्री काळभैरव'));
+    await tester.tap(find.widgetWithText(CheckboxListTile, 'श्री भिलट देव'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Save'));
+    await tester.pumpAndSettle();
+    final doc = await store.get(Col.shishyas, 'demo-shishya-1');
+    expect(doc!.data['deities'], ['kalbhairav', 'bhilatdev']);
+    expect(find.text('Deity access: श्री काळभैरव, श्री भिलट देव'), findsOneWidget);
+  });
+
   testWidgets('only the super admin makes an approved shishya gadhipati', (tester) async {
     var c = await _start(tester, _admin(AdminRole.templeAdmin));
     final store = c.read(dataStoreProvider);

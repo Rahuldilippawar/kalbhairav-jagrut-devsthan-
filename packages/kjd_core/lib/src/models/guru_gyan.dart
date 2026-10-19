@@ -17,6 +17,7 @@ class Shishya {
     this.status = ShishyaStatus.pending,
     this.rejectReason,
     this.completed = const [],
+    this.deities = const [],
     this.requestedAt,
     this.reviewedAt,
     this.reviewedByName,
@@ -39,11 +40,17 @@ class Shishya {
 
   /// Lesson ids they have marked as read.
   final List<String> completed;
+
+  /// Deity ids whose lessons the admin opened to this shishya; empty means
+  /// every deity. Lessons not tied to a deity are always shown.
+  final List<String> deities;
   final DateTime? requestedAt;
   final DateTime? reviewedAt;
   final String? reviewedByName;
 
   bool get isApproved => status == ShishyaStatus.approved;
+
+  bool canSee(GuruLesson l) => deities.isEmpty || l.deityId == null || l.deityId!.isEmpty || deities.contains(l.deityId);
 
   factory Shishya.fromMap(String uid, Map<String, dynamic> m) => Shishya(
         uid: uid,
@@ -55,6 +62,7 @@ class Shishya {
         status: ShishyaStatus.values.asNameMap()[m['status']] ?? ShishyaStatus.pending,
         rejectReason: asStringOrNull(m['rejectReason']),
         completed: asStringList(m['completed']),
+        deities: asStringList(m['deities']),
         requestedAt: asDate(m['requestedAt']),
         reviewedAt: asDate(m['reviewedAt']),
         reviewedByName: asStringOrNull(m['reviewedByName']),

@@ -165,6 +165,9 @@ test("guru gyan: shishya requests and lessons need approval", async () => {
   await assertFails(setDoc(doc(devotee(), "granth_text/kk-s2-a08"), { body: "x" }));
   await assertSucceeds(updateDoc(doc(devotee(), "shishyas/u1"), { completed: ["l1"] }));
   await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { completed: ["l1"], name: "x" }));
+  // Deity access is set by staff, never by the shishya.
+  await assertFails(updateDoc(doc(devotee(), "shishyas/u1"), { deities: [] }));
+  await assertSucceeds(updateDoc(doc(admin("temple_admin"), "shishyas/u1"), { deities: ["kalbhairav"] }));
   await assertFails(setDoc(doc(devotee(), "guru_gyan/l2"), { title: "x" }));
   await assertSucceeds(setDoc(doc(admin("content_manager"), "guru_gyan/l2"), { title: "x", body: "y" }));
   // Blocked: lessons close again; a rejected shishya may ask again.
