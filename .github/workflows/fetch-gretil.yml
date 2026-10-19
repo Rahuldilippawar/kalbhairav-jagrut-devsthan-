@@ -1,0 +1,45 @@
+# Downloads the GRETIL Sanskrit corpus (CC BY-NC-SA 4.0) and publishes the
+# Purana and Darshana (shastra) texts plus a listing as a pre-release
+# (tag gretil-<run number>), so Guru Gyan granths can be built from them.
+name: Fetch GRETIL texts
+
+on:
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: Folders/files to keep (grep -E on paths inside the zip)
+        default: "purana|3_purana|6_sastra|darsana|nyaya|vaisesika|samkhya|sankhya|yoga|mimamsa|vedanta|brahmasutra"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PATTERN: ${{ inputs.pattern }}
+        run: |
+          cd "$RUNNER_TEMP"
+          ua="KalbhairavDevsthanBooks/1.0 (temple app; github actions)"
+          ok=""
+          for u in https://gretil.sub.uni-goettingen.de/gretil/1_sanskr.zip \
+                   https://gretil.sub.uni-goettingen.de/1_sanskr.zip; do
+            if curl -fL --retry 3 -A "$ua" -o all.zip "$u"; then ok="$u"; break; fi
+          done
+          [ -n "$ok" ] || { echo "download failed"; exit 1; }
+          ls -la all.zip
+          unzip -l all.zip > listing-all.txt
+          wc -l listing-all.txt
+          mkdir sel
+          unzip -Z1 all.zip | grep -iE "$PATTERN" > picked.txt || true
+          wc -l picked.txt
+          unzip -q all.zip $(cat picked.txt | tr '\n' ' ') -d sel || true
+          (cd sel && zip -qr ../selected.zip .)
+          ls -la selected.zip
+          gh release create "gretil-${{ github.run_number }}" listing-all.txt picked.txt selected.zip \
+            --repo "${{ github.repository }}" --target "${{ github.sha }}" --prerelease \
+            --title "GRETIL texts (CC BY-NC-SA 4.0)" \
+            --notes "From $ok. GRETIL – Göttingen Register of Electronic Texts in Indian Languages. Licence CC BY-NC-SA 4.0."
