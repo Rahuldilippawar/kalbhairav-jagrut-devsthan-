@@ -12,6 +12,7 @@ import 'activity_tracker.dart';
 import 'granth_collections.dart';
 import 'granth_screens.dart';
 import 'lesson_body.dart';
+import 'reading_mode.dart';
 
 /// Guru Gyan tab: lessons for the shishya parivar. Anyone can ask for
 /// access; the temple management approves it from the admin panel.
@@ -575,6 +576,7 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
     final photos = lesson.allPhotos;
     final done = s.completed.contains(lesson.id);
     final poem = lesson.category == LessonCategory.stotra;
+    final mode = ref.watch(readingModeProvider);
     return ActivityTracker(
         key: ValueKey(lesson.id),
         kind: ActivityKind.lesson,
@@ -583,12 +585,14 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
         child: SecureScreen(
         title: lesson.title,
         child: Scaffold(
+      backgroundColor: mode.background,
       body: CustomScrollView(slivers: [
         SliverAppBar(
           pinned: true,
           expandedHeight: image == null ? null : 300,
           title: image == null ? Text(lesson.title) : null,
           actions: [
+            const ReadingModeButton(),
             IconButton(
               tooltip: 'A-',
               icon: const Icon(Icons.text_decrease),
@@ -655,7 +659,10 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
               ),
             ],
             const SizedBox(height: 16),
-            LessonBody(text: lesson.body, fontSize: _textSize, poem: poem),
+            DefaultTextStyle.merge(
+              style: TextStyle(color: mode.text),
+              child: LessonBody(text: lesson.body, fontSize: _textSize, poem: poem),
+            ),
             if (youtubeId(lesson.videoUrl) != null) ...[
               const SizedBox(height: 16),
               YoutubeView(url: lesson.videoUrl!),

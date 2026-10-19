@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/secure_screen.dart';
 import 'activity_tracker.dart';
 import 'lesson_body.dart';
+import 'reading_mode.dart';
 
 /// Granths shown on the Guru Gyan home until the list loads from Firestore
 /// (new granths added there need no new app release).
@@ -322,7 +323,9 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
     }
     final c = g.chapters[i];
     final next = i + 1 < g.chapters.length ? g.chapters[i + 1] : null;
+    final prev = i > 0 ? g.chapters[i - 1] : null;
     final done = s.completed.contains(c.id);
+    final mode = ref.watch(readingModeProvider);
     return ActivityTracker(
       key: ValueKey(c.id),
       kind: ActivityKind.granth,
@@ -331,9 +334,20 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
       child: SecureScreen(
       title: '${g.title} – ${g.chapterLabel ?? l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
       child: Scaffold(
+        backgroundColor: mode.background,
         appBar: AppBar(
           title: Text(c.stabak == 0 ? g.title : '${g.title} • ${g.partLabel ?? l.stabakLabel} ${c.stabak}'),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(4),
+            child: LinearProgressIndicator(
+              value: (i + 1) / g.chapters.length,
+              minHeight: 4,
+              backgroundColor: Colors.white24,
+              color: KjdColors.gold,
+            ),
+          ),
           actions: [
+            const ReadingModeButton(),
             IconButton(
               tooltip: 'A-',
               icon: const Icon(Icons.text_decrease),
@@ -349,16 +363,24 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text(
-              '${g.chapterLabel ?? l.adhyayLabel} ${c.adhyayLabel}',
-              style: const TextStyle(color: KjdColors.saffron, fontWeight: FontWeight.w800),
-            ),
+            Row(children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(gradient: KjdColors.heroGradient, borderRadius: BorderRadius.circular(20)),
+                child: Text('${g.chapterLabel ?? l.adhyayLabel} ${c.adhyayLabel}',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+              ),
+              const SizedBox(width: 8),
+              Text('${i + 1} / ${g.chapters.length}',
+                  style: TextStyle(color: mode.text.withValues(alpha: .6), fontWeight: FontWeight.w700)),
+            ]),
+            const SizedBox(height: 8),
             Text(
               c.title,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
-                color: KjdColors.kumkumDark,
+                color: mode == ReadingMode.night ? KjdColors.saffronLight : KjdColors.kumkumDark,
                 fontFamily: bannerFontFamily('tiroMarathi'),
                 locale: bannerTextLocale,
               ),
@@ -378,7 +400,10 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
             const SizedBox(height: 12),
             AsyncView(
               ref.watch(granthTextProvider(c.id)),
-              data: (text) => LessonBody(text: text ?? '', fontSize: _textSize),
+              data: (text) => DefaultTextStyle.merge(
+                style: TextStyle(color: mode.text),
+                child: LessonBody(text: text ?? '', fontSize: _textSize),
+              ),
             ),
             const SizedBox(height: 16),
             FilledButton.icon(
@@ -396,14 +421,36 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
               icon: Icon(done ? Icons.check_circle : Icons.check_circle_outline),
               label: Text(done ? l.markedRead : l.markRead),
             ),
-            if (next != null) ...[
-              const SizedBox(height: 8),
-              TextButton.icon(
-                onPressed: () => context.pushReplacement('/granth/${widget.granthId}/${next.id}'),
-                icon: const Icon(Icons.arrow_forward),
-                label: Text('${l.nextAdhyay}: ${next.title}', maxLines: 1, overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 10),
+            Row(children: [
+              if (prev != null)
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.pushReplacement('/granth/${widget.granthId}/${prev.id}'),
+                    icon: const Icon(Icons.arrow_back),
+                    label: Text('${g.chapterLabel ?? l.adhyayLabel} ${prev.adhyayLabel}'),
+                  ),
+                ),
+              if (prev != null && next != null) const SizedBox(width: 10),
+              if (next != null)
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.pushReplacement('/granth/${widget.granthId}/${next.id}'),
+                    icon: const Icon(Icons.arrow_forward),
+                    iconAlignment: IconAlignment.end,
+                    label: Text('${g.chapterLabel ?? l.adhyayLabel} ${next.adhyayLabel}'),
+                  ),
+                ),
+            ]),
+            if (next != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text('${l.nextAdhyay}: ${next.title}',
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: mode.text.withValues(alpha: .6), fontSize: 12.5)),
               ),
-            ],
             const SizedBox(height: 24),
           ],
         ),
