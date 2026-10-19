@@ -103,7 +103,17 @@ ThemeData buildKjdTheme({Brightness brightness = Brightness.light}) {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       selectedColor: dark ? const Color(0xFF5A3A1A) : KjdColors.goldLight,
       side: BorderSide(color: dark ? Colors.white24 : const Color(0xFFEBD7B8)),
-      labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontFamilyFallback: kjdFontFallback),
+      labelStyle: TextStyle(
+        color: dark ? Colors.white : KjdColors.ink,
+        fontWeight: FontWeight.w600,
+        fontFamilyFallback: kjdFontFallback,
+      ),
+      secondaryLabelStyle: TextStyle(
+        color: dark ? Colors.white : KjdColors.kumkumDark,
+        fontWeight: FontWeight.w700,
+        fontFamilyFallback: kjdFontFallback,
+      ),
+      checkmarkColor: dark ? Colors.white : KjdColors.kumkum,
     ),
     listTileTheme: ListTileThemeData(
       iconColor: dark ? KjdColors.saffronLight : KjdColors.kumkum,
