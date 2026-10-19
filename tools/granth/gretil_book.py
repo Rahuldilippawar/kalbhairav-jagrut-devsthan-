@@ -54,6 +54,10 @@ PURANAS = {
                    missing='GRETIL मध्ये प्राचीन स्कंद पुराणाचे अध्याय 1–31 व रेवाखंड उपलब्ध आहेत; इतर खंड (काशीखंड, सह्याद्रिखंड इ.) अजून नाहीत.'),
     'vayu': dict(title='वायु महापुराण – रेवाखंड', files=[('sa_revAkhANDa-of-the-vAyupurANa-rkv.txt', 0)], chapter='अध्याय',
                  order=54, complete=False, missing='GRETIL मध्ये वायु पुराणाचा फक्त रेवाखंड उपलब्ध आहे.'),
+    'ramayana': dict(title='श्री वाल्मीकि रामायण', files=[('sa_rAmAyaNa.txt', None)], part='कांड', chapter='सर्ग',
+                     order=39, complete=True, danda=True, author='महर्षी वाल्मीकि',
+                     parts={1: 'बालकांड', 2: 'अयोध्याकांड', 3: 'अरण्यकांड', 4: 'किष्किंधाकांड', 5: 'सुंदरकांड',
+                            6: 'युद्धकांड', 7: 'उत्तरकांड'}),
     'narasimha': dict(title='नरसिंह पुराण (उपपुराण)', files=[('sa_narasiMhapurANa.txt', 0)], chapter='अध्याय', order=55,
                       complete=True),
 }
@@ -92,7 +96,7 @@ def body_lines(path):
     return text
 
 
-def split_purana(path, fixed_part):
+def split_purana(path, fixed_part, danda=False):
     """[(part, chapter, iast text)] in order."""
     text = body_lines(path)
     text = re.sub(r'^\s*%.*$', '', text, flags=re.M)            # "% chapter {1}"
@@ -125,6 +129,9 @@ def split_purana(path, fixed_part):
                     halves.append(h)
             seg = ' ।\n'.join(halves)
         seg = seg.replace('$', ' ').replace('%', ' ')
+        if danda:  # half-verses on their own lines without "/" (Ramayana)
+            ls = [l.rstrip() for l in seg.strip().split('\n') if l.strip()]
+            seg = '\n'.join(l if i == len(ls) - 1 or l.endswith(('/', '|')) else l + ' /' for i, l in enumerate(ls))
         end = ' ।\n' if m['half'] == 'ab' else f' ॥ {verse} ॥\n\n'
         key = (part, ch)
         if not chapters or chapters[-1][0] != key:
@@ -177,7 +184,7 @@ def build_purana(src, out, bid, cfg):
     chapters = []
     seen = set()
     for f, fixed in cfg['files']:
-        for part, ch, iast in split_purana(os.path.join(src, f), fixed):
+        for part, ch, iast in split_purana(os.path.join(src, f), fixed, cfg.get('danda', False)):
             remap = cfg.get('remap')
             if remap:
                 if part not in remap:
@@ -221,8 +228,8 @@ def build_purana(src, out, bid, cfg):
     verses = sum(len(re.findall(r'॥ [०-९]+ ॥', c['body'])) for c in chapters)
     meta = {
         'id': bid, 'title': cfg['title'],
-        'subtitle': f'मूळ संस्कृत • {len(chapters)} अध्याय • सुमारे {verses} श्लोक',
-        'author': 'महर्षी वेदव्यास',
+        'subtitle': f"मूळ संस्कृत • {len(chapters)} {cfg.get('chapter', 'अध्याय')} • सुमारे {verses} श्लोक",
+        'author': cfg.get('author', 'महर्षी वेदव्यास'),
         'edition': 'GRETIL संस्कृत e-text, देवनागरीत रूपांतरित',
         'note': note, 'order': cfg['order'],
         'chapterLabel': cfg.get('chapter', 'अध्याय'),
