@@ -76,6 +76,13 @@ void main() {
     expect(find.textContaining('नवरात्र उत्सव 2026'), findsWidgets);
   });
 
+  testWidgets('home shows a built-in greeting when none is published today', (tester) async {
+    await _start(tester, extra: [greetingsTodayProvider.overrideWith((ref) => Stream.value(const <DailyGreeting>[]))]);
+    await tester.scrollUntilVisible(find.text('आजची शुभेच्छा'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.scrollUntilVisible(find.text('शुभ प्रभात 🌅'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.textContaining('काळभैरव'), findsWidgets);
+  });
+
   testWidgets('events archive filters by year', (tester) async {
     await _start(tester, to: '/events');
     expect(find.text('नवरात्र उत्सव 2026'), findsOneWidget);

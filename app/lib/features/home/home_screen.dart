@@ -436,6 +436,28 @@ class _LiveStrip extends ConsumerWidget {
   }
 }
 
+const _fallbackMessages = [
+  'श्री काळभैरवनाथांच्या कृपेने आपला आजचा दिवस आनंदी, आरोग्यदायी व मंगलमय होवो.',
+  'भक्तीत शक्ती आहे; श्रद्धेने केलेले प्रत्येक कार्य सफल होते. जय काळभैरव!',
+  'मनात श्रद्धा, ओठी नाम आणि हाती सत्कर्म — हाच खरा धर्म.',
+  'काळावर ज्यांची सत्ता, ते काळभैरव आपल्या कुटुंबाचे सदैव रक्षण करोत.',
+  'संकटे कितीही आली तरी नामस्मरणाची साथ सोडू नका; देव पाठीशी उभा आहे.',
+  'सेवा, संयम आणि सद्भावना — यातूनच जीवन पवित्र होते. शुभ दिवस!',
+  'श्री काळभैरवनाथ आपल्या सर्व इच्छा पूर्ण करोत. ॐ कालभैरवाय नमः',
+];
+
+DailyGreeting _fallbackGreeting(DateTime now) {
+  final day = now.difference(DateTime(now.year)).inDays;
+  final evening = now.hour >= 16;
+  return DailyGreeting(
+    id: 'builtin',
+    title: evening ? 'शुभ संध्या 🪔' : 'शुभ प्रभात 🌅',
+    message: _fallbackMessages[day % _fallbackMessages.length],
+    date: dateKey(now),
+    category: evening ? 'शुभ संध्या' : 'शुभ प्रभात',
+  );
+}
+
 class _GreetingCard extends ConsumerWidget {
   const _GreetingCard();
   @override
@@ -443,10 +465,13 @@ class _GreetingCard extends ConsumerWidget {
     final greetings = ref.watch(greetingsTodayProvider);
     final now = ref.watch(clockProvider)();
     return AsyncView(greetings, data: (list) {
-      if (list.isEmpty) return const SizedBox.shrink();
       // Morning greeting before 4pm, evening one afterwards when available.
+      // When the temple hasn't published one for today, a built-in message
+      // (rotating by day) keeps the section from appearing empty.
       final evening = list.where((g) => g.category == 'शुभ संध्या').firstOrNull;
-      final g = now.hour >= 16 && evening != null ? evening : list.first;
+      final g = list.isEmpty
+          ? _fallbackGreeting(now)
+          : now.hour >= 16 && evening != null ? evening : list.first;
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
