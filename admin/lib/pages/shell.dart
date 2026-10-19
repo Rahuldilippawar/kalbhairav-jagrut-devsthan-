@@ -42,7 +42,7 @@ final List<NavItem> navItems = [
   NavItem('calendar', 'Calendar Programmes', Icons.edit_calendar, AdminModule.events,
       () => CollectionListPage(
           spec: Specs.calendarEvents,
-          subtitle: 'फक्त कार्यक्रमाचे नाव, तारीख आणि ठिकाण टाका – त्या दिवसाचे पंचांग ॲप आपोआप दाखवते.'),
+          subtitle: 'कार्यक्रमाचे नाव, तारीख, ठिकाण आणि हवा असल्यास फोटो टाका – त्या दिवसाचे पंचांग ॲप आपोआप दाखवते.'),
       group: 'Utsav'),
   NavItem('categories', 'Event Categories', Icons.category_outlined, AdminModule.events, () => CollectionListPage(spec: Specs.categories), group: 'Utsav'),
   NavItem('donations', 'Donations', Icons.volunteer_activism_outlined, AdminModule.donations, () => const DonationsPage(), group: 'Finance'),

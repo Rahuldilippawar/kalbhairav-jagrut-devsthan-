@@ -191,12 +191,13 @@ abstract final class Specs {
     module: AdminModule.events,
     orderBy: 'date',
     descending: true,
-    columns: const ['date', 'title', 'location'],
+    columns: const ['date', 'photoUrl', 'title', 'location'],
     searchFields: const ['title', 'location'],
     fields: const [
       FieldSpec('title', 'कार्यक्रमाचे नाव', required: true),
       FieldSpec('date', 'तारीख', type: FieldType.date, required: true),
       FieldSpec('location', 'ठिकाण'),
+      FieldSpec('photoUrl', 'फोटो', type: FieldType.image, help: 'ऐच्छिक – कॅलेंडरमध्ये त्या दिवशी छोटा दिसतो'),
     ],
   );
 

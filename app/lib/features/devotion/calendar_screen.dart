@@ -6,6 +6,7 @@ import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
+import '../../widgets/media_viewer.dart';
 
 /// Kalnirnay-style month calendar: each date with its tithi and festivals,
 /// and below it the full Panchang of the selected day (tithi/nakshatra end
@@ -188,7 +189,7 @@ class _MonthPage extends ConsumerWidget {
                         isToday: d == today,
                         isSelected: d == selected,
                         hasEvent: hasEvent(d),
-                        programme: programmes.where((e) => e.date == d).firstOrNull?.title,
+                        programme: programmes.where((e) => e.date == d).firstOrNull,
                         onTap: () => onSelect(d),
                       );
                     }()),
@@ -252,7 +253,7 @@ class _DayCell extends StatelessWidget {
     required this.onTap,
     this.programme,
   });
-  final String? programme;
+  final CalendarEvent? programme;
   final DateTime date;
   final List<FestivalDay> festivals;
   final bool isToday;
@@ -328,9 +329,17 @@ class _DayCell extends StatelessWidget {
                           : KjdColors.kumkum,
                 ),
               ),
+            if (programme?.photoUrl case final url? when url.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 3, bottom: 2),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: NetImage(url, height: 30, fallbackIcon: '🛕'),
+                ),
+              ),
             if (programme != null)
               Text(
-                '🛕 $programme',
+                '🛕 ${programme!.title}',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -455,6 +464,18 @@ class _DayDetail extends ConsumerWidget {
                   title: Text(e.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
                   subtitle: e.location.isEmpty ? null : Text('📍 ${e.location}'),
                 ),
+              for (final e in programmes)
+                if (e.photoUrl case final url? when url.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: GestureDetector(
+                      onTap: () => MediaViewer.open(context, [MediaEntry(url: url, caption: e.title)]),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: NetImage(url, height: 180, width: double.infinity),
+                      ),
+                    ),
+                  ),
               for (final e in events)
                 ListTile(
                   dense: true,
@@ -665,6 +686,11 @@ class _ProgrammeRow extends StatelessWidget {
                   ),
                 ]),
               ),
+              if (e.photoUrl case final url? when url.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: NetImage(url, width: 52, height: 52),
+                ),
             ]),
           ),
         ),

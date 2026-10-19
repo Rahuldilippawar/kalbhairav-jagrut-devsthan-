@@ -86,7 +86,7 @@ void main() {
   testWidgets('calendar shows the month with tithis, festivals and the day panchang', (tester) async {
     final c = await _start(tester, to: '/calendar');
     await c.read(dataStoreProvider).set(Col.calendarEvents, 'p1',
-        {'title': 'भंडारा', 'date': DateTime(2026, 10, 6), 'location': 'मंदिर प्रांगण'});
+        {'title': 'भंडारा', 'date': DateTime(2026, 10, 6), 'location': 'मंदिर प्रांगण', 'photoUrl': 'asset:logo'});
     await tester.pumpAndSettle();
     // Only name, date and place are entered; the calendar shows it on the day.
     expect(find.text('🛕 भंडारा'), findsOneWidget);
