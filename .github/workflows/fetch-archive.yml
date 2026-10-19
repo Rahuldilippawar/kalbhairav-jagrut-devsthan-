@@ -1,0 +1,72 @@
+# Looks up public-domain books on archive.org and copies an item's scan and
+# its existing OCR text into a pre-release (tag archive-<run number>), so
+# Guru Gyan granths can be prepared from them.
+name: Fetch book from archive.org
+
+on:
+  workflow_dispatch:
+    inputs:
+      search:
+        description: Search archive.org (title words); results are listed in search.txt
+        required: false
+        default: ""
+      item:
+        description: archive.org item identifier to copy (scan PDF + OCR text)
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SEARCH: ${{ inputs.search }}
+          ITEM: ${{ inputs.item }}
+        run: |
+          set -u
+          cd "$RUNNER_TEMP"
+          ua="KalbhairavDevsthanBooks/1.0 (temple app; github actions)"
+          if [ -n "$SEARCH" ]; then
+            python3 - <<'PY' > search.txt
+          import json, os, urllib.parse, urllib.request
+          q = os.environ["SEARCH"]
+          url = "https://archive.org/advancedsearch.php?" + urllib.parse.urlencode(
+              [("q", q), ("fl[]", "identifier"), ("fl[]", "title"), ("fl[]", "language"), ("fl[]", "date"),
+               ("fl[]", "imagecount"), ("fl[]", "creator"), ("fl[]", "publisher"), ("rows", "100"), ("output", "json")])
+          req = urllib.request.Request(url, headers={"User-Agent": "KalbhairavDevsthanBooks/1.0"})
+          docs = json.load(urllib.request.urlopen(req, timeout=60))["response"]["docs"]
+          for d in docs:
+              print(" | ".join(str(d.get(k, "")) for k in ("identifier", "title", "language", "date", "imagecount", "creator", "publisher")))
+          PY
+            wc -l search.txt
+          fi
+          files=()
+          [ -f search.txt ] && files+=(search.txt)
+          if [ -n "$ITEM" ]; then
+            curl -fsSL --retry 4 -A "$ua" -o metadata.json "https://archive.org/metadata/$ITEM"
+            files+=(metadata.json)
+            python3 - <<'PY' > names.txt
+          import json
+          d = json.load(open("metadata.json"))
+          for f in d.get("files", []):
+              n = f["name"]
+              if n.endswith("_djvu.txt") or (n.endswith(".pdf") and not n.endswith("_text.pdf")):
+                  print(n)
+          PY
+            cat names.txt
+            while IFS= read -r n; do
+              out=$(echo "$n" | tr ' /' '__')
+              curl -fsSL --retry 4 -A "$ua" -o "$out" "https://archive.org/download/$ITEM/$(python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1]))' "$n")" \
+                && files+=("$out")
+            done < names.txt
+          fi
+          ls -la
+          tag="archive-${{ github.run_number }}"
+          gh release create "$tag" "${files[@]}" --repo "${{ github.repository }}" --target "${{ github.sha }}" --prerelease \
+            --title "archive.org: ${ITEM:-search $SEARCH}" \
+            --notes "Copied from archive.org for preparing Guru Gyan granths. Search: '$SEARCH'. Item: '$ITEM'."
