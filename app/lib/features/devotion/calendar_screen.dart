@@ -7,6 +7,7 @@ import 'package:kjd_core/kjd_core.dart';
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
 import '../../widgets/media_viewer.dart';
+import '../banner/festival_picker.dart' show programmeLine;
 
 /// Kalnirnay-style month calendar: each date with its tithi and festivals,
 /// and below it the full Panchang of the selected day (tithi/nakshatra end
@@ -441,6 +442,7 @@ class _DayDetail extends ConsumerWidget {
                     '${l.tithi}: ${p.tithis.first.name}',
                     '${l.nakshatra}: ${p.nakshatras.first.name}',
                     for (final f in festivals) '✨ ${f.festival.name}',
+                    for (final e in programmes) programmeLine(e),
                   ].join('\n'),
                 }).toString()),
               ),

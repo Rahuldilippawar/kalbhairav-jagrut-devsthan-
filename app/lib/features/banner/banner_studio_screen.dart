@@ -73,8 +73,8 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
       final def = t.defaultMessage;
       _message.text = initial != null && t.category == widget.initialCategory
           ? initial
-          : def == null && t.category == BannerCategory.tithi
-              ? tithiBannerMessage(_todayTithi())
+          : t.category == BannerCategory.tithi
+              ? tithiBannerMessage(_todayTithi(), _todayProgrammes(), def)
               : BannerTemplate.fill(def ?? '', {'name': _name.text.isEmpty ? '______' : _name.text});
     }
   }
@@ -83,6 +83,13 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
   TithiInfo _todayTithi() {
     final now = ref.read(clockProvider)();
     return ref.read(tithiProvider(dateOnly(now))).value ?? computeTithi(now);
+  }
+
+  List<CalendarEvent> _todayProgrammes() {
+    final today = dateOnly(ref.read(clockProvider)());
+    return (ref.read(calendarEventsProvider).value ?? const <CalendarEvent>[])
+        .where((e) => e.date == today)
+        .toList();
   }
 
   void _selectFestival(FestivalDay fd) {
@@ -174,6 +181,15 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     _resolveInitialFestival();
+    // Programmes load after the studio opens: add them to an untouched
+    // tithi message once they arrive.
+    ref.listen(calendarEventsProvider, (_, next) {
+      final t = _template;
+      if (t == null || t.category != BannerCategory.tithi) return;
+      if (_message.text == tithiBannerMessage(_todayTithi(), const [], t.defaultMessage)) {
+        setState(() => _message.text = tithiBannerMessage(_todayTithi(), _todayProgrammes(), t.defaultMessage));
+      }
+    });
     final all = ref.watch(bannerTemplatesProvider).value ?? const [];
     final templates = _templatesFor(all);
     // Template list changes (category switch, admin data arriving) are

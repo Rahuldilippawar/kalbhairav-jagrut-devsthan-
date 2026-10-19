@@ -91,6 +91,12 @@ void main() {
     // Only name, date and place are entered; the calendar shows it on the day.
     expect(find.text('🛕 भंडारा'), findsOneWidget);
     expect(find.textContaining('मंदिर प्रांगण'), findsWidgets);
+    // The day's Panchang banner carries the programme too.
+    await tester.tap(find.byTooltip('बॅनर तयार करा'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('🛕 भंडारा – 📍 मंदिर प्रांगण'), findsWidgets);
+    c.read(routerProvider).pop();
+    await tester.pumpAndSettle();
     // 6 Oct 2026: Bhadrapada Krishna Ekadashi (इंदिरा एकादशी).
     expect(find.textContaining('भाद्रपद – आश्विन'), findsOneWidget);
     expect(find.textContaining('शके १९४८'), findsWidgets);
@@ -105,6 +111,14 @@ void main() {
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.textContaining('✨ विजयादशमी'), -300, scrollable: list);
     expect(find.textContaining('✨ विजयादशमी'), findsOneWidget);
+  });
+
+  testWidgets("today's tithi banner lists the temple's programmes", (tester) async {
+    final c = await _start(tester);
+    await c.read(dataStoreProvider).set(Col.calendarEvents, 'p1', {'title': 'महाप्रसाद', 'date': _now});
+    c.read(routerProvider).go('/banner?category=tithi');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('🛕 महाप्रसाद'), findsWidgets);
   });
 
   testWidgets('events archive filters by year', (tester) async {

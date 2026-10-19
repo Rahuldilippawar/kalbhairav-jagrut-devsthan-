@@ -29,13 +29,18 @@ String festivalKindLabel(BuildContext context, FestivalKind k) => switch (k) {
   FestivalKind.national => context.l10n.kindNational,
 };
 
-/// Banner message for "आजची तिथी" from the day's Panchang.
-String tithiBannerMessage(TithiInfo t) {
+/// Banner line for a temple programme: name and place.
+String programmeLine(CalendarEvent e) => '🛕 ${e.title}${e.location.isEmpty ? '' : ' – 📍 ${e.location}'}';
+
+/// Banner message for "आजची तिथी" from the day's Panchang, with the
+/// temple's [programmes] of that day.
+String tithiBannerMessage(TithiInfo t, [List<CalendarEvent> programmes = const [], String? closing]) {
   final parts = [
     'आज ${t.vaar}, ${t.masa} ${t.paksha} ${t.tithi}.',
     if (t.nakshatra.isNotEmpty) 'नक्षत्र: ${t.nakshatra}.',
     if (t.specialDay != null && t.specialDay!.isNotEmpty) '${t.specialDay}.',
-    'श्री काळभैरव महाराजांची कृपा सदैव राहो.',
+    if (programmes.isNotEmpty) '\nदेवस्थानातील कार्यक्रम:\n${programmes.map(programmeLine).join('\n')}\n',
+    closing ?? 'श्री काळभैरव महाराजांची कृपा सदैव राहो.',
   ];
   return parts.join(' ');
 }
