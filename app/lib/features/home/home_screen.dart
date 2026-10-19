@@ -275,10 +275,12 @@ class _QuickActions extends StatelessWidget {
         crossAxisSpacing: 8,
         childAspectRatio: .9,
         children: [
-          for (final (emoji, label, onTap) in items)
+          for (final (i, (emoji, label, onTap)) in items.indexed)
             Material(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              elevation: 1.5,
+              shadowColor: const Color(0x33B26A00),
+              borderRadius: BorderRadius.circular(18),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: onTap,
@@ -287,7 +289,7 @@ class _QuickActions extends StatelessWidget {
                     width: 44,
                     height: 44,
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(color: KjdColors.goldLight, shape: BoxShape.circle),
+                    decoration: BoxDecoration(color: _tileTints[i % _tileTints.length], shape: BoxShape.circle),
                     child: Text(emoji, style: const TextStyle(fontSize: 22)),
                   ),
                   const SizedBox(height: 6),
@@ -303,6 +305,12 @@ class _QuickActions extends StatelessWidget {
     );
   }
 }
+
+/// Soft circle colours for the quick-action tiles.
+const _tileTints = [
+  Color(0xFFFFF3C4), Color(0xFFFFE0CC), Color(0xFFFCE4EC), Color(0xFFE8F5E9),
+  Color(0xFFE3F2FD), Color(0xFFF3E5F5), Color(0xFFFFF8E1), Color(0xFFE0F7FA),
+];
 
 class _LiveStrip extends ConsumerWidget {
   const _LiveStrip();

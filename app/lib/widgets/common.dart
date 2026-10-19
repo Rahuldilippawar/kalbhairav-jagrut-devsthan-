@@ -61,10 +61,15 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(icon, size: 48, color: KjdColors.saffronLight),
-          const SizedBox(height: 12),
+          Container(
+            width: 88,
+            height: 88,
+            decoration: const BoxDecoration(color: KjdColors.goldLight, shape: BoxShape.circle),
+            child: Icon(icon, size: 44, color: KjdColors.saffron),
+          ),
+          const SizedBox(height: 14),
           Text(message ?? context.l10n.nothingHereYet,
-              textAlign: TextAlign.center, style: const TextStyle(color: KjdColors.inkMuted)),
+              textAlign: TextAlign.center, style: const TextStyle(color: KjdColors.inkMuted, fontSize: 15, height: 1.5)),
         ]),
       );
 }
@@ -78,8 +83,14 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 8, 8),
+        padding: const EdgeInsets.fromLTRB(16, 22, 8, 8),
         child: Row(children: [
+          Container(
+            width: 4,
+            height: 20,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(gradient: KjdColors.heroGradient, borderRadius: BorderRadius.circular(4)),
+          ),
           if (icon != null) Text('$icon ', style: const TextStyle(fontSize: 18)),
           Expanded(
             child: Text(title,

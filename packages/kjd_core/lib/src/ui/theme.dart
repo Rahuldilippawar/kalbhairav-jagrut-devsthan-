@@ -49,6 +49,9 @@ ThemeData buildKjdTheme({Brightness brightness = Brightness.light}) {
       foregroundColor: Colors.white,
       centerTitle: false,
       elevation: 0,
+      scrolledUnderElevation: 3,
+      shadowColor: const Color(0x55000000),
+      surfaceTintColor: Colors.transparent,
       titleTextStyle: const TextStyle(
         fontSize: 19,
         fontWeight: FontWeight.w700,
@@ -57,7 +60,9 @@ ThemeData buildKjdTheme({Brightness brightness = Brightness.light}) {
       ),
     ),
     cardTheme: CardThemeData(
-      elevation: 0,
+      elevation: dark ? 0 : 1.5,
+      shadowColor: const Color(0x33B26A00),
+      surfaceTintColor: Colors.transparent,
       color: dark ? const Color(0xFF2A1D16) : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
@@ -81,7 +86,14 @@ ThemeData buildKjdTheme({Brightness brightness = Brightness.light}) {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: dark ? Colors.white10 : Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      floatingLabelStyle: TextStyle(color: dark ? KjdColors.saffronLight : KjdColors.kumkum, fontWeight: FontWeight.w700),
+      prefixIconColor: dark ? KjdColors.saffronLight : KjdColors.saffron,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: dark ? KjdColors.saffronLight : KjdColors.saffron, width: 2),
+      ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(color: dark ? Colors.white24 : const Color(0xFFE8D5B5)),
@@ -89,13 +101,50 @@ ThemeData buildKjdTheme({Brightness brightness = Brightness.light}) {
     ),
     chipTheme: base.chipTheme.copyWith(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      selectedColor: dark ? const Color(0xFF5A3A1A) : KjdColors.goldLight,
+      side: BorderSide(color: dark ? Colors.white24 : const Color(0xFFEBD7B8)),
+      labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontFamilyFallback: kjdFontFallback),
     ),
+    listTileTheme: ListTileThemeData(
+      iconColor: dark ? KjdColors.saffronLight : KjdColors.kumkum,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    ),
+    dividerTheme: DividerThemeData(color: dark ? Colors.white12 : const Color(0xFFF1E4CE), space: 1),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: dark ? const Color(0xFF3A2A20) : KjdColors.ink,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: dark ? const Color(0xFF2A1D16) : Colors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: dark ? const Color(0xFF2A1D16) : Colors.white,
+      surfaceTintColor: Colors.transparent,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    ),
+    pageTransitionsTheme: const PageTransitionsTheme(builders: {
+      TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+    }),
     navigationBarTheme: NavigationBarThemeData(
       indicatorColor: KjdColors.goldLight,
       backgroundColor: dark ? const Color(0xFF1E1410) : Colors.white,
-      labelTextStyle: WidgetStateProperty.all(
-        const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, fontFamilyFallback: kjdFontFallback),
-      ),
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      shadowColor: const Color(0x33000000),
+      height: 68,
+      iconTheme: WidgetStateProperty.resolveWith((s) => IconThemeData(
+            color: s.contains(WidgetState.selected) ? KjdColors.kumkum : (dark ? Colors.white70 : KjdColors.inkMuted),
+          )),
+      labelTextStyle: WidgetStateProperty.resolveWith((s) => TextStyle(
+            fontSize: 12,
+            fontWeight: s.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
+            color: s.contains(WidgetState.selected) ? KjdColors.kumkum : (dark ? Colors.white70 : KjdColors.inkMuted),
+            fontFamilyFallback: kjdFontFallback,
+          )),
     ),
   );
 }
