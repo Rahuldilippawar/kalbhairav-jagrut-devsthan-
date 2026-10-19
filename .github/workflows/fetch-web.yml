@@ -1,0 +1,55 @@
+# Downloads web pages (e.g. a public-domain granth published chapter by
+# chapter) and publishes them as a zip in a pre-release (tag web-<run>).
+name: Fetch web pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: URL with {n} for the page number, e.g. https://example.org/a{n}.htm
+        required: true
+      from:
+        description: First number
+        default: "1"
+      to:
+        description: Last number
+        default: "1"
+      width:
+        description: Zero-pad the number to this many digits (0 = none)
+        default: "0"
+      extra:
+        description: Extra URLs (space separated)
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PATTERN: ${{ inputs.pattern }}
+          FROM: ${{ inputs.from }}
+          TO: ${{ inputs.to }}
+          WIDTH: ${{ inputs.width }}
+          EXTRA: ${{ inputs.extra }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/pages" && cd "$RUNNER_TEMP/pages"
+          ua="Mozilla/5.0 (KalbhairavDevsthanBooks/1.0; temple app)"
+          for n in $(seq "$FROM" "$TO"); do
+            num=$n; [ "$WIDTH" -gt 0 ] && num=$(printf "%0${WIDTH}d" "$n")
+            url=${PATTERN//\{n\}/$num}
+            curl -fsSL --retry 3 -A "$ua" -o "page-$(printf '%04d' "$n").html" "$url" || echo "missing $url"
+            sleep 1
+          done
+          i=0
+          for url in $EXTRA; do
+            i=$((i+1)); curl -fsSL --retry 3 -A "$ua" -o "extra-$i.html" "$url" || echo "missing $url"
+          done
+          ls | wc -l
+          cd .. && zip -qr pages.zip pages
+          gh release create "web-${{ github.run_number }}" pages.zip --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" --prerelease --title "Web pages: $PATTERN" --notes "Fetched $PATTERN ($FROM–$TO)."
