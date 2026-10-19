@@ -118,8 +118,14 @@ class _Layout {
       'royal' => BoxDecoration(
         gradient: RadialGradient(center: const Alignment(0, -.45), radius: 1.2, colors: colors.reversed.toList()),
       ),
-      'photoHero' => BoxDecoration(
+      'photoHero' || 'temple' => BoxDecoration(
         gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: colors),
+      ),
+      'mandala' => BoxDecoration(
+        gradient: RadialGradient(radius: .95, colors: colors.reversed.toList()),
+      ),
+      'lotus' => BoxDecoration(
+        gradient: RadialGradient(center: const Alignment(0, -1.1), radius: 1.6, colors: colors.reversed.toList()),
       ),
       _ => BoxDecoration(
         gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: colors),
@@ -155,6 +161,45 @@ class _Layout {
       ),
     ],
     'photoHero' => [_heroImage()],
+    'mandala' => [
+      Center(
+        child: SizedBox.square(
+          dimension: math.min(w, h) * 1.02,
+          child: CustomPaint(painter: MandalaPainter(color: _goldFrame.withValues(alpha: .26))),
+        ),
+      ),
+      Positioned.fill(child: CustomPaint(painter: SparklePainter(color: _goldStops[0].withValues(alpha: .5), unit: u))),
+    ],
+    'temple' => [
+      Positioned.fill(child: CustomPaint(painter: SparklePainter(color: Colors.white.withValues(alpha: .6), unit: u))),
+      Positioned(
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: math.min(h * .36, 150 * u),
+        child: CustomPaint(painter: ShikharPainter(color: Colors.black.withValues(alpha: .28), unit: u * 1.3)),
+      ),
+    ],
+    'lotus' => [
+      Positioned(
+        left: w / 2 - w * .75,
+        top: -w * .75,
+        width: w * 1.5,
+        height: w * 1.5,
+        child: CustomPaint(painter: SunRaysPainter(color: _goldStops[0].withValues(alpha: .35), rays: 40)),
+      ),
+      Positioned.fill(child: CustomPaint(painter: SparklePainter(color: _goldStops[0], unit: u))),
+      Positioned(
+        left: 0,
+        right: 0,
+        bottom: 32 * u,
+        height: 56 * u,
+        child: CustomPaint(painter: LotusPainter(unit: u * .78)),
+      ),
+    ],
+    'paithani' => [
+      Positioned.fill(child: CustomPaint(painter: SparklePainter(color: _goldStops[1].withValues(alpha: .45), unit: u))),
+    ],
     _ => const [],
   };
 
@@ -183,6 +228,41 @@ class _Layout {
         height: 44 * u,
         child: CustomPaint(
           painter: DiyaRowPainter(unit: u, count: landscape ? 9 : (story ? 5 : 6)),
+        ),
+      ),
+    ],
+    'temple' => [
+      Positioned.fill(child: IgnorePointer(child: CustomPaint(painter: TempleArchPainter(color: _goldFrame, unit: u)))),
+    ],
+    'paithani' => [
+      Positioned(top: 0, left: 0, right: 0, height: 34 * u, child: CustomPaint(painter: ZariBandPainter(unit: u))),
+      Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 34 * u,
+        child: CustomPaint(painter: ZariBandPainter(unit: u, flip: true)),
+      ),
+      for (final x in [6.0, null])
+        Positioned(
+          left: x == null ? null : x * u,
+          right: x == null ? 6 * u : null,
+          top: 34 * u,
+          bottom: 34 * u,
+          width: 2 * u,
+          child: const ColoredBox(color: _goldFrame),
+        ),
+    ],
+    'mandala' => [
+      Positioned.fill(
+        child: Padding(
+          padding: EdgeInsets.all(8 * u),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(color: _goldFrame.withValues(alpha: .8), width: 1.2 * u),
+              borderRadius: BorderRadius.circular(14 * u),
+            ),
+          ),
         ),
       ),
     ],
@@ -258,6 +338,9 @@ class _Layout {
     'royal' => EdgeInsets.fromLTRB(28 * u, 26 * u, 28 * u, 24 * u),
     'festive' => EdgeInsets.fromLTRB(18 * u, 50 * u, 18 * u, 46 * u),
     'minimal' => EdgeInsets.all(26 * u),
+    'temple' => EdgeInsets.fromLTRB(26 * u, 64 * u, 26 * u, 22 * u),
+    'paithani' => EdgeInsets.fromLTRB(18 * u, 40 * u, 18 * u, 40 * u),
+    'mandala' => EdgeInsets.all(20 * u),
     'photoHero' when landscape => EdgeInsets.fromLTRB(w * .46, 16 * u, 16 * u, 16 * u),
     _ => EdgeInsets.all(16 * u),
   };
@@ -527,7 +610,7 @@ class _Layout {
   }
 
   Widget _footer() {
-    final filled = minimal || layout == 'festive';
+    final filled = minimal || layout == 'festive' || layout == 'paithani';
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 6 * u, horizontal: 10 * u),

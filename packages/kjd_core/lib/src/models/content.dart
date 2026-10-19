@@ -498,6 +498,10 @@ class BannerTemplate {
     'festive': 'उत्सवी (तोरण व दिवे)',
     'photoHero': 'फोटो मुख्य',
     'minimal': 'साधी व मोहक',
+    'mandala': 'मंडल (दैवी)',
+    'temple': 'मंदिर द्वार व शिखर',
+    'lotus': 'कमळ व तेज',
+    'paithani': 'पैठणी काठ',
   };
 
   /// Bundled banner fonts: key → display name.
