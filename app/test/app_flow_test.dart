@@ -544,11 +544,11 @@ void main() {
     expect(find.byType(NavigationBar), findsNothing);
     expect(find.text('झटपट'), findsOneWidget); // side menu quick links
     expect(find.text('🪔 आगामी सण व व्रत'), findsOneWidget); // today panel
+    // Mantras are only inside Guru Gyan now, not in the public side menu.
+    expect(find.widgetWithText(InkWell, 'मंत्र'), findsNothing);
     await tester.tap(find.text('गुरु ज्ञान').first);
     await tester.pumpAndSettle();
     expect(c.read(routerProvider).routerDelegate.currentConfiguration.uri.path, '/guru');
-    // Mantras are only inside Guru Gyan now, not in the public side menu.
-    expect(find.widgetWithText(InkWell, 'मंत्र'), findsNothing);
   });
 
   testWidgets('an older app offers the new version; a too-old one must update', (tester) async {

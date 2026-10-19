@@ -86,6 +86,95 @@ class GranthCard extends ConsumerWidget {
   }
 }
 
+/// Guru Gyan home: a granth as a book cover with its reading progress.
+class GranthCover extends ConsumerWidget {
+  const GranthCover({super.key, required this.id, required this.index, required this.completed});
+  final String id;
+  final int index;
+  final List<String> completed;
+
+  static const _covers = [
+    [Color(0xFF7F0000), Color(0xFFC62828)],
+    [Color(0xFF4E2A12), Color(0xFF8D5524)],
+    [Color(0xFF1B5E20), Color(0xFF43A047)],
+    [Color(0xFF283593), Color(0xFF5C6BC0)],
+    [Color(0xFFE65100), Color(0xFFFFA000)],
+    [Color(0xFF4A148C), Color(0xFF8E24AA)],
+    [Color(0xFF006064), Color(0xFF00ACC1)],
+    [Color(0xFF880E4F), Color(0xFFD81B60)],
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final g = ref.watch(granthProvider(id)).value;
+    if (g == null || g.chapters.isEmpty) return const SizedBox.shrink();
+    final l = context.l10n;
+    final done = g.chapters.where((c) => completed.contains(c.id)).length;
+    final colors = _covers[index % _covers.length];
+    return Material(
+      borderRadius: BorderRadius.circular(18),
+      clipBehavior: Clip.antiAlias,
+      elevation: 4,
+      shadowColor: colors.first.withValues(alpha: .45),
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: colors),
+        ),
+        child: InkWell(
+          onTap: () => context.push('/granth/$id'),
+          child: Stack(children: [
+            // Book spine and gold border, like a pothi cover.
+            Positioned(left: 0, top: 0, bottom: 0, child: Container(width: 10, color: const Color(0x33000000))),
+            Positioned.fill(
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0x88FFD54F), width: 1.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 16, 14),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('📖', style: TextStyle(fontSize: 30)),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Text(
+                    g.title,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      height: 1.3,
+                      fontWeight: FontWeight.w800,
+                      fontFamily: bannerFontFamily('tiroMarathi'),
+                      locale: bannerTextLocale,
+                    ),
+                  ),
+                ),
+                Text('$done / ${g.chapters.length} ${g.chapterLabel ?? l.adhyayLabel}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                const SizedBox(height: 6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: done / g.chapters.length,
+                    minHeight: 5,
+                    backgroundColor: Colors.white24,
+                    color: KjdColors.gold,
+                  ),
+                ),
+              ]),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
 /// A granth: its stabaks and their adhyays.
 class GranthScreen extends ConsumerWidget {
   const GranthScreen({super.key, required this.id});

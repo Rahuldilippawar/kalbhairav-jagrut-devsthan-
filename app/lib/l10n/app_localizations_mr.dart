@@ -1343,4 +1343,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get partialText => 'काही भाग उपलब्ध';
+
+  @override
+  String get lessonsSection => 'पाठ व कथा';
 }

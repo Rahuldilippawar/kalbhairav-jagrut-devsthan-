@@ -1346,4 +1346,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get partialText => 'Partly available';
+
+  @override
+  String get lessonsSection => 'Lessons and kathas';
 }

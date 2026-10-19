@@ -1344,4 +1344,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get partialText => 'आंशिक रूप से उपलब्ध';
+
+  @override
+  String get lessonsSection => 'पाठ व कथाएँ';
 }

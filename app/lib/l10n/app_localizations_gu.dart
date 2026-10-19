@@ -1338,4 +1338,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get partialText => 'આંશિક ઉપલબ્ધ';
+
+  @override
+  String get lessonsSection => 'પાઠ અને કથાઓ';
 }

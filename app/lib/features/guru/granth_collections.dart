@@ -154,9 +154,17 @@ class _EntryCard extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           ListTile(
-            leading: CircleAvatar(
-              backgroundColor: soon ? Colors.grey.shade300 : KjdColors.goldLight,
-              child: Text(entry.note == 'उपपुराण' ? '+' : '$number', style: const TextStyle(fontWeight: FontWeight.w800, color: KjdColors.kumkumDark)),
+            leading: Container(
+              width: 42,
+              height: 42,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: soon ? null : KjdColors.heroGradient,
+                color: soon ? Colors.grey.shade300 : null,
+              ),
+              child: Text(entry.note == 'उपपुराण' ? '+' : '$number',
+                  style: TextStyle(fontWeight: FontWeight.w900, color: soon ? KjdColors.inkMuted : Colors.white)),
             ),
             title: Text(entry.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17)),
             subtitle: Text([?entry.note, if (soon) l.comingSoonText].join(' • ')),

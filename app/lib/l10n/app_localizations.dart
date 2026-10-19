@@ -2591,6 +2591,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Partly available'**
   String get partialText;
+
+  /// No description provided for @lessonsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons and kathas'**
+  String get lessonsSection;
 }
 
 class _AppLocalizationsDelegate

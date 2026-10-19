@@ -349,78 +349,73 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
           .where((x) => _category == null || x.category == _category)
           .where((x) => _deity == null || x.deityId == _deity)
           .toList();
-      return ListView(padding: const EdgeInsets.all(16), children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(gradient: KjdColors.heroGradient, borderRadius: BorderRadius.circular(18)),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(l.welcomeShishya(s.name),
-                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 10),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: all.isEmpty ? 0 : done / all.length,
-                minHeight: 10,
-                backgroundColor: Colors.white24,
-                color: KjdColors.gold,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(l.lessonsProgress(done, all.length), style: const TextStyle(color: KjdColors.goldLight)),
-          ]),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: Card(
-            color: const Color(0xFFFFF1DC),
-            child: ListTile(
-              leading: const Text('💬', style: TextStyle(fontSize: 28)),
-              title: Text(l.chatTitle, style: const TextStyle(fontWeight: FontWeight.w800)),
-              subtitle: Text(l.chatHint),
-              trailing: switch (ref.watch(unreadChatCountProvider)) {
-                0 => const Icon(Icons.chevron_right),
-                final n => Badge(
-                    label: Text(n > 99 ? '99+' : '$n'),
-                    backgroundColor: KjdColors.success,
-                    child: const Icon(Icons.chevron_right),
-                  ),
-              },
+      final gadhipati = ref.watch(isGadhipatiProvider).value ?? false;
+      final unread = ref.watch(unreadChatCountProvider);
+      final books = [
+        for (final id in ref.watch(granthIdsProvider).value ?? granthIds)
+          if (!collectionGranthIds.contains(id)) id,
+      ];
+      return ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 24), children: [
+        _GuruHero(name: s.name, done: done, total: all.length),
+        const SizedBox(height: 14),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 2.15,
+          children: [
+            _GuruTile(
+              emoji: '💬',
+              label: l.chatTitle,
+              colors: const [Color(0xFF00897B), Color(0xFF26A69A)],
+              badge: unread,
               onTap: () => context.push('/shishya-chat'),
             ),
-          ),
-        ),
-        if (ref.watch(isGadhipatiProvider).value ?? false)
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Card(
-              color: KjdColors.goldLight,
-              child: ListTile(
-                leading: const Text('👁️', style: TextStyle(fontSize: 28)),
-                title: Text(l.gadhipatiPanel, style: const TextStyle(fontWeight: FontWeight.w800)),
-                subtitle: Text(l.gadhipatiPanelHint),
-                trailing: const Icon(Icons.chevron_right),
+            _GuruTile(
+              emoji: '🕉️',
+              label: l.mantras,
+              colors: const [Color(0xFFE65100), Color(0xFFFFA000)],
+              onTap: () => context.push('/mantras'),
+            ),
+            _GuruTile(
+              emoji: '📜',
+              label: l.puranasTitle,
+              colors: const [Color(0xFF6B2D0C), Color(0xFFB0581E)],
+              onTap: () => context.push('/puranas'),
+            ),
+            _GuruTile(
+              emoji: '🔱',
+              label: l.darshanasTitle,
+              colors: const [Color(0xFF283593), Color(0xFF5C6BC0)],
+              onTap: () => context.push('/darshanas'),
+            ),
+            if (gadhipati)
+              _GuruTile(
+                emoji: '👁️',
+                label: l.gadhipatiPanel,
+                colors: const [Color(0xFF7F0000), Color(0xFFC62828)],
                 onTap: () => context.push('/shishya-activity'),
               ),
-            ),
-          ),
-        Card(
-          margin: const EdgeInsets.only(top: 12),
-          color: KjdColors.goldLight,
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            leading: const Text('🕉️', style: TextStyle(fontSize: 32)),
-            title: Text(l.mantras, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17)),
-            subtitle: Text(l.mantraJapaCta),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/mantras'),
-          ),
+          ],
         ),
-        for (final c in GranthCollection.values) GranthCollectionCard(collection: c),
-        for (final id in ref.watch(granthIdsProvider).value ?? granthIds)
-          if (!collectionGranthIds.contains(id)) GranthCard(id: id, completed: s.completed),
+        if (books.isNotEmpty) ...[
+          SectionHeader(l.granthReading, icon: '📚'),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: .8,
+            children: [
+              for (final (i, id) in books.indexed) GranthCover(id: id, index: i, completed: s.completed),
+            ],
+          ),
+        ],
+        SectionHeader(l.lessonsSection, icon: '🪔'),
         if (lessonDeities.isNotEmpty) ...[
-          const SizedBox(height: 14),
           SizedBox(
             height: 96,
             child: ListView(scrollDirection: Axis.horizontal, children: [
@@ -455,15 +450,25 @@ class _LessonsHomeState extends ConsumerState<_LessonsHome> {
           ),
         ],
         const SizedBox(height: 8),
-        Wrap(spacing: 8, runSpacing: 4, children: [
-          ChoiceChip(label: Text(l.allLessons), selected: _category == null, onSelected: (_) => setState(() => _category = null)),
-          for (final c in categories)
-            ChoiceChip(
-              label: Text('${c.emoji} ${c.labelMr}'),
-              selected: _category == c,
-              onSelected: (on) => setState(() => _category = on ? c : null),
+        SizedBox(
+          height: 44,
+          child: ListView(scrollDirection: Axis.horizontal, children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ChoiceChip(
+                  label: Text(l.allLessons), selected: _category == null, onSelected: (_) => setState(() => _category = null)),
             ),
-        ]),
+            for (final c in categories)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text('${c.emoji} ${c.labelMr}'),
+                  selected: _category == c,
+                  onSelected: (on) => setState(() => _category = on ? c : null),
+                ),
+              ),
+          ]),
+        ),
         const SizedBox(height: 8),
         if (shown.isEmpty) EmptyState(message: l.nothingHereYet, icon: Icons.menu_book_outlined),
         for (final x in shown)
@@ -687,5 +692,117 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
         ),
       ]),
     )));
+  }
+}
+
+/// Guru Gyan header: greeting and reading progress as a ring.
+class _GuruHero extends StatelessWidget {
+  const _GuruHero({required this.name, required this.done, required this.total});
+  final String name;
+  final int done;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final value = total == 0 ? 0.0 : done / total;
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        gradient: KjdColors.heroGradient,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [BoxShadow(color: Color(0x44B71C1C), blurRadius: 16, offset: Offset(0, 6))],
+      ),
+      child: Stack(children: [
+        const Positioned(
+          right: -18,
+          bottom: -38,
+          child: Text('ॐ', style: TextStyle(fontSize: 150, color: Color(0x1FFFFFFF), fontWeight: FontWeight.w900)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(children: [
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('🙏 गुरु ज्ञान', style: TextStyle(color: KjdColors.goldLight, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 4),
+                Text(l.welcomeShishya(name),
+                    style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w800, height: 1.3)),
+                const SizedBox(height: 8),
+                Text(l.lessonsProgress(done, total), style: const TextStyle(color: KjdColors.goldLight)),
+              ]),
+            ),
+            const SizedBox(width: 12),
+            SizedBox(
+              width: 78,
+              height: 78,
+              child: Stack(fit: StackFit.expand, children: [
+                CircularProgressIndicator(
+                  value: value,
+                  strokeWidth: 8,
+                  backgroundColor: Colors.white24,
+                  color: KjdColors.gold,
+                  strokeCap: StrokeCap.round,
+                ),
+                Center(
+                  child: Text('${(value * 100).round()}%',
+                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                ),
+              ]),
+            ),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+/// A colourful shortcut tile on the Guru Gyan home.
+class _GuruTile extends StatelessWidget {
+  const _GuruTile({required this.emoji, required this.label, required this.colors, required this.onTap, this.badge = 0});
+  final String emoji;
+  final String label;
+  final List<Color> colors;
+  final VoidCallback onTap;
+  final int badge;
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = Text(emoji, style: const TextStyle(fontSize: 24));
+    return Material(
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      elevation: 3,
+      shadowColor: colors.first.withValues(alpha: .4),
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: colors),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(children: [
+              Container(
+                width: 46,
+                height: 46,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(color: Color(0x33FFFFFF), shape: BoxShape.circle),
+                child: badge > 0
+                    ? Badge(label: Text(badge > 99 ? '99+' : '$badge'), backgroundColor: KjdColors.success, child: icon)
+                    : icon,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14, height: 1.25)),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    );
   }
 }

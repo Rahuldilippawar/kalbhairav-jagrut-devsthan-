@@ -78,7 +78,14 @@ List<Override> demoOverrides({
   UpiPayUi upiPayUi = showUpiPayScreen,
 }) {
   final now = clock ?? DateTime.now;
-  final store = MemoryDataStore(buildDemoSeed(now()))..clock = now;
+  final seed = buildDemoSeed(now());
+  // `--dart-define=DEMO_SHISHYA=true`: open the demo as an approved shishya
+  // (to preview Guru Gyan without Firebase).
+  if (const bool.fromEnvironment('DEMO_SHISHYA') && user == null) {
+    (seed[Col.shishyas]!['demo-shishya-1']!)['status'] = ShishyaStatus.approved.name;
+    user = const AuthUser(uid: 'demo-shishya-1', phone: '+919800000001');
+  }
+  final store = MemoryDataStore(seed)..clock = now;
   final auth = DemoAuthService(initial: user);
   final content = ContentRepository(store);
   return [
