@@ -231,6 +231,8 @@ class Granth {
     this.note,
     this.order = 100,
     this.chapters = const [],
+    this.partLabel,
+    this.chapterLabel,
   });
 
   final String id;
@@ -244,6 +246,12 @@ class Granth {
   final int order;
   final List<GranthChapter> chapters;
 
+  /// What the book calls its parts and chapters, e.g. "स्कंध" / "अध्याय"
+  /// for the Bhagavata, "अध्याय" / "पाद" for the Brahma Sutra. Null: the
+  /// app's own "स्तबक" / "अध्याय".
+  final String? partLabel;
+  final String? chapterLabel;
+
   List<int> get stabaks => {for (final c in chapters) c.stabak}.toList()..sort();
 
   factory Granth.fromMap(String id, Map<String, dynamic> m) => Granth(
@@ -254,6 +262,8 @@ class Granth {
         edition: asStringOrNull(m['edition']),
         note: asStringOrNull(m['note']),
         order: m['order'] == null ? 100 : asInt(m['order']),
+        partLabel: asStringOrNull(m['partLabel']),
+        chapterLabel: asStringOrNull(m['chapterLabel']),
         chapters: [
           for (final c in (m['chapters'] as List? ?? const []))
             if (c is Map) GranthChapter.fromMap(Map<String, dynamic>.from(c)),

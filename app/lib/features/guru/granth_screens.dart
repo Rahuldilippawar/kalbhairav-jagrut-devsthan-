@@ -70,7 +70,7 @@ class GranthCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '$done / ${g.chapters.length} ${l.adhyayLabel}',
+                        '$done / ${g.chapters.length} ${g.chapterLabel ?? l.adhyayLabel}',
                         style: const TextStyle(color: Colors.white70, fontSize: 12.5),
                       ),
                     ],
@@ -156,7 +156,7 @@ class GranthScreen extends ConsumerWidget {
                       child: ExpansionTile(
                         initiallyExpanded: s == g.stabaks.first,
                         title: Text(
-                          '${l.stabakLabel} $s',
+                          '${g.partLabel ?? l.stabakLabel} $s',
                           style: const TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 17,
@@ -165,7 +165,7 @@ class GranthScreen extends ConsumerWidget {
                         ),
                         subtitle: Text(() {
                           final cs = g.chapters.where((c) => c.stabak == s);
-                          return '${cs.where((c) => completed.contains(c.id)).length} / ${cs.length} ${l.adhyayLabel}';
+                          return '${cs.where((c) => completed.contains(c.id)).length} / ${cs.length} ${g.chapterLabel ?? l.adhyayLabel}';
                         }()),
                         children: [
                           for (final c in g.chapters.where((c) => c.stabak == s)) _chapterTile(context, c, completed),
@@ -238,12 +238,12 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
       key: ValueKey(c.id),
       kind: ActivityKind.granth,
       itemId: c.id,
-      title: '${g.title} – ${l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
+      title: '${g.title} – ${g.chapterLabel ?? l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
       child: SecureScreen(
-      title: '${g.title} – ${l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
+      title: '${g.title} – ${g.chapterLabel ?? l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
       child: Scaffold(
         appBar: AppBar(
-          title: Text(c.stabak == 0 ? g.title : '${g.title} • ${l.stabakLabel} ${c.stabak}'),
+          title: Text(c.stabak == 0 ? g.title : '${g.title} • ${g.partLabel ?? l.stabakLabel} ${c.stabak}'),
           actions: [
             IconButton(
               tooltip: 'A-',
@@ -261,7 +261,7 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              '${l.adhyayLabel} ${c.adhyayLabel}',
+              '${g.chapterLabel ?? l.adhyayLabel} ${c.adhyayLabel}',
               style: const TextStyle(color: KjdColors.saffron, fontWeight: FontWeight.w800),
             ),
             Text(

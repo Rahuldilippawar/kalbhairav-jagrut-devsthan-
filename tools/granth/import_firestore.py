@@ -57,7 +57,7 @@ def book_meta(path):
     meta = dict(BOOKS.get(book, {}))
     if os.path.exists(meta_file):
         meta.update(json.load(open(meta_file, encoding='utf-8')))
-    return book, {k: v for k, v in meta.items() if k in ('title', 'subtitle', 'author', 'edition', 'note', 'order') and v}
+    return book, {k: v for k, v in meta.items() if k in ('title', 'subtitle', 'author', 'edition', 'note', 'order', 'partLabel', 'chapterLabel') and v}
 
 
 def main(path):

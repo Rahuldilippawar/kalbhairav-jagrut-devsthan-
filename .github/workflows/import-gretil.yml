@@ -1,0 +1,43 @@
+# Builds the Purana and Shad-darshana granths from GRETIL's Sanskrit
+# e-texts (CC BY-NC-SA 4.0) with tools/granth/gretil_book.py and writes them
+# to Firestore (granth / granth_text) for approved shishyas.
+name: Import Puranas and Darshanas (GRETIL)
+
+on:
+  workflow_dispatch:
+    inputs:
+      books:
+        description: Book ids to import (space separated); empty = all
+        required: false
+        default: ""
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download GRETIL
+        run: |
+          curl -fL --retry 3 -A "KalbhairavDevsthanBooks/1.0 (temple app; github actions)" \
+            -o "$RUNNER_TEMP/all.zip" https://gretil.sub.uni-goettingen.de/gretil/1_sanskr.zip
+          cd "$RUNNER_TEMP" && unzip -q all.zip '1_sanskr/tei/transformations/plaintext/*'
+          pip install -q indic_transliteration
+      - name: Build
+        env:
+          BOOKS: ${{ inputs.books }}
+        run: |
+          python3 tools/granth/gretil_book.py "$RUNNER_TEMP/1_sanskr/tei/transformations/plaintext" "$RUNNER_TEMP/out" $BOOKS \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Import
+        env:
+          PROJECT: ${{ vars.FIREBASE_PROJECT_ID }}
+        run: |
+          export TOKEN=$(gcloud auth print-access-token)
+          for f in "$RUNNER_TEMP"/out/*.json; do
+            echo -n "$(basename "$f" .json): "
+            python3 tools/granth/import_firestore.py "$f"
+          done | tee -a "$GITHUB_STEP_SUMMARY"
