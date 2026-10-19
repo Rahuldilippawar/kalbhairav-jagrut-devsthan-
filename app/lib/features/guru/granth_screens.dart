@@ -11,7 +11,7 @@ import 'lesson_body.dart';
 
 /// Granths shown on the Guru Gyan home until the list loads from Firestore
 /// (new granths added there need no new app release).
-const granthIds = ['moolstambh', 'navnath', 'renuka', 'kanbai', 'kashikhand', 'nilavanti', 'vidya14', 'kathakalpataru'];
+const granthIds = ['moolstambh', 'navnath', 'pandavpratap', 'renuka', 'kanbai', 'kashikhand', 'nilavanti', 'vidya14', 'kathakalpataru'];
 
 /// Guru Gyan home card that opens a granth.
 class GranthCard extends ConsumerWidget {
