@@ -1346,4 +1346,19 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get lessonsSection => 'पाठ व कथा';
+
+  @override
+  String get greetMorning => 'शुभ प्रभात 🙏';
+
+  @override
+  String get greetAfternoon => 'शुभ दुपार 🙏';
+
+  @override
+  String get greetEvening => 'शुभ संध्या 🙏';
+
+  @override
+  String get greetNight => 'शुभ रात्री 🙏';
+
+  @override
+  String get quickMore => 'अधिक';
 }

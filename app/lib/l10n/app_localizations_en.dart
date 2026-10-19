@@ -1349,4 +1349,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lessonsSection => 'Lessons and kathas';
+
+  @override
+  String get greetMorning => 'Good morning 🙏';
+
+  @override
+  String get greetAfternoon => 'Good afternoon 🙏';
+
+  @override
+  String get greetEvening => 'Good evening 🙏';
+
+  @override
+  String get greetNight => 'Good night 🙏';
+
+  @override
+  String get quickMore => 'More';
 }

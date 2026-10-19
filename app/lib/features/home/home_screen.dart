@@ -82,40 +82,112 @@ class _Header extends ConsumerWidget {
   const _Header();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final info = ref.watch(templeInfoProvider).value ?? const TempleInfo();
+    final now = ref.watch(clockProvider)();
+    final greeting = switch (now.hour) {
+      < 12 => l.greetMorning,
+      < 16 => l.greetAfternoon,
+      < 20 => l.greetEvening,
+      _ => l.greetNight,
+    };
+    final slots = ref.watch(darshanProvider).value ?? const [];
+    final open = slots
+        .where((s) => s.type == DarshanType.morning || s.type == DarshanType.evening)
+        .any((s) => s.isOpenAt(now));
+    const radius = BorderRadius.vertical(bottom: Radius.circular(28));
     return SliverAppBar(
       pinned: true,
-      expandedHeight: 150,
+      expandedHeight: 196,
       backgroundColor: KjdColors.kumkum,
+      shape: const RoundedRectangleBorder(borderRadius: radius),
       actions: [
         IconButton(icon: const Icon(Icons.search), onPressed: () => context.push('/search')),
         IconButton(icon: const Icon(Icons.notifications_outlined), onPressed: () => context.push('/notifications')),
       ],
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: const BoxDecoration(gradient: KjdColors.heroGradient),
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          alignment: Alignment.bottomLeft,
-          child: Row(children: [
-            const TempleLogo(size: 72),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                Text(info.nameMr,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800, height: 1.2)),
-                Text('${info.location} • ${info.name}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: KjdColors.goldLight, fontSize: 12)),
-              ]),
-            ),
-          ]),
+      flexibleSpace: ClipRRect(
+        borderRadius: radius,
+        child: FlexibleSpaceBar(
+          background: Container(
+            decoration: const BoxDecoration(gradient: KjdColors.heroGradient),
+            child: Stack(children: [
+              const Positioned(
+                right: -10,
+                top: 20,
+                child: Text('ॐ', style: TextStyle(fontSize: 170, color: Color(0x14FFFFFF), fontWeight: FontWeight.w900)),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(mainAxisAlignment: MainAxisAlignment.end, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(greeting, style: const TextStyle(color: KjdColors.gold, fontWeight: FontWeight.w800, fontSize: 15)),
+                  const SizedBox(height: 6),
+                  Row(children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .25), blurRadius: 10)],
+                      ),
+                      child: const TempleLogo(size: 64),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                        Text(info.nameMr,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800, height: 1.2)),
+                        Text('${info.location} • ${info.name}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: KjdColors.goldLight, fontSize: 12)),
+                      ]),
+                    ),
+                  ]),
+                  const SizedBox(height: 10),
+                  Wrap(spacing: 8, runSpacing: 6, children: [
+                    _HeaderPill(icon: Icons.calendar_today, text: formatDate(now, locale: context.lang)),
+                    if (slots.isNotEmpty)
+                      _HeaderPill(
+                        dot: open ? const Color(0xFF69F0AE) : Colors.white54,
+                        text: open ? l.darshanOpenNow : l.darshanClosedNow,
+                        onTap: () => context.go('/darshan'),
+                      ),
+                  ]),
+                ]),
+              ),
+            ]),
+          ),
         ),
       ),
     );
   }
+}
+
+class _HeaderPill extends StatelessWidget {
+  const _HeaderPill({required this.text, this.icon, this.dot, this.onTap});
+  final String text;
+  final IconData? icon;
+  final Color? dot;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+        color: const Color(0x26FFFFFF),
+        shape: const StadiumBorder(side: BorderSide(color: Color(0x33FFFFFF))),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              if (icon != null) Icon(icon, size: 13, color: Colors.white),
+              if (dot != null) Icon(Icons.circle, size: 10, color: dot),
+              const SizedBox(width: 6),
+              Text(text, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+        ),
+      );
 }
 
 class _HeroCarousel extends ConsumerStatefulWidget {
@@ -264,44 +336,74 @@ class _QuickActions extends StatelessWidget {
       ('🚩', l.quickParampara, () => context.push('/parampara')),
       ('📅', l.quickTithi, () => context.push('/tithi')),
     ];
+    Widget tile(int i, String emoji, String label, VoidCallback onTap) => Material(
+          color: Colors.white,
+          elevation: 1.5,
+          shadowColor: const Color(0x33B26A00),
+          borderRadius: BorderRadius.circular(18),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: onTap,
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                width: 46,
+                height: 46,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: _tileTints[i % _tileTints.length], shape: BoxShape.circle),
+                child: Text(emoji, style: const TextStyle(fontSize: 23)),
+              ),
+              const SizedBox(height: 6),
+              Text(label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+        );
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
-      child: LayoutBuilder(builder: (context, box) => GridView.count(
-        // 4 on phones, up to 6 on tablets and the web.
-        crossAxisCount: (box.maxWidth / 130).floor().clamp(4, 6),
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        childAspectRatio: .9,
-        children: [
-          for (final (i, (emoji, label, onTap)) in items.indexed)
-            Material(
-              color: Colors.white,
-              elevation: 1.5,
-              shadowColor: const Color(0x33B26A00),
-              borderRadius: BorderRadius.circular(18),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: onTap,
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(color: _tileTints[i % _tileTints.length], shape: BoxShape.circle),
-                    child: Text(emoji, style: const TextStyle(fontSize: 22)),
+      child: LayoutBuilder(builder: (context, box) {
+        // 4 on phones (7 tiles + "More"), up to 6 with every tile on tablets and the web.
+        final columns = (box.maxWidth / 130).floor().clamp(4, 6);
+        final shown = columns == 4 ? items.take(7).toList() : items;
+        final rest = columns == 4 ? items.skip(7).toList() : const <(String, String, VoidCallback)>[];
+        return GridView.count(
+          crossAxisCount: columns,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: .9,
+          children: [
+            for (final (i, (emoji, label, onTap)) in shown.indexed) tile(i, emoji, label, onTap),
+            if (rest.isNotEmpty)
+              tile(7, '➕', l.quickMore, () {
+                showModalBottomSheet<void>(
+                  context: context,
+                  builder: (sheet) => SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: GridView.count(
+                        crossAxisCount: 4,
+                        shrinkWrap: true,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: .9,
+                        children: [
+                          for (final (i, (emoji, label, onTap)) in rest.indexed)
+                            tile(i + 8, emoji, label, () {
+                              Navigator.pop(sheet);
+                              onTap();
+                            }),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700)),
-                ]),
-              ),
-            ),
-        ],
-      )),
+                );
+              }),
+          ],
+        );
+      }),
     );
   }
 }

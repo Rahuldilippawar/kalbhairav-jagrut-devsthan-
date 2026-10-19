@@ -62,7 +62,11 @@ void main() {
   testWidgets('home shows admin-driven sections', (tester) async {
     await _start(tester);
     expect(find.text('श्री काळभैरव जागृत देवस्थान'), findsWidgets);
-    await tester.scrollUntilVisible(find.textContaining('शुभ प्रभात'), 300, scrollable: find.byType(Scrollable).first);
+    // Header: greeting by time of day (09:30) and today's darshan status.
+    expect(find.text('शुभ प्रभात 🙏'), findsOneWidget);
+    expect(find.textContaining('दर्शन'), findsWidgets);
+    // Today's greeting card further down.
+    await tester.scrollUntilVisible(find.text('आजची शुभेच्छा'), 300, scrollable: find.byType(Scrollable).first);
     expect(find.textContaining('शुभ प्रभात'), findsWidgets);
     // Today's tithi is computed (no admin entry in demo): Bhadrapada Krishna Ekadashi.
     await tester.scrollUntilVisible(find.text('आश्लेषा'), 300, scrollable: find.byType(Scrollable).first);

@@ -415,5 +415,10 @@
   "collectionAvailable": "{total} માંથી {available} ઉપલબ્ધ",
   "comingSoonText": "ટૂંક સમયમાં",
   "partialText": "આંશિક ઉપલબ્ધ",
-  "lessonsSection": "પાઠ અને કથાઓ"
+  "lessonsSection": "પાઠ અને કથાઓ",
+  "greetMorning": "સુપ્રભાત 🙏",
+  "greetAfternoon": "શુભ બપોર 🙏",
+  "greetEvening": "શુભ સંધ્યા 🙏",
+  "greetNight": "શુભ રાત્રિ 🙏",
+  "quickMore": "વધુ"
 }

@@ -415,5 +415,10 @@
   "collectionAvailable": "{total} पैकी {available} उपलब्ध",
   "comingSoonText": "लवकरच",
   "partialText": "काही भाग उपलब्ध",
-  "lessonsSection": "पाठ व कथा"
+  "lessonsSection": "पाठ व कथा",
+  "greetMorning": "शुभ प्रभात 🙏",
+  "greetAfternoon": "शुभ दुपार 🙏",
+  "greetEvening": "शुभ संध्या 🙏",
+  "greetNight": "शुभ रात्री 🙏",
+  "quickMore": "अधिक"
 }

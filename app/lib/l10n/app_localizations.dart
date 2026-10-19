@@ -2597,6 +2597,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lessons and kathas'**
   String get lessonsSection;
+
+  /// No description provided for @greetMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning 🙏'**
+  String get greetMorning;
+
+  /// No description provided for @greetAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon 🙏'**
+  String get greetAfternoon;
+
+  /// No description provided for @greetEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening 🙏'**
+  String get greetEvening;
+
+  /// No description provided for @greetNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Good night 🙏'**
+  String get greetNight;
+
+  /// No description provided for @quickMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get quickMore;
 }
 
 class _AppLocalizationsDelegate

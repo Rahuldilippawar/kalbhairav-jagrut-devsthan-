@@ -616,5 +616,10 @@
       }
     }
   },
-  "lessonsSection": "Lessons and kathas"
+  "lessonsSection": "Lessons and kathas",
+  "greetMorning": "Good morning 🙏",
+  "greetAfternoon": "Good afternoon 🙏",
+  "greetEvening": "Good evening 🙏",
+  "greetNight": "Good night 🙏",
+  "quickMore": "More"
 }

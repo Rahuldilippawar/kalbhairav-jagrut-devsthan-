@@ -1341,4 +1341,19 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get lessonsSection => 'પાઠ અને કથાઓ';
+
+  @override
+  String get greetMorning => 'સુપ્રભાત 🙏';
+
+  @override
+  String get greetAfternoon => 'શુભ બપોર 🙏';
+
+  @override
+  String get greetEvening => 'શુભ સંધ્યા 🙏';
+
+  @override
+  String get greetNight => 'શુભ રાત્રિ 🙏';
+
+  @override
+  String get quickMore => 'વધુ';
 }
