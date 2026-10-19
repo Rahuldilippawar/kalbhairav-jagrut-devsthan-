@@ -215,6 +215,18 @@ test("guru gyan: shishya reading activity is seen by gadhipatis only", async () 
   await assertFails(getDocs(collection(other(), "shishya_activity")));
 });
 
+test("screenshot alerts: written by the phone, read by staff only", async () => {
+  const ev = (u = "u1") => ({ uid: u, name: "गणेश", mobile: "+919876543210", kind: "screenshot", screen: "गुरु ज्ञान", device: "Redmi", at: serverTimestamp() });
+  const ref = await assertSucceeds(addDoc(collection(devotee(), "capture_events"), ev()));
+  await assertFails(addDoc(collection(devotee(), "capture_events"), ev("u2")));
+  await assertFails(addDoc(collection(devotee(), "capture_events"), { ...ev(), kind: "other" }));
+  await assertFails(addDoc(collection(guest(), "capture_events"), ev()));
+  await assertFails(getDoc(doc(devotee(), ref.path)));
+  await assertFails(deleteDoc(doc(devotee(), ref.path)));
+  await assertSucceeds(getDocs(collection(admin("temple_admin"), "capture_events")));
+  await assertSucceeds(deleteDoc(doc(admin("temple_admin"), ref.path)));
+});
+
 test("guru gyan: shishya parivar chat is for approved shishyas only", async () => {
   await env.withSecurityRulesDisabled(async (ctx) => {
     await setDoc(doc(ctx.firestore(), "shishyas/u1"), { name: "गणेश", mobile: "+919876543210", status: "approved" });

@@ -412,6 +412,34 @@ class GuruGyanRepository {
   Future<void> recordActivityTime(String activityId, int seconds) =>
       store.update(Col.shishyaActivity, activityId, {'seconds': seconds, 'lastAt': store.serverTimestamp});
 
+  /// A screenshot or screen recording was detected on a Guru Gyan page.
+  Future<String> reportCapture(String uid, CaptureKind kind,
+          {required String name,
+          String? mobile,
+          String? screen,
+          String? device,
+          String? place,
+          double? lat,
+          double? lng}) =>
+      store.add(Col.captureEvents, {
+        'uid': uid,
+        'name': name.length > 100 ? name.substring(0, 100) : name,
+        'mobile': ?mobile,
+        'kind': kind.name,
+        if (screen != null) 'screen': screen.length > 300 ? screen.substring(0, 300) : screen,
+        if (device != null) 'device': device.length > 100 ? device.substring(0, 100) : device,
+        if (place != null) 'place': place.length > 150 ? place.substring(0, 150) : place,
+        if (lat != null && lng != null) ...{'lat': lat, 'lng': lng},
+        'at': store.serverTimestamp,
+      });
+
+  /// Admin: capture attempts, newest first.
+  Stream<List<CaptureEvent>> watchCaptures({int limit = 500}) => store
+      .watch(Col.captureEvents, Query(orderBy: 'at', descending: true, limit: limit))
+      .map((d) => [for (final x in d) CaptureEvent.fromMap(x.id, x.data)]);
+
+  Future<void> removeCapture(String id) => store.delete(Col.captureEvents, id);
+
   /// Gadhipati / admin: latest visits of all shishyas, newest first.
   Stream<List<ShishyaActivity>> watchActivity({int limit = 500}) => store
       .watch(Col.shishyaActivity, Query(orderBy: 'startedAt', descending: true, limit: limit))

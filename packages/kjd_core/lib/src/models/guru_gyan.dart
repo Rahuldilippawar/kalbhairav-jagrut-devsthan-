@@ -339,6 +339,55 @@ class ShishyaActivity {
       );
 }
 
+enum CaptureKind { screenshot, recording }
+
+/// Someone took a screenshot of, or recorded, a Guru Gyan page.
+class CaptureEvent {
+  const CaptureEvent({
+    required this.id,
+    required this.uid,
+    required this.name,
+    required this.kind,
+    this.mobile,
+    this.screen,
+    this.device,
+    this.place,
+    this.lat,
+    this.lng,
+    this.at,
+  });
+
+  final String id;
+  final String uid;
+  final String name;
+  final String? mobile;
+  final CaptureKind kind;
+
+  /// The page that was on screen.
+  final String? screen;
+  final String? device;
+  final String? place;
+  final double? lat;
+  final double? lng;
+  final DateTime? at;
+
+  String? get mapUrl => lat == null || lng == null ? null : 'https://www.google.com/maps?q=$lat,$lng';
+
+  factory CaptureEvent.fromMap(String id, Map<String, dynamic> m) => CaptureEvent(
+        id: id,
+        uid: asString(m['uid']),
+        name: asString(m['name']),
+        mobile: asStringOrNull(m['mobile']),
+        kind: CaptureKind.values.asNameMap()[m['kind']] ?? CaptureKind.screenshot,
+        screen: asStringOrNull(m['screen']),
+        device: asStringOrNull(m['device']),
+        place: asStringOrNull(m['place']),
+        lat: (m['lat'] as num?)?.toDouble(),
+        lng: (m['lng'] as num?)?.toDouble(),
+        at: asDate(m['at']),
+      );
+}
+
 /// A shishya login the super admin made gadhipati (not the parampara list).
 class GadhipatiAccount {
   const GadhipatiAccount({required this.uid, required this.name, this.mobile, this.assignedAt, this.assignedByName});

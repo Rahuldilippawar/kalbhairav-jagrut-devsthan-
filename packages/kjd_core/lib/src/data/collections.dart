@@ -62,6 +62,9 @@ abstract final class Col {
   /// ticks and unread counts.
   static const shishyaChatReads = 'shishya_chat_reads';
 
+  /// Screenshot / screen-recording attempts on Guru Gyan pages (admin only).
+  static const captureEvents = 'capture_events';
+
   /// Guru Gyan lessons (approved shishyas only).
   static const guruGyan = 'guru_gyan';
 

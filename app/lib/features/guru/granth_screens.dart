@@ -96,6 +96,7 @@ class GranthScreen extends ConsumerWidget {
     final l = context.l10n;
     final completed = ref.watch(myShishyaProvider).value?.completed ?? const <String>[];
     return SecureScreen(
+      title: l.granthReading,
       child: Scaffold(
         appBar: AppBar(title: Text('📚 ${l.granthReading}')),
         body: AsyncView(
@@ -239,6 +240,7 @@ class _GranthChapterScreenState extends ConsumerState<GranthChapterScreen> {
       itemId: c.id,
       title: '${g.title} – ${l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
       child: SecureScreen(
+      title: '${g.title} – ${l.adhyayLabel} ${c.adhyayLabel}: ${c.title}',
       child: Scaffold(
         appBar: AppBar(
           title: Text(c.stabak == 0 ? g.title : '${g.title} • ${l.stabakLabel} ${c.stabak}'),

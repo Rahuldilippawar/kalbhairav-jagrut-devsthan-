@@ -485,6 +485,29 @@ void main() {
     expect(calls, [true, false, true]);
   });
 
+  testWidgets('screenshot attempts on Guru Gyan are reported; pages carry a name watermark', (tester) async {
+    final c = await _start(tester, to: '/guru');
+    final store = c.read(dataStoreProvider);
+    final uid = c.read(uidProvider)!;
+    await store.set(Col.shishyas, uid, {'name': 'गणेश', 'mobile': '+919822012345', 'status': 'approved'});
+    await tester.pumpAndSettle();
+    expect(find.byWidgetPredicate((w) => w is CustomPaint && w.painter.runtimeType.toString() == '_Watermark'),
+        findsOneWidget);
+    await tester.runAsync(() => SecureScreen.captured('screenshot'));
+    await tester.runAsync(() => SecureScreen.captured('screenshot')); // same burst: once
+    final events = await store.list(Col.captureEvents);
+    expect(events.length, 1);
+    expect(events.single.data, containsPair('uid', uid));
+    expect(events.single.data, containsPair('kind', 'screenshot'));
+    expect(events.single.data, containsPair('mobile', '+919822012345'));
+    expect(events.single.data, containsPair('screen', 'गुरु ज्ञान'));
+    // Not on a Guru Gyan page: nothing to report.
+    await tester.tap(find.text('मुख्यपृष्ठ'));
+    await tester.pumpAndSettle();
+    await tester.runAsync(() => SecureScreen.captured('recording'));
+    expect((await store.list(Col.captureEvents)).length, 1);
+  });
+
   testWidgets('vanshavali lessons draw headings and a family tree', (tester) async {
     final lesson = guruLessonLibrary.firstWhere((l) => l.id == 'gg-vansh-shiv');
     await tester.pumpWidget(MaterialApp(

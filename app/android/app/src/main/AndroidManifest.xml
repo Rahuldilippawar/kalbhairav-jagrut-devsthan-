@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- Guru Gyan: town-level place a shishya reads from (shown to gadhipatis). -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Guru Gyan: report screenshots (Android 14+) and screen recording (15+) to the admin. -->
+    <uses-permission android:name="android.permission.DETECT_SCREEN_CAPTURE" />
+    <uses-permission android:name="android.permission.DETECT_SCREEN_RECORDING" />
 
     <application
         android:label="Kalbhairav Jagrut Devsthan"

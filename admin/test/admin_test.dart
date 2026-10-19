@@ -356,6 +356,20 @@ void main() {
     expect(find.text('└ नमुना – पणतू  (मुलगा)'), findsOneWidget);
   });
 
+  testWidgets('admin sees screenshot alerts with page, phone and place', (tester) async {
+    final c = await _start(tester, _admin(AdminRole.templeAdmin));
+    final repo = GuruGyanRepository(c.read(dataStoreProvider));
+    await repo.reportCapture('u1', CaptureKind.screenshot,
+        name: 'गणेश जाधव', mobile: '+919822012345', screen: 'मूळस्तंभ – अध्याय ४', device: 'Redmi Note 12', place: 'शेवगाव');
+    await tester.tap(find.text('Screenshot Alerts'));
+    await tester.pumpAndSettle();
+    expect(find.text('गणेश जाधव • +919822012345'), findsOneWidget);
+    expect(find.textContaining('📄 मूळस्तंभ – अध्याय ४\n📱 Redmi Note 12\n📍 शेवगाव'), findsOneWidget);
+    await tester.tap(find.byTooltip('Remove'));
+    await tester.pumpAndSettle();
+    expect(find.text('No attempts 🙏'), findsOneWidget);
+  });
+
   testWidgets('temple admin reads the shishya chat and removes a message', (tester) async {
     final c = await _start(tester, _admin(AdminRole.templeAdmin));
     final chat = ShishyaChatRepository(c.read(dataStoreProvider));

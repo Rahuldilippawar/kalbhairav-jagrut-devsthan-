@@ -309,6 +309,7 @@ class _ShishyaChatScreenState extends ConsumerState<ShishyaChatScreen> {
     final canMedia = ref.watch(chatMediaUploaderProvider).enabled;
     final recording = _recorder != null;
     return SecureScreen(
+      title: l.chatTitle,
       child: Scaffold(
         backgroundColor: const Color(0xFFFFF8EC),
         appBar: AppBar(title: Text('💬 ${l.chatTitle}')),

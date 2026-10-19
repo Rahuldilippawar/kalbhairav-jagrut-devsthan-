@@ -22,6 +22,7 @@ class GuruGyanScreen extends ConsumerWidget {
     final l = context.l10n;
     final me = ref.watch(myShishyaProvider);
     return SecureScreen(
+        title: l.navGuru,
         child: Scaffold(
       appBar: AppBar(
         title: Text('🕉️ ${l.navGuru}'),
@@ -560,6 +561,7 @@ class _GuruLessonScreenState extends ConsumerState<GuruLessonScreen> {
         itemId: lesson.id,
         title: lesson.title,
         child: SecureScreen(
+        title: lesson.title,
         child: Scaffold(
       body: CustomScrollView(slivers: [
         SliverAppBar(

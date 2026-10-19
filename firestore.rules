@@ -102,6 +102,22 @@ service cloud.firestore {
     }
     // One row per lesson / granth chapter / mantra a shishya opened; the
     // shishya's app adds it and then only reports the time spent.
+    // Screenshot / screen-recording attempts on Guru Gyan pages.
+    match /capture_events/{id} {
+      allow read, delete: if can('devotees');
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid','name','mobile','kind','screen','device','place','lat','lng','at'])
+        && request.resource.data.uid == uid()
+        && request.resource.data.kind in ['screenshot', 'recording']
+        && request.resource.data.name is string && request.resource.data.name.size() <= 100
+        && (!('mobile' in request.resource.data) || (request.resource.data.mobile is string && request.resource.data.mobile.size() <= 20))
+        && (!('screen' in request.resource.data) || (request.resource.data.screen is string && request.resource.data.screen.size() <= 300))
+        && (!('device' in request.resource.data) || (request.resource.data.device is string && request.resource.data.device.size() <= 100))
+        && (!('place' in request.resource.data) || (request.resource.data.place is string && request.resource.data.place.size() <= 150))
+        && (!('lat' in request.resource.data) || request.resource.data.lat is number)
+        && (!('lng' in request.resource.data) || request.resource.data.lng is number)
+        && request.resource.data.at == request.time;
+    }
     match /shishya_activity/{id} {
       allow read: if gadhipati() || can('devotees');
       allow create: if approvedShishya()

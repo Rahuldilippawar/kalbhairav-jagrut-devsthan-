@@ -1,5 +1,6 @@
 package org.kalbhairav.kjd_app
 
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
@@ -17,12 +18,63 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
+import java.util.function.Consumer
 
 class MainActivity : FlutterActivity() {
+    // Tells the Guru Gyan pages when Android sees a screenshot (14+) or a
+    // screen recording (15+), so the attempt can be reported to the admin.
+    private var secureChannel: MethodChannel? = null
+
+    private fun captured(what: String) {
+        secureChannel?.invokeMethod("captured", what)
+    }
+
+    private val screenshotCallback: Any? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            Activity.ScreenCaptureCallback { captured("screenshot") }
+        } else {
+            null
+        }
+    }
+
+    private val recordingCallback: Any? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            Consumer<Int> { state ->
+                if (state == WindowManager.SCREEN_RECORDING_STATE_VISIBLE) captured("recording")
+            }
+        } else {
+            null
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            runCatching { registerScreenCaptureCallback(mainExecutor, screenshotCallback as Activity.ScreenCaptureCallback) }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            @Suppress("UNCHECKED_CAST")
+            val cb = recordingCallback as Consumer<Int>
+            runCatching { cb.accept(windowManager.addScreenRecordingCallback(mainExecutor, cb)) }
+        }
+    }
+
+    override fun onStop() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            runCatching { unregisterScreenCaptureCallback(screenshotCallback as Activity.ScreenCaptureCallback) }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            @Suppress("UNCHECKED_CAST")
+            runCatching { windowManager.removeScreenRecordingCallback(recordingCallback as Consumer<Int>) }
+        }
+        super.onStop()
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         // Guru Gyan pages block screenshots and screen recording (FLAG_SECURE).
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kjd/secure_screen").setMethodCallHandler { call, result ->
+        secureChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "kjd/secure_screen")
+        secureChannel!!.setMethodCallHandler { call, result ->
             when (call.method) {
                 "setSecure" -> {
                     if (call.arguments == true) {

@@ -66,6 +66,7 @@ final List<NavItem> navItems = [
   NavItem('shishyas', 'Shishya Requests', Icons.how_to_reg_outlined, AdminModule.devotees, () => const ShishyasPage(), group: 'Guru Gyan'),
   NavItem('shishya_activity', 'Shishya Reading', Icons.insights_outlined, AdminModule.devotees, () => const ShishyaActivityPage(), group: 'Guru Gyan'),
   NavItem('shishya_chat', 'Shishya Chat', Icons.forum_outlined, AdminModule.devotees, () => const ShishyaChatModerationPage(), group: 'Guru Gyan'),
+  NavItem('capture_alerts', 'Screenshot Alerts', Icons.screenshot_monitor_outlined, AdminModule.devotees, () => const CaptureAlertsPage(), group: 'Guru Gyan'),
   NavItem('guru_lessons', 'Lessons (पाठ)', Icons.menu_book_outlined, AdminModule.content, () => const GuruLessonsPage(), group: 'Guru Gyan'),
   NavItem('devotees', 'Devotees', Icons.people_outline, AdminModule.devotees, () => const DevoteesPage(), group: 'Admin'),
   NavItem('users', 'Admin Users & Roles', Icons.admin_panel_settings_outlined, AdminModule.users, () => const UsersPage(), group: 'Admin'),

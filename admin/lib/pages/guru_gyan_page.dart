@@ -661,3 +661,58 @@ class ShishyaChatModerationPage extends ConsumerWidget {
     ]);
   }
 }
+
+final _capturesProvider =
+    StreamProvider((ref) => GuruGyanRepository(ref.watch(dataStoreProvider)).watchCaptures());
+
+/// Guru Gyan → Screenshot Alerts: screenshots and screen recordings that a
+/// shishya's phone reported on Guru Gyan pages.
+class CaptureAlertsPage extends ConsumerWidget {
+  const CaptureAlertsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final all = ref.watch(_capturesProvider).value ?? const <CaptureEvent>[];
+    final byShishya = <String, int>{};
+    for (final e in all) {
+      byShishya[e.uid] = (byShishya[e.uid] ?? 0) + 1;
+    }
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      const Text(
+        'Guru Gyan pages block screenshots and screen recording. When a shishya still tries (Android 14 and newer '
+        'report screenshots, Android 15 and newer screen recording), it is listed here with the page, phone and place. '
+        'Photos taken with another phone cannot be detected – every Guru Gyan page shows the shishya\'s name and mobile '
+        'faintly across it, so such a photo shows whose account it came from.',
+        style: TextStyle(color: KjdColors.inkMuted),
+      ),
+      const SizedBox(height: 12),
+      if (all.isEmpty) const Padding(padding: EdgeInsets.all(24), child: Center(child: Text('No attempts 🙏'))),
+      for (final e in all)
+        Card(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: ListTile(
+            leading: Text(e.kind == CaptureKind.screenshot ? '📸' : '🎥', style: const TextStyle(fontSize: 26)),
+            title: Text(
+              '${e.name.isEmpty ? e.uid : e.name}${e.mobile == null ? '' : ' • ${e.mobile}'}'
+              '${(byShishya[e.uid] ?? 0) > 1 ? '  (${byShishya[e.uid]} times)' : ''}',
+              style: const TextStyle(fontWeight: FontWeight.w800),
+            ),
+            subtitle: Text([
+              '${e.kind == CaptureKind.screenshot ? 'Screenshot' : 'Screen recording'} • '
+                  '${e.at == null ? '' : formatDateTime(e.at!, locale: 'en')}',
+              if (e.screen != null) '📄 ${e.screen}',
+              if (e.device != null) '📱 ${e.device}',
+              if (e.place != null) '📍 ${e.place}',
+            ].join('\n')),
+            isThreeLine: true,
+            onTap: e.mapUrl == null ? null : () => launchUrl(Uri.parse(e.mapUrl!)),
+            trailing: IconButton(
+              tooltip: 'Remove',
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () => GuruGyanRepository(ref.read(dataStoreProvider)).removeCapture(e.id),
+            ),
+          ),
+        ),
+    ]);
+  }
+}
