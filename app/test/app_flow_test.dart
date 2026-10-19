@@ -83,6 +83,24 @@ void main() {
     expect(find.textContaining('काळभैरव'), findsWidgets);
   });
 
+  testWidgets('calendar shows the month with tithis, festivals and the day panchang', (tester) async {
+    await _start(tester, to: '/calendar');
+    // 6 Oct 2026: Bhadrapada Krishna Ekadashi (इंदिरा एकादशी).
+    expect(find.textContaining('भाद्रपद – आश्विन'), findsOneWidget);
+    expect(find.textContaining('शके १९४८'), findsWidgets);
+    expect(find.text('इंदिरा एकादशी'), findsWidgets);
+    await tester.scrollUntilVisible(find.text('राहुकाळ'), 300, scrollable: find.byType(Scrollable).last);
+    expect(find.text('अभिजित मुहूर्त'), findsOneWidget);
+    // Selecting Dasara from the month's list shows it in the day detail.
+    final list = find.descendant(of: find.byType(ListView), matching: find.byType(Scrollable)).first;
+    final row = find.text('विजयादशमी (दसरा)').hitTestable();
+    await tester.scrollUntilVisible(row, 300, scrollable: list);
+    await tester.tap(row.last);
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.textContaining('✨ विजयादशमी'), -300, scrollable: list);
+    expect(find.textContaining('✨ विजयादशमी'), findsOneWidget);
+  });
+
   testWidgets('events archive filters by year', (tester) async {
     await _start(tester, to: '/events');
     expect(find.text('नवरात्र उत्सव 2026'), findsOneWidget);

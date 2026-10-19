@@ -95,3 +95,83 @@ double lahiriAyanamsa(double jd) {
   final w = math.acos(cosW) / _deg;
   return (rise: fromJulianDay(transit - w / 360), set: fromJulianDay(transit + w / 360));
 }
+
+// Meeus table 47.B: multiples of D, M, M', F and the sine coefficient (1e-6 °).
+const _moonLatTerms = <List<int>>[
+  [0, 0, 0, 1, 5128122], [0, 0, 1, 1, 280602], [0, 0, 1, -1, 277693], [2, 0, 0, -1, 173237],
+  [2, 0, -1, 1, 55413], [2, 0, -1, -1, 46271], [2, 0, 0, 1, 32573], [0, 0, 2, 1, 17198],
+  [2, 0, 1, -1, 9266], [0, 0, 2, -1, 8822], [2, -1, 0, -1, 8216], [2, 0, -2, -1, 4324],
+  [2, 0, 1, 1, 4200], [2, 1, 0, -1, -3359], [2, -1, -1, 1, 2463], [2, -1, 0, 1, 2211],
+  [2, -1, -1, -1, 2065], [0, 1, -1, -1, -1870], [4, 0, -1, -1, 1828], [0, 1, 0, 1, -1794],
+  [0, 0, 0, 3, -1749], [0, 1, -1, 1, -1565], [1, 0, 0, 1, -1491], [0, 1, 1, 1, -1475],
+  [0, 1, 1, -1, -1410], [0, 1, 0, -1, -1344], [1, 0, 0, -1, -1335], [0, 0, 3, 1, 1107],
+  [4, 0, 0, -1, 1021], [4, 0, -1, 1, 833],
+];
+
+/// Geocentric ecliptic latitude of the Moon (degrees).
+double moonLatitude(double jd) {
+  final t = _t(jd);
+  final t2 = t * t, t3 = t2 * t, t4 = t3 * t;
+  final lp = 218.3164477 + 481267.88123421 * t - 0.0015786 * t2 + t3 / 538841 - t4 / 65194000;
+  final d = 297.8501921 + 445267.1114034 * t - 0.0018819 * t2 + t3 / 545868 - t4 / 113065000;
+  final m = 357.5291092 + 35999.0502909 * t - 0.0001536 * t2 + t3 / 24490000;
+  final mp = 134.9633964 + 477198.8675055 * t + 0.0087414 * t2 + t3 / 69699 - t4 / 14712000;
+  final f = 93.2720950 + 483202.0175233 * t - 0.0036539 * t2 - t3 / 3526000 + t4 / 863310000;
+  final e = 1 - 0.002516 * t - 0.0000074 * t2;
+  var sum = 0.0;
+  for (final term in _moonLatTerms) {
+    var c = term[4].toDouble();
+    if (term[1].abs() == 1) c *= e;
+    if (term[1].abs() == 2) c *= e * e;
+    sum += c * _sin(term[0] * d + term[1] * m + term[2] * mp + term[3] * f);
+  }
+  final a1 = 119.75 + 131.849 * t, a3 = 313.45 + 481266.484 * t;
+  sum += -2235 * _sin(lp) + 382 * _sin(a3) + 175 * _sin(a1 - f) + 175 * _sin(a1 + f) +
+      127 * _sin(lp - mp) - 115 * _sin(lp + mp);
+  return sum / 1e6;
+}
+
+/// Geocentric altitude of the Moon's centre (degrees) at [lat]/[lng].
+double moonAltitude(double jd, double lat, double lng) {
+  final t = _t(jd);
+  final lam = moonLongitude(jd), beta = moonLatitude(jd);
+  final eps = 23.439291 - 0.0130042 * t;
+  final ra = math.atan2(_sin(lam) * _cos(eps) - math.tan(beta * _deg) * _sin(eps), _cos(lam)) / _deg;
+  final dec = math.asin(_sin(beta) * _cos(eps) + _cos(beta) * _sin(eps) * _sin(lam)) / _deg;
+  final gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * t * t;
+  final h = norm360(gmst + lng - ra);
+  return math.asin(_sin(lat) * _sin(dec) + _cos(lat) * _cos(dec) * _cos(h)) / _deg;
+}
+
+/// Moonrise and moonset (UTC) within the 24 hours from [start]; either is
+/// null when it doesn't happen in that window (about once a month).
+({DateTime? rise, DateTime? set}) moonRiseSet(DateTime start, double lat, double lng) {
+  // +0.125° accounts for the Moon's parallax, semi-diameter and refraction.
+  double f(double jd) => moonAltitude(jd, lat, lng) - 0.125;
+  final j0 = julianDay(start);
+  const step = 1 / 96; // 15 minutes
+  DateTime? rise, set;
+  var prev = f(j0);
+  for (var i = 1; i <= 96 && (rise == null || set == null); i++) {
+    final x = j0 + i * step, cur = f(x);
+    if ((prev < 0) != (cur < 0)) {
+      var lo = x - step, hi = x;
+      for (var k = 0; k < 20; k++) {
+        final mid = (lo + hi) / 2;
+        if ((f(mid) < 0) == (prev < 0)) {
+          lo = mid;
+        } else {
+          hi = mid;
+        }
+      }
+      final at = fromJulianDay(hi);
+      if (prev < 0) {
+        rise ??= at;
+      } else {
+        set ??= at;
+      }
+    }
+    prev = cur;
+  }
+  return (rise: rise, set: set);
+}

@@ -6,7 +6,7 @@ import '../features/banner/banner_studio_screen.dart';
 import '../features/darshan/darshan_screen.dart';
 import '../features/darshan/live_darshan_screen.dart';
 import '../features/devotion/greetings_screen.dart';
-import '../features/devotion/tithi_screen.dart';
+import '../features/devotion/calendar_screen.dart';
 import '../features/donation/donation_screen.dart';
 import '../features/donation/receipt_screen.dart';
 import '../features/events/event_detail_screen.dart';
@@ -82,7 +82,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/vanshavali', builder: (_, _) => const VanshavaliScreen()),
       GoRoute(path: '/parampara/:id', builder: (_, s) => GadhipatiScreen(id: s.pathParameters['id']!)),
       GoRoute(path: '/gallery', builder: (_, _) => const GalleryScreen()),
-      GoRoute(path: '/tithi', builder: (_, _) => const TithiScreen()),
+      GoRoute(path: '/tithi', builder: (_, _) => const CalendarScreen()),
+      GoRoute(path: '/calendar', builder: (_, _) => const CalendarScreen()),
       GoRoute(path: '/greetings', builder: (_, _) => const GreetingsScreen()),
       GoRoute(path: '/mantras', builder: (_, _) => const MantrasScreen()),
       GoRoute(path: '/mantra/:id', builder: (_, s) => MantraScreen(mantraId: s.pathParameters['id']!)),

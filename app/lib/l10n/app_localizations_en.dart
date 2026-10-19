@@ -1364,4 +1364,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quickMore => 'More';
+
+  @override
+  String get calendarTitle => 'Calendar';
+
+  @override
+  String get moonrise => 'Moonrise';
+
+  @override
+  String get moonset => 'Moonset';
+
+  @override
+  String get rahuKaal => 'Rahu Kaal';
+
+  @override
+  String get yamaganda => 'Yamaganda';
+
+  @override
+  String get gulikaKaal => 'Gulika Kaal';
+
+  @override
+  String get abhijitMuhurta => 'Abhijit Muhurta';
+
+  @override
+  String get moonRashi => 'Moon sign';
+
+  @override
+  String get sunRashi => 'Sun sign';
+
+  @override
+  String get ritu => 'Season';
+
+  @override
+  String get ayana => 'Ayana';
+
+  @override
+  String get shakaSamvat => 'Shaka';
+
+  @override
+  String get monthFestivals => 'Festivals & vrats this month';
+
+  @override
+  String get inauspiciousTimes => 'Inauspicious times';
+
+  @override
+  String get auspiciousTime => 'Auspicious time';
+
+  @override
+  String get templeEventsOnDay => 'Temple events';
+
+  @override
+  String get sunAndMoon => 'Sun & Moon';
+
+  @override
+  String nameSamvatsara(String name) {
+    return '$name samvatsara';
+  }
+
+  @override
+  String untilTime(String time) {
+    return 'till $time';
+  }
 }

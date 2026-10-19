@@ -45,7 +45,7 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(child: SectionHeader(l.todaysGreeting, icon: '🌅')),
           const SliverToBoxAdapter(child: _GreetingCard()),
           SliverToBoxAdapter(
-            child: SectionHeader(l.todaysTithi, icon: '📅', action: l.viewAll, onAction: () => context.push('/tithi')),
+            child: SectionHeader(l.todaysTithi, icon: '📅', action: l.viewAll, onAction: () => context.push('/calendar')),
           ),
           Consumer(builder: (context, ref, _) {
             final tithi = ref.watch(tithiProvider(dateOnly(now)));
@@ -334,7 +334,7 @@ class _QuickActions extends StatelessWidget {
       ('🎨', l.quickBanner, () => context.push('/banner')),
       ('🔱', l.quickDeities, () => context.push('/deities')),
       ('🚩', l.quickParampara, () => context.push('/parampara')),
-      ('📅', l.quickTithi, () => context.push('/tithi')),
+      ('📅', l.calendarTitle, () => context.push('/calendar')),
     ];
     Widget tile(int i, String emoji, String label, VoidCallback onTap) => Material(
           color: Colors.white,

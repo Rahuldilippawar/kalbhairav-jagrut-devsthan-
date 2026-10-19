@@ -621,5 +621,38 @@
   "greetAfternoon": "Good afternoon 🙏",
   "greetEvening": "Good evening 🙏",
   "greetNight": "Good night 🙏",
-  "quickMore": "More"
+  "quickMore": "More",
+  "calendarTitle": "Calendar",
+  "moonrise": "Moonrise",
+  "moonset": "Moonset",
+  "rahuKaal": "Rahu Kaal",
+  "yamaganda": "Yamaganda",
+  "gulikaKaal": "Gulika Kaal",
+  "abhijitMuhurta": "Abhijit Muhurta",
+  "moonRashi": "Moon sign",
+  "sunRashi": "Sun sign",
+  "ritu": "Season",
+  "ayana": "Ayana",
+  "shakaSamvat": "Shaka",
+  "monthFestivals": "Festivals & vrats this month",
+  "inauspiciousTimes": "Inauspicious times",
+  "auspiciousTime": "Auspicious time",
+  "templeEventsOnDay": "Temple events",
+  "sunAndMoon": "Sun & Moon",
+  "nameSamvatsara": "{name} samvatsara",
+  "@nameSamvatsara": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "untilTime": "till {time}",
+  "@untilTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

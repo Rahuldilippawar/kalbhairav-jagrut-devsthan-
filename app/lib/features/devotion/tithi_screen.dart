@@ -1,67 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
 
-import '../../app/providers.dart';
 import '../../widgets/common.dart';
-
-/// Panchang for a selectable day (defaults to today).
-class TithiScreen extends ConsumerStatefulWidget {
-  const TithiScreen({super.key});
-  @override
-  ConsumerState<TithiScreen> createState() => _TithiScreenState();
-}
-
-class _TithiScreenState extends ConsumerState<TithiScreen> {
-  late DateTime _day = dateOnly(ref.read(clockProvider)());
-
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l10n;
-    final tithi = ref.watch(tithiProvider(_day));
-    return Scaffold(
-      appBar: AppBar(title: Text(l.todaysTithi)),
-      body: ListView(padding: const EdgeInsets.all(16), children: [
-        Row(children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: () => setState(() => _day = _day.subtract(const Duration(days: 1))),
-          ),
-          Expanded(
-            child: Text('${formatWeekday(_day, locale: context.lang)}, ${formatDate(_day, locale: context.lang)}',
-                textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-          ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: () => setState(() => _day = _day.add(const Duration(days: 1))),
-          ),
-        ]),
-        const SizedBox(height: 8),
-        AsyncView(tithi, data: (t) => TithiCard(tithi: t)),
-        const SizedBox(height: 16),
-        if (tithi.value != null)
-          OutlinedButton.icon(
-            icon: const Icon(Icons.share),
-            label: Text(l.createBanner),
-            onPressed: () {
-              final t = tithi.value!;
-              context.push(Uri(path: '/banner', queryParameters: {
-                'category': BannerCategory.tithi.name,
-                'message': [
-                  '${t.vaar}, ${formatDate(_day)}',
-                  if (t.masa.isNotEmpty) '${t.masa} ${t.paksha}',
-                  '${l.tithi}: ${t.tithi}',
-                  if (t.nakshatra.isNotEmpty) '${l.nakshatra}: ${t.nakshatra}',
-                  if (t.specialDay != null) '✨ ${t.specialDay}',
-                ].join('\n'),
-              }).toString());
-            },
-          ),
-      ]),
-    );
-  }
-}
 
 class TithiCard extends StatelessWidget {
   const TithiCard({super.key, required this.tithi, this.compact = false});
@@ -87,7 +28,7 @@ class TithiCard extends StatelessWidget {
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: compact ? () => context.push('/tithi') : null,
+        onTap: compact ? () => context.push('/calendar') : null,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

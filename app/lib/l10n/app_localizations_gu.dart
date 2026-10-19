@@ -1356,4 +1356,65 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get quickMore => 'વધુ';
+
+  @override
+  String get calendarTitle => 'કેલેન્ડર';
+
+  @override
+  String get moonrise => 'ચંદ્રોદય';
+
+  @override
+  String get moonset => 'ચંદ્રાસ્ત';
+
+  @override
+  String get rahuKaal => 'રાહુકાળ';
+
+  @override
+  String get yamaganda => 'યમઘંટ';
+
+  @override
+  String get gulikaKaal => 'ગુલિક કાળ';
+
+  @override
+  String get abhijitMuhurta => 'અભિજિત મુહૂર્ત';
+
+  @override
+  String get moonRashi => 'ચંદ્ર રાશિ';
+
+  @override
+  String get sunRashi => 'સૂર્ય રાશિ';
+
+  @override
+  String get ritu => 'ઋતુ';
+
+  @override
+  String get ayana => 'અયન';
+
+  @override
+  String get shakaSamvat => 'શક';
+
+  @override
+  String get monthFestivals => 'આ મહિનાના તહેવારો અને વ્રત';
+
+  @override
+  String get inauspiciousTimes => 'અશુભ સમય';
+
+  @override
+  String get auspiciousTime => 'શુભ સમય';
+
+  @override
+  String get templeEventsOnDay => 'મંદિરના કાર્યક્રમો';
+
+  @override
+  String get sunAndMoon => 'સૂર્ય અને ચંદ્ર';
+
+  @override
+  String nameSamvatsara(String name) {
+    return '$name નામ સંવત્સર';
+  }
+
+  @override
+  String untilTime(String time) {
+    return '$time સુધી';
+  }
 }

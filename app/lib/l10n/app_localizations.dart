@@ -2627,6 +2627,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More'**
   String get quickMore;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarTitle;
+
+  /// No description provided for @moonrise.
+  ///
+  /// In en, this message translates to:
+  /// **'Moonrise'**
+  String get moonrise;
+
+  /// No description provided for @moonset.
+  ///
+  /// In en, this message translates to:
+  /// **'Moonset'**
+  String get moonset;
+
+  /// No description provided for @rahuKaal.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu Kaal'**
+  String get rahuKaal;
+
+  /// No description provided for @yamaganda.
+  ///
+  /// In en, this message translates to:
+  /// **'Yamaganda'**
+  String get yamaganda;
+
+  /// No description provided for @gulikaKaal.
+  ///
+  /// In en, this message translates to:
+  /// **'Gulika Kaal'**
+  String get gulikaKaal;
+
+  /// No description provided for @abhijitMuhurta.
+  ///
+  /// In en, this message translates to:
+  /// **'Abhijit Muhurta'**
+  String get abhijitMuhurta;
+
+  /// No description provided for @moonRashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon sign'**
+  String get moonRashi;
+
+  /// No description provided for @sunRashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun sign'**
+  String get sunRashi;
+
+  /// No description provided for @ritu.
+  ///
+  /// In en, this message translates to:
+  /// **'Season'**
+  String get ritu;
+
+  /// No description provided for @ayana.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayana'**
+  String get ayana;
+
+  /// No description provided for @shakaSamvat.
+  ///
+  /// In en, this message translates to:
+  /// **'Shaka'**
+  String get shakaSamvat;
+
+  /// No description provided for @monthFestivals.
+  ///
+  /// In en, this message translates to:
+  /// **'Festivals & vrats this month'**
+  String get monthFestivals;
+
+  /// No description provided for @inauspiciousTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Inauspicious times'**
+  String get inauspiciousTimes;
+
+  /// No description provided for @auspiciousTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Auspicious time'**
+  String get auspiciousTime;
+
+  /// No description provided for @templeEventsOnDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Temple events'**
+  String get templeEventsOnDay;
+
+  /// No description provided for @sunAndMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun & Moon'**
+  String get sunAndMoon;
+
+  /// No description provided for @nameSamvatsara.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} samvatsara'**
+  String nameSamvatsara(String name);
+
+  /// No description provided for @untilTime.
+  ///
+  /// In en, this message translates to:
+  /// **'till {time}'**
+  String untilTime(String time);
 }
 
 class _AppLocalizationsDelegate

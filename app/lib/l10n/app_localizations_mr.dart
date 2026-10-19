@@ -1361,4 +1361,65 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get quickMore => 'अधिक';
+
+  @override
+  String get calendarTitle => 'दिनदर्शिका';
+
+  @override
+  String get moonrise => 'चंद्रोदय';
+
+  @override
+  String get moonset => 'चंद्रास्त';
+
+  @override
+  String get rahuKaal => 'राहुकाळ';
+
+  @override
+  String get yamaganda => 'यमघंट';
+
+  @override
+  String get gulikaKaal => 'गुलिक काळ';
+
+  @override
+  String get abhijitMuhurta => 'अभिजित मुहूर्त';
+
+  @override
+  String get moonRashi => 'चंद्र राशी';
+
+  @override
+  String get sunRashi => 'सूर्य राशी';
+
+  @override
+  String get ritu => 'ऋतू';
+
+  @override
+  String get ayana => 'अयन';
+
+  @override
+  String get shakaSamvat => 'शके';
+
+  @override
+  String get monthFestivals => 'या महिन्यातील सण, उत्सव व व्रते';
+
+  @override
+  String get inauspiciousTimes => 'अशुभ काळ';
+
+  @override
+  String get auspiciousTime => 'शुभ वेळ';
+
+  @override
+  String get templeEventsOnDay => 'देवस्थानातील कार्यक्रम';
+
+  @override
+  String get sunAndMoon => 'सूर्य व चंद्र';
+
+  @override
+  String nameSamvatsara(String name) {
+    return '$name नाम संवत्सर';
+  }
+
+  @override
+  String untilTime(String time) {
+    return '$time पर्यंत';
+  }
 }
