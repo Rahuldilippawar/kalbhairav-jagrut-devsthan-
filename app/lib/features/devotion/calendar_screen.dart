@@ -107,7 +107,10 @@ class _MonthPage extends ConsumerWidget {
       byDay.putIfAbsent(f.date.day, () => []).add(f);
     }
     final events = ref.watch(allEventsProvider).value ?? const <TempleEvent>[];
-    bool hasEvent(DateTime d) => events.any((e) => _eventOn(e, d));
+    final programmes = (ref.watch(calendarEventsProvider).value ?? const <CalendarEvent>[])
+        .where((e) => e.date.year == month.year && e.date.month == month.month)
+        .toList();
+    bool hasEvent(DateTime d) => events.any((e) => _eventOn(e, d)) || programmes.any((e) => e.date == d);
 
     final days = DateUtils.getDaysInMonth(month.year, month.month);
     final first = dayPanchang(month), last = dayPanchang(DateTime(month.year, month.month, days));
@@ -185,6 +188,7 @@ class _MonthPage extends ConsumerWidget {
                         isToday: d == today,
                         isSelected: d == selected,
                         hasEvent: hasEvent(d),
+                        programme: programmes.where((e) => e.date == d).firstOrNull?.title,
                         onTap: () => onSelect(d),
                       );
                     }()),
@@ -201,8 +205,14 @@ class _MonthPage extends ConsumerWidget {
           date: selected,
           festivals: byDay[selected.day] ?? const [],
           events: events.where((e) => _eventOn(e, selected)).toList(),
+          programmes: programmes.where((e) => e.date == selected).toList(),
         ),
       // ---- month list
+      if (programmes.isNotEmpty) ...[
+        SectionHeader(l.templeEventsOnDay, icon: '🛕'),
+        for (final e in programmes)
+          _ProgrammeRow(e: e, selected: e.date == selected, onTap: () => onSelect(e.date)),
+      ],
       if (festivals.isNotEmpty) ...[
         SectionHeader(l.monthFestivals, icon: '🪔'),
         for (final f in festivals)
@@ -240,7 +250,9 @@ class _DayCell extends StatelessWidget {
     required this.isSelected,
     required this.hasEvent,
     required this.onTap,
+    this.programme,
   });
+  final String? programme;
   final DateTime date;
   final List<FestivalDay> festivals;
   final bool isToday;
@@ -316,6 +328,18 @@ class _DayCell extends StatelessWidget {
                           : KjdColors.kumkum,
                 ),
               ),
+            if (programme != null)
+              Text(
+                '🛕 $programme',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 9,
+                  height: 1.15,
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? KjdColors.goldLight : KjdColors.success,
+                ),
+              ),
           ]),
         ),
       ),
@@ -349,10 +373,11 @@ class _Legend extends StatelessWidget {
 }
 
 class _DayDetail extends ConsumerWidget {
-  const _DayDetail({required this.date, required this.festivals, required this.events});
+  const _DayDetail({required this.date, required this.festivals, required this.events, required this.programmes});
   final DateTime date;
   final List<FestivalDay> festivals;
   final List<TempleEvent> events;
+  final List<CalendarEvent> programmes;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -420,8 +445,16 @@ class _DayDetail extends ConsumerWidget {
                 if (note != null && note.isNotEmpty) Pill('🛕 $note', color: KjdColors.success),
               ]),
             ],
-            if (events.isNotEmpty) ...[
+            if (events.isNotEmpty || programmes.isNotEmpty) ...[
               const SizedBox(height: 10),
+              for (final e in programmes)
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Text('🛕', style: TextStyle(fontSize: 22)),
+                  title: Text(e.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                  subtitle: e.location.isEmpty ? null : Text('📍 ${e.location}'),
+                ),
               for (final e in events)
                 ListTile(
                   dense: true,
@@ -576,6 +609,58 @@ class _FestivalRow extends StatelessWidget {
                       '${p.masa} ${p.paksha} ${p.tithis.first.name}',
                       if (sankashti && p.moonrise != null) '${context.l10n.moonrise} ${_t(context, p.moonrise!)}',
                     ].join(' • '),
+                    style: const TextStyle(fontSize: 12, color: KjdColors.inkMuted),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgrammeRow extends StatelessWidget {
+  const _ProgrammeRow({required this.e, required this.selected, required this.onTap});
+  final CalendarEvent e;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = dayPanchang(e.date);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+      child: Material(
+        color: selected ? KjdColors.goldLight : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            child: Row(children: [
+              Container(
+                width: 46,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                decoration: BoxDecoration(
+                  color: KjdColors.success.withValues(alpha: .12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(children: [
+                  Text(localDigits(context, e.date.day),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: KjdColors.success)),
+                  Text(DateFormat('E', context.lang).format(e.date), style: const TextStyle(fontSize: 10)),
+                ]),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(e.title, style: const TextStyle(fontWeight: FontWeight.w800)),
+                  Text(
+                    [if (e.location.isNotEmpty) '📍 ${e.location}', '${p.masa} ${p.paksha} ${p.tithis.first.name}']
+                        .join(' • '),
                     style: const TextStyle(fontSize: 12, color: KjdColors.inkMuted),
                   ),
                 ]),

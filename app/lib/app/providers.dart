@@ -170,6 +170,7 @@ final granthProvider = StreamProvider.family<Granth?, String>((ref, id) {
 
 final granthTextProvider =
     FutureProvider.family<String?, String>((ref, chapterId) => ref.watch(guruRepoProvider).chapterText(chapterId));
+final calendarEventsProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchCalendarEvents());
 final festivalOverridesProvider = StreamProvider((ref) => ref.watch(contentRepoProvider).watchFestivalOverrides());
 
 /// The year's festivals and vrats with the temple's date corrections.

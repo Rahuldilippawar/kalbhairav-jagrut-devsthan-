@@ -116,6 +116,10 @@ class ContentRepository {
   Stream<VanshTree> watchVanshavali() =>
       store.watch(Col.vanshavali).map((d) => VanshTree(_map(d, VanshMember.fromMap).where((x) => x.active)));
 
+  Stream<List<CalendarEvent>> watchCalendarEvents() => store
+      .watch(Col.calendarEvents)
+      .map((d) => _map(d, CalendarEvent.fromMap)..sort((a, b) => a.date.compareTo(b.date)));
+
   /// Admin date corrections for computed festivals, keyed by doc id.
   Stream<Map<String, FestivalOverride>> watchFestivalOverrides() => store
       .watch(Col.festivalDates)

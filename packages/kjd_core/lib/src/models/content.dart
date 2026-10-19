@@ -724,3 +724,21 @@ class PublicGreetings {
 
   Map<String, dynamic> toMap() => {'entries': [for (final e in entries) e.toMap()]};
 }
+
+/// A temple programme on the calendar. Only the name, date and place are
+/// entered; the day's Panchang is computed by the app.
+class CalendarEvent {
+  const CalendarEvent({required this.id, required this.title, required this.date, this.location = ''});
+
+  factory CalendarEvent.fromMap(String id, Map<String, dynamic> m) => CalendarEvent(
+        id: id,
+        title: asString(m['title']),
+        date: dateOnly(asDate(m['date']) ?? DateTime(2000)),
+        location: asString(m['location']),
+      );
+
+  final String id;
+  final String title;
+  final DateTime date;
+  final String location;
+}

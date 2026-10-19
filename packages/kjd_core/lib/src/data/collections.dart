@@ -24,6 +24,9 @@ abstract final class Col {
   static const dailyGreetings = 'daily_greetings';
   static const tithiContent = 'tithi_content';
 
+  /// Simple temple programmes shown on the calendar (name, date, place).
+  static const calendarEvents = 'calendar_events';
+
   /// Admin corrections to computed festival dates (`<festivalId>_<year>`).
   static const festivalDates = 'festival_dates';
   static const mantras = 'mantras';

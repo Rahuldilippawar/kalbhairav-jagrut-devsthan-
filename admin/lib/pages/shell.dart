@@ -39,6 +39,11 @@ final List<NavItem> navItems = [
   NavItem('bookings', 'Seva Bookings', Icons.event_seat_outlined, AdminModule.bookings, () => const BookingsPage(), group: 'Seva'),
   NavItem('sevas', 'Seva Catalogue', Icons.local_fire_department_outlined, AdminModule.seva, () => CollectionListPage(spec: Specs.sevas), group: 'Seva'),
   NavItem('events', 'Events & Archive', Icons.event_outlined, AdminModule.events, () => const EventsPage(), group: 'Utsav'),
+  NavItem('calendar', 'Calendar Programmes', Icons.edit_calendar, AdminModule.events,
+      () => CollectionListPage(
+          spec: Specs.calendarEvents,
+          subtitle: 'फक्त कार्यक्रमाचे नाव, तारीख आणि ठिकाण टाका – त्या दिवसाचे पंचांग ॲप आपोआप दाखवते.'),
+      group: 'Utsav'),
   NavItem('categories', 'Event Categories', Icons.category_outlined, AdminModule.events, () => CollectionListPage(spec: Specs.categories), group: 'Utsav'),
   NavItem('donations', 'Donations', Icons.volunteer_activism_outlined, AdminModule.donations, () => const DonationsPage(), group: 'Finance'),
   NavItem('upi', 'UPI Verification', Icons.qr_code_2, AdminModule.payments, () => const UpiVerificationPage(), group: 'Finance'),

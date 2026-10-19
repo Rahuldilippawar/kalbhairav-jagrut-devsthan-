@@ -84,7 +84,13 @@ void main() {
   });
 
   testWidgets('calendar shows the month with tithis, festivals and the day panchang', (tester) async {
-    await _start(tester, to: '/calendar');
+    final c = await _start(tester, to: '/calendar');
+    await c.read(dataStoreProvider).set(Col.calendarEvents, 'p1',
+        {'title': 'भंडारा', 'date': DateTime(2026, 10, 6), 'location': 'मंदिर प्रांगण'});
+    await tester.pumpAndSettle();
+    // Only name, date and place are entered; the calendar shows it on the day.
+    expect(find.text('🛕 भंडारा'), findsOneWidget);
+    expect(find.textContaining('मंदिर प्रांगण'), findsWidgets);
     // 6 Oct 2026: Bhadrapada Krishna Ekadashi (इंदिरा एकादशी).
     expect(find.textContaining('भाद्रपद – आश्विन'), findsOneWidget);
     expect(find.textContaining('शके १९४८'), findsWidgets);

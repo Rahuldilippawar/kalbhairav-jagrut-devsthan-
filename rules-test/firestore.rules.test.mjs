@@ -56,6 +56,14 @@ test("gadhipati vanshavali: everyone reads, temple staff write", async () => {
   await assertSucceeds(setDoc(doc(admin("temple_admin"), "gadhipati_vanshavali/v1"), { name: "x", parentId: null }));
 });
 
+test("calendar programmes: everyone reads, event/content staff write", async () => {
+  await assertSucceeds(getDoc(doc(guest(), "calendar_events/c1")));
+  await assertFails(setDoc(doc(devotee(), "calendar_events/c1"), { title: "x" }));
+  await assertFails(setDoc(doc(admin("volunteer"), "calendar_events/c1"), { title: "x" }));
+  await assertSucceeds(setDoc(doc(admin("event_manager"), "calendar_events/c1"), { title: "x", location: "रुंधाटी" }));
+  await assertSucceeds(setDoc(doc(admin("content_manager"), "calendar_events/c2"), { title: "x" }));
+});
+
 test("money documents are never client-writable", async () => {
   for (const db of [devotee(), admin("super_admin")]) {
     await assertFails(setDoc(doc(db, "donations/new"), { userId: "u1", amountPaise: 1 }));

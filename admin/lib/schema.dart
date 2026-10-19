@@ -185,6 +185,21 @@ abstract final class Specs {
     ],
   );
 
+  static final calendarEvents = CollectionSpec(
+    collection: Col.calendarEvents,
+    title: 'Calendar Programmes (कॅलेंडर कार्यक्रम)',
+    module: AdminModule.events,
+    orderBy: 'date',
+    descending: true,
+    columns: const ['date', 'title', 'location'],
+    searchFields: const ['title', 'location'],
+    fields: const [
+      FieldSpec('title', 'कार्यक्रमाचे नाव', required: true),
+      FieldSpec('date', 'तारीख', type: FieldType.date, required: true),
+      FieldSpec('location', 'ठिकाण'),
+    ],
+  );
+
   static final categories = CollectionSpec(
     collection: Col.eventCategories,
     title: 'Event Categories',

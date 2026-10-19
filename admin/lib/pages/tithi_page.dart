@@ -51,7 +51,8 @@ class _TithiPageState extends ConsumerState<TithiPage> {
   @override
   Widget build(BuildContext context) => CollectionListPage(
         spec: Specs.tithi,
-        subtitle: 'Values are computed for Rundhati at sunrise (Lahiri ayanamsa, amanta months). '
+        subtitle: 'कार्यक्रम टाकायचा असल्यास "Calendar Programmes" वापरा (फक्त नाव, तारीख, ठिकाण). '
+            'Values are computed for Rundhati at sunrise (Lahiri ayanamsa, amanta months). '
             'Edit any day to correct it – edited days are marked manual and are never overwritten.',
         headerActions: [
           OutlinedButton.icon(
