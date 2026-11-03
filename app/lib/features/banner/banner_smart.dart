@@ -141,7 +141,7 @@ List<BannerSuggestion> smartSuggestions({
     out.add(BannerSuggestion(icon: '🎂', title: m.name, subtitle: '${m.relation.labelMr} – वाढदिवस', category: BannerCategory.birthday, name: m.name));
   }
   for (final f in festivals.where((f) => f.date == tomorrow && f.festival.kind != FestivalKind.vrat)) {
-    out.add(BannerSuggestion(icon: '📆', title: f.festival.name, subtitle: 'उद्याचा सण', category: f.festival.category, festival: f));
+    out.add(BannerSuggestion(icon: '🪔', title: f.festival.name, subtitle: 'उद्याचा सण', category: f.festival.category, festival: f));
   }
   final greeting = now.hour < 12
       ? ('🌅', 'शुभ प्रभात', '🌅 शुभ प्रभात 🙏')
@@ -159,7 +159,7 @@ List<BannerSuggestion> smartSuggestions({
     message: builtInGreeting(now).message,
   ));
   out.add(BannerSuggestion(
-    icon: '📅',
+    icon: '🌙',
     title: tithi.tithi,
     subtitle: 'आजची तिथी',
     category: BannerCategory.tithi,

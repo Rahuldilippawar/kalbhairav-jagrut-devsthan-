@@ -523,7 +523,7 @@ class _Layout {
   Widget _middle() {
     final photo = hero ? null : b.photo;
     final message = Text(
-      b.message,
+      _noCalendarIcons(b.message),
       textAlign: landscape && photo != null ? TextAlign.start : TextAlign.center,
       maxLines: 12,
       overflow: TextOverflow.ellipsis,
@@ -540,7 +540,7 @@ class _Layout {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (b.headline.isNotEmpty) Text(b.headline, textAlign: TextAlign.center, style: _headlineStyle(headSize)),
+        if (b.headline.isNotEmpty) Text(_noCalendarIcons(b.headline), textAlign: TextAlign.center, style: _headlineStyle(headSize)),
         if (layout != 'classic' && layout != 'photoHero') _ornament() else SizedBox(height: 10 * u),
         if (photo != null && landscape)
           Row(
@@ -635,6 +635,11 @@ class _Layout {
   }
 }
 
+/// Calendar emoji show a date of their own (e.g. "JUL 17") that devotees
+/// take for the banner's date, so they are left out of banner text.
+final _calendarIcons = RegExp('[\u{1F4C5}\u{1F4C6}\u{1F5D3}]\u{FE0F}?\\s*', unicode: true);
+String _noCalendarIcons(String s) => s.replaceAll(_calendarIcons, '');
+
 /// Designer templates bundled with the app (same as the admin starter set).
 final List<BannerTemplate> builtinBannerTemplates = [
   for (final e in buildDemoSeed(DateTime(2026))[Col.bannerTemplates]!.entries) BannerTemplate.fromMap(e.key, e.value),
@@ -656,7 +661,7 @@ BannerTemplate fallbackTemplate(BannerCategory c) => BannerTemplate(
     BannerCategory.birthday => '🎂 वाढदिवसाच्या हार्दिक शुभेच्छा',
     BannerCategory.anniversary => '💍 विवाह वर्धापन दिनाच्या हार्दिक शुभेच्छा',
     BannerCategory.dailySubhechha => '🌅 शुभ प्रभात 🙏',
-    BannerCategory.tithi => '📅 आजची तिथी',
+    BannerCategory.tithi => '🌙 आजची तिथी',
     BannerCategory.festival => '🚩 उत्सवाच्या हार्दिक शुभेच्छा',
     BannerCategory.event => '🙏 सस्नेह निमंत्रण',
     BannerCategory.jayanti => '🌺 जयंतीनिमित्त विनम्र अभिवादन',

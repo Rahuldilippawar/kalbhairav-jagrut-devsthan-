@@ -52,4 +52,21 @@ void main() {
     expect(BannerTemplate.fromMap('a', t.toMap()).layout, 'festive');
     expect(BannerTemplate.fromMap('a', {...t.toMap(), 'layout': 'unknown'}).layout, 'classic');
   });
+
+  testWidgets('calendar emoji never appear on a banner', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: Center(
+        child: SizedBox(
+          width: 360,
+          child: BannerCanvas(
+            template: BannerTemplate(id: 't', name: 't', category: BannerCategory.tithi),
+            headline: '📅 आजची तिथी',
+            message: '🗓️ सोमवार\n📆 अष्टमी',
+          ),
+        ),
+      ),
+    ));
+    expect(find.text('आजची तिथी'), findsOneWidget);
+    expect(find.text('सोमवार\nअष्टमी'), findsOneWidget);
+  });
 }
