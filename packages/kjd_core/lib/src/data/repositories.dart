@@ -121,6 +121,12 @@ class ContentRepository {
       .map((d) => _map(d, CalendarEvent.fromMap)..sort((a, b) => a.date.compareTo(b.date)));
 
   /// Admin date corrections for computed festivals, keyed by doc id.
+  /// Festival id (or vrat type) → photo URL uploaded by the temple.
+  Stream<Map<String, String>> watchFestivalImages() => store.watch(Col.festivalImages).map((d) => {
+        for (final x in d)
+          if (x.data['active'] != false && asString(x.data['imageUrl']).isNotEmpty) x.id: asString(x.data['imageUrl']),
+      });
+
   Stream<Map<String, FestivalOverride>> watchFestivalOverrides() => store
       .watch(Col.festivalDates)
       .map((d) => {for (final x in d) x.id: FestivalOverride.fromMap(x.data)});

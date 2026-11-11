@@ -1448,4 +1448,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get continueText => 'आगे बढ़ें';
+
+  @override
+  String get festivalPicture => 'त्योहार का चित्र / फोटो';
 }

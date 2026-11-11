@@ -10,6 +10,7 @@ import '../../services/share_service.dart';
 import '../../widgets/common.dart';
 import 'banner_canvas.dart';
 import 'banner_smart.dart';
+import 'festival_art.dart';
 import 'festival_picker.dart';
 
 /// Banner Studio → Category → Template → Details → Photo → Preview → Share.
@@ -58,6 +59,9 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
   /// Colour theme over the template's own gradient (key of [bannerPalettes]).
   String? _palette;
   int _idea = 0;
+
+  /// Festival picture (the temple's photo, else the drawn artwork).
+  bool _showFestivalPicture = true;
   bool _senderPrefilled = false;
   bool _includeDate = true;
   bool _busy = false;
@@ -246,6 +250,11 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
       _sender.text = profileName;
     }
     final template = _withLayout(_template ?? templates.first);
+    final festivalId = _festival?.festival.id;
+    final images = ref.watch(festivalImagesProvider).value ?? const <String, String>{};
+    final showPicture = _showFestivalPicture && festivalId != null;
+    final festivalPhoto = showPicture ? images[festivalId] ?? images[festivalId.split('-').first] : null;
+    final art = showPicture ? festivalArt(festivalId) : null;
     final date = _includeDate ? formatDate(_festival?.date ?? ref.read(clockProvider)()) : null;
     final personal = _category == BannerCategory.birthday || _category == BannerCategory.anniversary;
 
@@ -272,10 +281,20 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
                   senderName: _sender.text,
                   senderPhoto: _senderPhoto,
                   textScale: _textScale,
+                  art: art,
+                  photoUrl: festivalPhoto,
                 ),
               ),
             ),
           ),
+          if (festivalId != null && (art != null || festivalPhoto != null || !_showFestivalPicture))
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              secondary: const Text('🖼️', style: TextStyle(fontSize: 22)),
+              title: Text(l.festivalPicture),
+              value: _showFestivalPicture,
+              onChanged: (v) => setState(() => _showFestivalPicture = v),
+            ),
           const SizedBox(height: 12),
           SegmentedButton<BannerFormat>(
             segments: [

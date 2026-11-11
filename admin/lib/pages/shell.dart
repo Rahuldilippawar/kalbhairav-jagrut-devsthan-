@@ -52,6 +52,12 @@ final List<NavItem> navItems = [
   NavItem('greetings', 'Daily Subhechha', Icons.wb_sunny_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.greetings), group: 'Content'),
   NavItem('quotes', 'Quotes', Icons.format_quote, AdminModule.content, () => CollectionListPage(spec: Specs.quotes, header: LibraryLoader(collection: Col.dailyQuotes, items: suvicharLibraryDocs, label: 'Suvichar library')), group: 'Content'),
   NavItem('mantras', 'Mantras', Icons.self_improvement, AdminModule.content, () => CollectionListPage(spec: Specs.mantras, header: LibraryLoader(collection: Col.mantras, items: mantraLibraryDocs, label: 'Mantra library')), group: 'Content'),
+  NavItem('festivalPhotos', 'Festival Photos', Icons.add_photo_alternate_outlined, AdminModule.content,
+      () => CollectionListPage(
+          spec: Specs.festivalImages,
+          subtitle: 'प्रत्येक सणासाठी एक सुंदर फोटो टाका – भक्त त्या सणाचा बॅनर बनवताना तो आपोआप येतो. '
+              'फोटो नसलेल्या सणांसाठी ॲपमधील सणाचे चित्र दिसते.'),
+      group: 'Content'),
   NavItem('festivals', 'Festival Calendar', Icons.celebration_outlined, AdminModule.content, () => const FestivalCalendarPage(), group: 'Content'),
   NavItem('tithi', 'Tithi / Panchang', Icons.calendar_month, AdminModule.content, () => const TithiPage(), group: 'Content'),
   NavItem('announcements', 'Announcements', Icons.campaign_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.announcements), group: 'Content'),

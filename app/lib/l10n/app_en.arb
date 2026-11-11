@@ -662,5 +662,6 @@
   "camera": "Camera",
   "completeProfileTitle": "Complete your profile",
   "completeProfileHint": "To start using the app, please enter your name, mobile number and village. This is used only by the temple.",
-  "continueText": "Continue"
+  "continueText": "Continue",
+  "festivalPicture": "Festival picture"
 }

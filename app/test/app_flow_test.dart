@@ -12,6 +12,7 @@ import 'package:kjd_app/app/app_update.dart';
 import 'package:kjd_app/app/providers.dart';
 import 'package:kjd_app/app/router.dart';
 import 'package:kjd_app/main.dart';
+import 'package:kjd_app/features/banner/festival_art.dart';
 import 'package:kjd_app/features/banner/festival_picker.dart';
 import 'package:kjd_app/features/guru/lesson_body.dart';
 import 'package:kjd_app/features/guru/shishya_chat_screen.dart';
@@ -332,8 +333,21 @@ void main() {
     await tester.tap(find.text('शुभेच्छा बॅनर बनवा'));
     await tester.pumpAndSettle();
     expect(c.read(routerProvider).state.uri.queryParameters['festival'], startsWith('ekadashi-'));
-    // The banner preview shows the vrat's headline.
+    // The banner preview shows the vrat's headline and its artwork (tulsi).
     expect(find.text('🙏 इंदिरा एकादशी'), findsWidgets);
+    expect(find.byWidgetPredicate((w) => w is FestivalArt && w.art == 'tulsi'), findsOneWidget);
+    // A photo uploaded by the temple for ekadashi replaces the artwork.
+    await c.read(dataStoreProvider).set(Col.festivalImages, 'ekadashi', {'imageUrl': 'asset:logo'});
+    await tester.pumpAndSettle();
+    expect(find.byType(FestivalArt), findsNothing);
+    await c.read(dataStoreProvider).delete(Col.festivalImages, 'ekadashi');
+    await tester.pumpAndSettle();
+    // The picture can be switched off.
+    await tester.tap(find.text('सणाचे चित्र / फोटो'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FestivalArt), findsNothing);
+    await tester.tap(find.text('सणाचे चित्र / फोटो'));
+    await tester.pumpAndSettle();
 
     // Pick घटस्थापना (11 Oct) from the upcoming strip.
     final ghat = find.text('घटस्थापना – नवरात्र आरंभ');

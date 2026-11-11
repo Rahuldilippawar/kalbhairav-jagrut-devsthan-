@@ -1450,4 +1450,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continueText => 'Continue';
+
+  @override
+  String get festivalPicture => 'Festival picture';
 }

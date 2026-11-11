@@ -2789,6 +2789,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get continueText;
+
+  /// No description provided for @festivalPicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Festival picture'**
+  String get festivalPicture;
 }
 
 class _AppLocalizationsDelegate

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kjd_app/features/banner/banner_canvas.dart';
+import 'package:kjd_app/features/banner/festival_art.dart';
 import 'package:kjd_core/kjd_core.dart';
 
 // 1×1 transparent PNG.
@@ -68,5 +69,40 @@ void main() {
     ));
     expect(find.text('आजची तिथी'), findsOneWidget);
     expect(find.text('सोमवार\nअष्टमी'), findsOneWidget);
+  });
+
+  for (final layout in BannerTemplate.layouts.keys) {
+    testWidgets('festival artwork fits the $layout layout in every format', (tester) async {
+      for (final format in BannerFormat.values) {
+        await tester.pumpWidget(MaterialApp(
+          home: Center(
+            child: SizedBox(
+              width: 360,
+              child: BannerCanvas(
+                template: BannerTemplate(id: 't', name: 't', category: BannerCategory.festival, layout: layout),
+                headline: '🪔 दिवाळीच्या हार्दिक शुभेच्छा',
+                message: long,
+                date: '08 Nov 2026',
+                format: format,
+                senderName: 'राहुल पवार',
+                art: festivalArt('lakshmipujan'),
+              ),
+            ),
+          ),
+        ));
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        expect(find.byType(FestivalArt), findsOneWidget);
+      }
+    });
+  }
+
+  test('every festival and monthly vrat has artwork', () {
+    for (final f in festivalCatalog) {
+      expect(festivalArt(f.id), isNotNull, reason: f.id);
+    }
+    for (final v in ['ekadashi-2026-10-06', 'sankashti-2026-10-29', 'fest-dasara']) {
+      expect(festivalArt(v), isNotNull, reason: v);
+    }
   });
 }

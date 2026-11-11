@@ -1442,4 +1442,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get continueText => 'આગળ વધો';
+
+  @override
+  String get festivalPicture => 'તહેવારનું ચિત્ર';
 }

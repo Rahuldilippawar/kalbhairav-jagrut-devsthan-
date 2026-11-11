@@ -6,6 +6,7 @@ import 'package:kjd_core/kjd_core.dart';
 
 import '../../widgets/common.dart';
 import 'banner_painters.dart';
+import 'festival_art.dart';
 
 /// Output shape of a banner. Exports are 1080px on the short side.
 enum BannerFormat {
@@ -37,6 +38,8 @@ class BannerCanvas extends StatelessWidget {
     this.senderName,
     this.senderPhoto,
     this.textScale = 1,
+    this.art,
+    this.photoUrl,
   });
 
   final BannerTemplate template;
@@ -50,6 +53,12 @@ class BannerCanvas extends StatelessWidget {
 
   /// Devotee's text-size choice for headline and message (0.8 – 1.3).
   final double textScale;
+
+  /// Festival artwork (see [festivalArt]) shown when there is no photo.
+  final String? art;
+
+  /// The temple's photo for the festival, used when the devotee adds none.
+  final String? photoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -294,13 +303,15 @@ class _Layout {
   Widget _heroImage() {
     final Widget art = b.photo != null
         ? Image.memory(b.photo!, fit: BoxFit.cover, gaplessPlayback: true)
-        : Stack(
-            fit: StackFit.expand,
-            children: [
-              CustomPaint(painter: SunRaysPainter(color: accent.withValues(alpha: .55), rays: 32)),
-              Center(child: TempleLogo(size: 130 * u)),
-            ],
-          );
+        : b.photoUrl != null
+            ? NetImage(b.photoUrl)
+            : Stack(
+                fit: StackFit.expand,
+                children: [
+                  CustomPaint(painter: SunRaysPainter(color: accent.withValues(alpha: .55), rays: 32)),
+                  Center(child: b.art != null ? FestivalArt(b.art!, size: 170 * u) : TempleLogo(size: 130 * u)),
+                ],
+              );
     final faded = ShaderMask(
       blendMode: BlendMode.dstIn,
       shaderCallback: (r) => LinearGradient(
@@ -502,7 +513,9 @@ class _Layout {
     );
   }
 
-  Widget _ringPhoto(Uint8List bytes, double size) => Container(
+  Widget _ringPhoto(Uint8List bytes, double size) => _ring(MemoryImage(bytes), size);
+
+  Widget _ring(ImageProvider image, double size) => Container(
     width: size,
     height: size,
     padding: EdgeInsets.all(size * .04),
@@ -515,22 +528,34 @@ class _Layout {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(color: Colors.white, width: size * .015),
-        image: DecorationImage(image: MemoryImage(bytes), fit: BoxFit.cover),
+        image: DecorationImage(image: image, fit: BoxFit.cover),
       ),
     ),
   );
 
+  /// The devotee's photo, else the temple's festival photo, else the
+  /// festival artwork (none of them in the hero layout, which shows its own).
+  Widget? _picture(double size) {
+    if (hero) return null;
+    if (b.photo != null) return _ringPhoto(b.photo!, size);
+    if (b.photoUrl != null) {
+      return _ring(b.photoUrl == 'asset:logo' ? TempleLogo.asset : NetworkImage(b.photoUrl!), size);
+    }
+    if (b.art != null) return FestivalArt(b.art!, size: size * 1.1);
+    return null;
+  }
+
   Widget _middle() {
-    final photo = hero ? null : b.photo;
+    final hasPicture = !hero && (b.photo != null || b.photoUrl != null || b.art != null);
     final message = Text(
       _noCalendarIcons(b.message),
-      textAlign: landscape && photo != null ? TextAlign.start : TextAlign.center,
+      textAlign: !story && hasPicture ? TextAlign.start : TextAlign.center,
       maxLines: 12,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontFamily: bodyFont,
         color: text,
-        fontSize: (photo != null ? 15.5 : 18) * u * b.textScale,
+        fontSize: (hasPicture && !story ? 14.5 : 18) * u * b.textScale,
         height: 1.45,
         fontWeight: FontWeight.w700,
         shadows: shadows,
@@ -542,16 +567,17 @@ class _Layout {
       children: [
         if (b.headline.isNotEmpty) Text(_noCalendarIcons(b.headline), textAlign: TextAlign.center, style: _headlineStyle(headSize)),
         if (layout != 'classic' && layout != 'photoHero') _ornament() else SizedBox(height: 10 * u),
-        if (photo != null && landscape)
+        // Side by side unless the tall Status format has room to stack.
+        if (hasPicture && !story)
           Row(
             children: [
-              _ringPhoto(photo, 120 * u),
+              _picture((landscape ? 120 : 112) * u)!,
               SizedBox(width: 14 * u),
               Expanded(child: message),
             ],
           )
         else ...[
-          if (photo != null) ...[_ringPhoto(photo, (story ? 170 : 116) * u), SizedBox(height: 12 * u)],
+          if (hasPicture) ...[_picture(170 * u)!, SizedBox(height: 12 * u)],
           message,
         ],
       ],

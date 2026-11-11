@@ -1447,4 +1447,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get continueText => 'पुढे चला';
+
+  @override
+  String get festivalPicture => 'सणाचे चित्र / फोटो';
 }

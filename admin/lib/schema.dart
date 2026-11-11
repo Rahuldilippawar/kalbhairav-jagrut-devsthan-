@@ -185,6 +185,30 @@ abstract final class Specs {
     ],
   );
 
+  static final festivalImages = CollectionSpec(
+    collection: Col.festivalImages,
+    title: 'Festival Photos (सणांचे फोटो)',
+    module: AdminModule.content,
+    docIdField: 'festivalId',
+    columns: const ['imageUrl', 'festivalId', 'active'],
+    fields: [
+      FieldSpec('festivalId', 'सण / व्रत', type: FieldType.select, required: true, options: [
+        for (final f in festivalCatalog) (f.id, f.name),
+        ('ekadashi', 'एकादशी (दर महिन्याची)'),
+        ('sankashti', 'संकष्ट चतुर्थी'),
+        ('vinayaki', 'विनायक चतुर्थी'),
+        ('kalashtami', 'कालाष्टमी'),
+        ('pradosh', 'प्रदोष'),
+        ('shivratri', 'मासिक शिवरात्री'),
+        ('purnima', 'पौर्णिमा'),
+        ('amavasya', 'अमावस्या'),
+      ]),
+      const FieldSpec('imageUrl', 'फोटो', type: FieldType.image, required: true,
+          help: 'या सणाच्या बॅनरवर हा फोटो आपोआप दिसतो (भक्ताने स्वतःचा फोटो लावला नसल्यास)'),
+      const FieldSpec('active', 'वापरात', type: FieldType.boolean, defaultValue: true),
+    ],
+  );
+
   static final calendarEvents = CollectionSpec(
     collection: Col.calendarEvents,
     title: 'Calendar Programmes (कॅलेंडर कार्यक्रम)',

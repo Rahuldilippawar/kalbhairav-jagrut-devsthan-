@@ -29,6 +29,10 @@ abstract final class Col {
 
   /// Admin corrections to computed festival dates (`<festivalId>_<year>`).
   static const festivalDates = 'festival_dates';
+
+  /// The temple's photo per festival or vrat type (doc id = festival id),
+  /// used on festival banners.
+  static const festivalImages = 'festival_images';
   static const mantras = 'mantras';
   static const publicGreetings = 'public_greetings';
 
