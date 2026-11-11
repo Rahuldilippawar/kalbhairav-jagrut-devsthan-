@@ -40,6 +40,7 @@ class BannerCanvas extends StatelessWidget {
     this.textScale = 1,
     this.art,
     this.photoUrl,
+    this.deity,
   });
 
   final BannerTemplate template;
@@ -59,6 +60,10 @@ class BannerCanvas extends StatelessWidget {
 
   /// The temple's photo for the festival, used when the devotee adds none.
   final String? photoUrl;
+
+  /// Bundled painting of the festival's deity (asset path), shown in a
+  /// golden temple-arch frame.
+  final String? deity;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +117,13 @@ class _Layout {
 
   Widget build() {
     return ClipRect(
-      child: Stack(fit: StackFit.expand, children: [_background(), ..._underlays(), _content(), ..._overlays()]),
+      child: Stack(fit: StackFit.expand, children: [
+        _background(),
+        if (hasFestivalScene(b.art)) Positioned.fill(child: CustomPaint(painter: FestivalScenePainter(b.art!, unit: u))),
+        ..._underlays(),
+        _content(),
+        ..._overlays(),
+      ]),
     );
   }
 
@@ -305,6 +316,8 @@ class _Layout {
         ? Image.memory(b.photo!, fit: BoxFit.cover, gaplessPlayback: true)
         : b.photoUrl != null
             ? NetImage(b.photoUrl)
+            : b.deity != null
+            ? Image.asset(b.deity!, fit: BoxFit.cover, alignment: Alignment.topCenter)
             : Stack(
                 fit: StackFit.expand,
                 children: [
@@ -541,12 +554,38 @@ class _Layout {
     if (b.photoUrl != null) {
       return _ring(b.photoUrl == 'asset:logo' ? TempleLogo.asset : NetworkImage(b.photoUrl!), size);
     }
+    if (b.deity != null) return _deityFrame(b.deity!, size);
     if (b.art != null) return FestivalArt(b.art!, size: size * 1.1);
     return null;
   }
 
+  /// Deity painting in a golden arch, like a temple niche.
+  Widget _deityFrame(String asset, double size) {
+    final w = size * .86, h = size * 1.22;
+    final radius = BorderRadius.only(
+      topLeft: Radius.circular(w / 2),
+      topRight: Radius.circular(w / 2),
+      bottomLeft: Radius.circular(8 * u),
+      bottomRight: Radius.circular(8 * u),
+    );
+    return Container(
+      width: w,
+      height: h,
+      padding: EdgeInsets.all(3.2 * u),
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: _goldStops),
+        boxShadow: [BoxShadow(color: const Color(0xFFFFD54F).withValues(alpha: .55), blurRadius: 18 * u, spreadRadius: 1 * u)],
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: Image.asset(asset, fit: BoxFit.cover, alignment: Alignment.topCenter, gaplessPlayback: true),
+      ),
+    );
+  }
+
   Widget _middle() {
-    final hasPicture = !hero && (b.photo != null || b.photoUrl != null || b.art != null);
+    final hasPicture = !hero && (b.photo != null || b.photoUrl != null || b.deity != null || b.art != null);
     final message = Text(
       _noCalendarIcons(b.message),
       textAlign: !story && hasPicture ? TextAlign.start : TextAlign.center,

@@ -948,3 +948,180 @@ class FestivalArtPainter extends CustomPainter {
   @override
   bool shouldRepaint(FestivalArtPainter old) => old.art != art;
 }
+
+/// Whole-banner festive scene behind the text for festivals that are about
+/// a celebration rather than a deity: kites across the sky for Sankranti,
+/// colour bursts for Holi, fireworks for Diwali, tricolour ribbons for
+/// national days and stars for full-moon nights.
+bool hasFestivalScene(String? art) => const {'kite', 'holi', 'diya', 'tricolor', 'moon'}.contains(art);
+
+class FestivalScenePainter extends CustomPainter {
+  const FestivalScenePainter(this.art, {required this.unit});
+  final String art;
+  final double unit;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    switch (art) {
+      case 'kite':
+        _kites(canvas, size);
+      case 'holi':
+        _colours(canvas, size);
+      case 'diya':
+        _fireworks(canvas, size);
+      case 'tricolor':
+        _ribbons(canvas, size);
+      case 'moon':
+        _stars(canvas, size);
+    }
+  }
+
+  void _kite(Canvas canvas, Offset c, double w, double tilt, List<Color> colors) {
+    canvas.save();
+    canvas.translate(c.dx, c.dy);
+    canvas.rotate(tilt);
+    final body = Path()
+      ..moveTo(0, -w)
+      ..lineTo(w * .8, 0)
+      ..lineTo(0, w)
+      ..lineTo(-w * .8, 0)
+      ..close();
+    canvas.drawPath(body, Paint()..color = colors[0]);
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, -w)
+        ..lineTo(w * .8, 0)
+        ..lineTo(0, 0)
+        ..close()
+        ..moveTo(0, w)
+        ..lineTo(-w * .8, 0)
+        ..lineTo(0, 0)
+        ..close(),
+      Paint()..color = colors[1],
+    );
+    final stick = Paint()
+      ..color = Colors.black.withValues(alpha: .35)
+      ..strokeWidth = w * .04;
+    canvas.drawLine(Offset(0, -w), Offset(0, w), stick);
+    canvas.drawLine(Offset(-w * .8, 0), Offset(w * .8, 0), stick);
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, w)
+        ..lineTo(-w * .22, w * 1.3)
+        ..lineTo(w * .22, w * 1.3)
+        ..close(),
+      Paint()..color = colors[1],
+    );
+    // Long string trailing down.
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, 0)
+        ..quadraticBezierTo(w * .8, w * 3, -w * .5, w * 6),
+      Paint()
+        ..color = Colors.white.withValues(alpha: .55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = w * .025,
+    );
+    canvas.restore();
+  }
+
+  void _kites(Canvas canvas, Size size) {
+    final u = unit;
+    // Soft sun in the corner.
+    final sun = Offset(size.width * .86, size.height * .12);
+    canvas.drawCircle(
+      sun,
+      70 * u,
+      Paint()
+        ..shader = RadialGradient(colors: [const Color(0xCCFFF59D), const Color(0x00FFF59D)])
+            .createShader(Rect.fromCircle(center: sun, radius: 70 * u)),
+    );
+    const palettes = [
+      [Color(0xFFE91E63), Color(0xFFFFC107)],
+      [Color(0xFF1E88E5), Color(0xFF76FF03)],
+      [Color(0xFF8E24AA), Color(0xFFFF7043)],
+      [Color(0xFF00897B), Color(0xFFFFEB3B)],
+      [Color(0xFFD50000), Color(0xFF2962FF)],
+      [Color(0xFFFF6D00), Color(0xFF00C853)],
+    ];
+    final spots = [
+      (.1, .22, 22.0, -.3),
+      (.9, .3, 18.0, .25),
+      (.18, .5, 14.0, .2),
+      (.82, .56, 24.0, -.2),
+      (.08, .78, 16.0, .3),
+      (.93, .8, 13.0, -.35),
+      (.3, .1, 12.0, .15),
+      (.7, .08, 15.0, -.1),
+    ];
+    for (final (i, (x, y, w, t)) in spots.indexed) {
+      _kite(canvas, Offset(size.width * x, size.height * y), w * u, t, palettes[i % palettes.length]);
+    }
+  }
+
+  void _colours(Canvas canvas, Size size) {
+    final rnd = math.Random(11);
+    const colors = [Color(0xFFE91E63), Color(0xFFFFEB3B), Color(0xFF00E676), Color(0xFF2979FF), Color(0xFFFF6D00), Color(0xFFAA00FF)];
+    for (final (i, (x, y)) in [(.05, .1), (.95, .12), (.04, .88), (.96, .9), (.5, .02), (.5, .98)].indexed) {
+      final c = Offset(size.width * x, size.height * y);
+      final color = colors[i];
+      canvas.drawCircle(
+        c,
+        80 * unit,
+        Paint()..shader = RadialGradient(colors: [color.withValues(alpha: .65), color.withValues(alpha: 0)]).createShader(Rect.fromCircle(center: c, radius: 80 * unit)),
+      );
+      for (var j = 0; j < 14; j++) {
+        final a = rnd.nextDouble() * 2 * math.pi, d = (20 + rnd.nextDouble() * 60) * unit;
+        canvas.drawCircle(c + Offset(math.cos(a), math.sin(a)) * d, (2 + rnd.nextDouble() * 5) * unit, Paint()..color = color.withValues(alpha: .8));
+      }
+    }
+  }
+
+  void _burst(Canvas canvas, Offset c, double r, Color color) {
+    for (var k = 0; k < 18; k++) {
+      final a = k * math.pi / 9;
+      final p1 = c + Offset(math.cos(a), math.sin(a)) * r * .25;
+      final p2 = c + Offset(math.cos(a), math.sin(a)) * r;
+      canvas.drawLine(p1, p2, Paint()
+        ..shader = LinearGradient(colors: [color.withValues(alpha: .1), color]).createShader(Rect.fromPoints(p1, p2))
+        ..strokeWidth = 1.6 * unit
+        ..strokeCap = StrokeCap.round);
+      canvas.drawCircle(p2, 1.8 * unit, Paint()..color = Colors.white.withValues(alpha: .9));
+    }
+  }
+
+  void _fireworks(Canvas canvas, Size size) {
+    _burst(canvas, Offset(size.width * .12, size.height * .16), 34 * unit, const Color(0xFFFFD54F));
+    _burst(canvas, Offset(size.width * .88, size.height * .14), 40 * unit, const Color(0xFFFF80AB));
+    _burst(canvas, Offset(size.width * .9, size.height * .5), 24 * unit, const Color(0xFF80D8FF));
+    _burst(canvas, Offset(size.width * .08, size.height * .52), 22 * unit, const Color(0xFFB9F6CA));
+  }
+
+  void _ribbons(Canvas canvas, Size size) {
+    for (final (i, color) in const [Color(0xFFFF9933), Colors.white, Color(0xFF138808)].indexed) {
+      final top = Path()
+        ..moveTo(0, (10 + i * 9) * unit)
+        ..cubicTo(size.width * .3, (0 + i * 9) * unit, size.width * .7, (26 + i * 9) * unit, size.width, (8 + i * 9) * unit);
+      final bottom = Path()
+        ..moveTo(0, size.height - (28 - i * 9) * unit)
+        ..cubicTo(size.width * .3, size.height - (40 - i * 9) * unit, size.width * .7, size.height - (14 - i * 9) * unit, size.width, size.height - (30 - i * 9) * unit);
+      final paint = Paint()
+        ..color = color.withValues(alpha: .85)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 8 * unit;
+      canvas.drawPath(top, paint);
+      canvas.drawPath(bottom, paint);
+    }
+  }
+
+  void _stars(Canvas canvas, Size size) {
+    final rnd = math.Random(3);
+    for (var k = 0; k < 40; k++) {
+      final p = Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height * .6);
+      canvas.drawCircle(p, (.8 + rnd.nextDouble() * 1.8) * unit, Paint()..color = Colors.white.withValues(alpha: .4 + rnd.nextDouble() * .5));
+    }
+  }
+
+  @override
+  bool shouldRepaint(FestivalScenePainter old) => old.art != art || old.unit != unit;
+}
