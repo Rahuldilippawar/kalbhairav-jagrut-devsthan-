@@ -198,23 +198,6 @@ void main() {
     expect(find.textContaining('मुक्काम: मांडळ'), findsOneWidget);
   });
 
-  testWidgets('no login: a guest device donates with an anonymous account', (tester) async {
-    final c = await _start(tester, to: '/donate');
-    expect(find.text('मोबाईल नंबरने लॉगिन करा'), findsNothing);
-    await tester.tap(find.text('₹101'));
-    await tester.pump();
-    await tester.enterText(find.widgetWithText(TextFormField, 'पूर्ण नाव'), 'भक्त');
-    await tester.enterText(find.widgetWithText(TextFormField, 'मोबाईल नंबर'), '9876543210');
-    final pay = find.widgetWithText(FilledButton, '₹101 देणगी द्या');
-    await tester.scrollUntilVisible(pay, 200, scrollable: find.byType(Scrollable).first);
-    await tester.tap(pay);
-    await tester.pumpAndSettle();
-    expect(c.read(routerProvider).state.matchedLocation, startsWith('/receipt/'));
-    final user = c.read(authServiceProvider).currentUser!;
-    expect(user.isAnonymous, isTrue);
-    expect(user.uid, startsWith('demo-guest-'));
-  });
-
   testWidgets('profile offers Temple Management (admin) entry', (tester) async {
     await _start(tester, to: '/profile');
     await tester.pumpAndSettle();
@@ -223,64 +206,6 @@ void main() {
     await tester.tap(tile);
     await tester.pump();
     expect(find.textContaining('सर्व्हर जोडल्यानंतर ॲडमिन पॅनेल'), findsOneWidget); // demo mode
-  });
-
-  testWidgets('donation produces a receipt', (tester) async {
-    final c = await _start(tester, user: _devotee, to: '/donate');
-    await tester.tap(find.text('अन्नदान'));
-    await tester.tap(find.text('₹501'));
-    await tester.pump();
-    await tester.enterText(find.widgetWithText(TextFormField, 'पूर्ण नाव'), 'राम पाटील');
-    await tester.enterText(find.widgetWithText(TextFormField, 'मोबाईल नंबर'), '9876543210');
-    final pay = find.widgetWithText(FilledButton, '₹501 देणगी द्या');
-    await tester.scrollUntilVisible(pay, 200, scrollable: find.byType(Scrollable).first);
-    await tester.tap(pay);
-    await tester.pumpAndSettle();
-    expect(c.read(routerProvider).state.matchedLocation, startsWith('/receipt/'));
-    expect(find.text('KJD-RCPT-000001'), findsOneWidget);
-    expect(find.text('अन्नदान'), findsOneWidget);
-  });
-
-  testWidgets('UPI: pay by QR, submit UTR, receipt after office approval', (tester) async {
-    final c = await _start(tester, user: _devotee, to: '/donate');
-    final store = c.read(dataStoreProvider);
-    await store.update(Col.appSettings, Col.mainDoc, {'upiId': 'kalbhairav@sbi', 'upiPayeeName': 'Kalbhairav Devsthan'});
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('₹501'));
-    await tester.pump();
-    await tester.enterText(find.widgetWithText(TextFormField, 'पूर्ण नाव'), 'राम पाटील');
-    await tester.enterText(find.widgetWithText(TextFormField, 'मोबाईल नंबर'), '9876543210');
-    final pay = find.widgetWithText(FilledButton, '₹501 देणगी द्या');
-    await tester.scrollUntilVisible(pay, 200, scrollable: find.byType(Scrollable).first);
-    await tester.tap(pay);
-    await tester.pumpAndSettle();
-
-    // UPI screen: QR + UPI ID, then the UTR.
-    expect(find.text('kalbhairav@sbi'), findsOneWidget);
-    final submit = find.text('पडताळणीसाठी पाठवा');
-    await tester.scrollUntilVisible(submit, 200, scrollable: find.byType(Scrollable).first);
-    await tester.tap(submit);
-    await tester.pump();
-    expect(find.text('12 अंकी UTR क्रमांक भरा'), findsOneWidget); // empty UTR rejected
-    await tester.pump(const Duration(seconds: 4));
-    await tester.enterText(find.byType(TextField).last, '4123 4567 8901');
-    await tester.tap(submit);
-    await tester.pumpAndSettle();
-    expect(find.text('पेमेंट पडताळणीसाठी पाठवले'), findsOneWidget);
-    await tester.tap(find.descendant(of: find.byType(AlertDialog), matching: find.byType(FilledButton)));
-    await tester.pumpAndSettle();
-    expect(c.read(routerProvider).state.matchedLocation, '/profile/donations');
-    expect(find.text('पडताळणी सुरू'), findsOneWidget);
-    expect(find.textContaining('UTR 412345678901'), findsOneWidget);
-
-    // Office approves → receipt replaces the pending entry.
-    final demo = DemoCheckoutService(store as MemoryDataStore,
-        userId: () => _devotee.uid, settings: () async => const AppSettings(), clock: () => _now);
-    final pending = await c.read(donationRepoProvider).watchPendingUpi().first;
-    await DemoUpiGateway(demo).approve(pending.single.id);
-    await tester.pumpAndSettle();
-    expect(find.text('पडताळणी सुरू'), findsNothing);
-    expect(find.textContaining('KJD-RCPT-000001'), findsOneWidget);
   });
 
   testWidgets('daily suvichar pops up once a day and can be turned off', (tester) async {
@@ -447,26 +372,6 @@ void main() {
     expect(find.text('महामृत्युंजय मंत्र'), findsOneWidget);
   });
 
-  testWidgets('seva booking issues a QR pass', (tester) async {
-    final c = await _start(tester, user: _devotee, to: '/book/abhishek');
-    // Pick a date: opens the picker, accept the default (today).
-    await tester.tap(find.text('तारीख निवडा').last);
-    await tester.pumpAndSettle();
-    await tester.tap(find.byType(TextButton).last); // OK
-    await tester.pumpAndSettle();
-    await tester.tap(find.textContaining('10:00'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.widgetWithText(TextFormField, 'भक्ताचे नाव'), 'सीता पाटील');
-    await tester.enterText(find.widgetWithText(TextFormField, 'मोबाईल नंबर'), '9876543210');
-    final pay = find.textContaining('भरा व निश्चित करा');
-    await tester.scrollUntilVisible(pay, 200, scrollable: find.byType(Scrollable).first);
-    await tester.tap(pay);
-    await tester.pumpAndSettle();
-    expect(c.read(routerProvider).state.matchedLocation, startsWith('/pass/'));
-    expect(find.text('KJD-SEVA-000001'), findsWidgets);
-    expect(find.text('BOOKED'), findsOneWidget);
-  });
-
   testWidgets('switching to Hindi and Gujarati translates the UI', (tester) async {
     final c = await _start(tester, to: '/profile/settings');
     await tester.tap(find.text('हिंदी'));
@@ -506,21 +411,6 @@ void main() {
     expect(find.text('आजचे वाढदिवस व वर्धापन दिन'), findsOneWidget);
     expect(find.text('सौ. सुनीता व श्री. अनिल देशमुख'), findsOneWidget);
   });
-
-  testWidgets('donation receipt shows trust details and 80G line', (tester) async {
-    final c = await _start(tester, user: _devotee, to: '/home');
-    final store = c.read(dataStoreProvider);
-    await store.update(Col.templeInfo, Col.mainDoc, {'trustRegNo': 'E-1234 (जळगाव)', 'eightyGNo': 'AAATK1234X/80G'});
-    final r = await c.read(checkoutServiceProvider).donate(
-        const DonationRequest(category: 'अन्नदान', amountPaise: 50100, name: 'राम', mobile: '9876543210'));
-    c.read(routerProvider).go('/receipt/${r.receiptId}');
-    await tester.pumpAndSettle();
-    expect(find.textContaining('E-1234 (जळगाव)'), findsOneWidget);
-    expect(find.textContaining('AAATK1234X/80G'), findsOneWidget);
-    expect(find.textContaining('80G अंतर्गत'), findsOneWidget);
-    expect(find.textContaining('नमुना'), findsWidgets); // demo trust name / note
-  });
-
 
   testWidgets('guru gyan: shishya registers, temple approves, lessons open', (tester) async {
     final c = await _start(tester, to: '/guru');
@@ -687,7 +577,7 @@ void main() {
     expect(find.text('आत्ता अपडेट करा'), findsOneWidget); // banner button stays
 
     await store.set(Col.appSettings, Col.mainDoc, {'minAndroidBuild': 19}, merge: true);
-    c.read(routerProvider).go('/seva');
+    c.read(routerProvider).go('/events');
     await tester.pumpAndSettle();
     expect(c.read(appUpdateProvider).required, isTrue);
   });

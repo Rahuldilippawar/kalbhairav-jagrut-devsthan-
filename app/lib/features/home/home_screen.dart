@@ -68,7 +68,6 @@ class HomeScreen extends ConsumerWidget {
           const SliverToBoxAdapter(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: DarshanSummaryCard()),
           ),
-          const SliverToBoxAdapter(child: _DonateCta()),
           SliverToBoxAdapter(child: SectionHeader(l.todaysQuote, icon: '💬')),
           const SliverToBoxAdapter(child: _QuoteCard()),
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
@@ -325,8 +324,6 @@ class _QuickActions extends StatelessWidget {
     final l = context.l10n;
     final items = [
       ('🙏', l.quickDarshan, () => context.go('/darshan')),
-      ('🪔', l.quickSeva, () => context.go('/seva')),
-      ('💰', l.quickDonate, () => context.push('/donate')),
       ('📅', l.quickEvents, () => context.go('/events')),
       ('📺', l.quickLive, () => context.push('/live')),
       ('🛕', l.quickTemple, () => context.push('/temple')),
@@ -528,30 +525,6 @@ class _UpcomingEvents extends ConsumerWidget {
         ),
       );
     });
-  }
-}
-
-class _DonateCta extends StatelessWidget {
-  const _DonateCta();
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l10n;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Container(
-        decoration: BoxDecoration(gradient: KjdColors.goldGradient, borderRadius: BorderRadius.circular(20)),
-        padding: const EdgeInsets.all(18),
-        child: Row(children: [
-          const Text('🪙', style: TextStyle(fontSize: 40)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(l.donateCta,
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: KjdColors.kumkumDark)),
-          ),
-          FilledButton(onPressed: () => context.push('/donate'), child: Text(l.donateNow)),
-        ]),
-      ),
-    );
   }
 }
 

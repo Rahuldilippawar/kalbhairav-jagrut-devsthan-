@@ -57,3 +57,5 @@ class RangeButton extends StatelessWidget {
 
 bool inRange(DateTime? d, DateTimeRange r) =>
     d != null && !d.isBefore(dateOnly(r.start)) && d.isBefore(dateOnly(r.end).add(const Duration(days: 1)));
+
+DateTimeRange thisMonth(DateTime now) => DateTimeRange(start: DateTime(now.year, now.month), end: dateOnly(now));

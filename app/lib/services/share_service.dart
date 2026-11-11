@@ -3,9 +3,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,19 +24,6 @@ Future<void> sharePng(Uint8List png, {required String fileName, String? text}) =
       fileNameOverrides: ['$fileName.png'],
       text: text,
     ));
-
-/// Wraps a captured receipt image into an A5 PDF and opens the system
-/// share/save dialog.
-Future<void> sharePngAsPdf(Uint8List png, {required String fileName}) async {
-  final doc = pw.Document(title: fileName, author: 'Kalbhairav Jagrut Devsthan');
-  final img = pw.MemoryImage(png);
-  doc.addPage(pw.Page(
-    pageFormat: PdfPageFormat.a5,
-    margin: const pw.EdgeInsets.all(16),
-    build: (_) => pw.Center(child: pw.Image(img, fit: pw.BoxFit.contain)),
-  ));
-  await Printing.sharePdf(bytes: await doc.save(), filename: '$fileName.pdf');
-}
 
 Future<bool> openUrl(String url) =>
     launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);

@@ -31,7 +31,7 @@ class KjdScrollBehavior extends MaterialScrollBehavior {
 
 /// Tabs of the bottom navigation, in order (also the side menu on wide
 /// screens).
-const shellTabs = ['/home', '/darshan', '/events', '/seva', '/guru', '/profile'];
+const shellTabs = ['/home', '/darshan', '/events', '/guru', '/profile'];
 
 /// Wraps the whole app on wide screens (web on a laptop or tablet): a side
 /// menu on the left, the app in a centred column, and today's panchang,
@@ -157,7 +157,6 @@ class _SideMenu extends StatelessWidget {
       ('🏠', l.navHome),
       ('🙏', l.navDarshan),
       ('🎉', l.navEvents),
-      ('🪔', l.navSeva),
       ('📿', l.navGuru),
       ('👤', l.navProfile),
     ];
@@ -168,7 +167,6 @@ class _SideMenu extends StatelessWidget {
       ('📅', l.calendarTitle, '/calendar'),
       ('🖼️', l.gallery, '/gallery'),
       ('🎨', l.makeBanner, '/banner'),
-      ('🙏', l.donateNow, '/donate'),
     ];
     final current = shellTabs.indexWhere((t) => path == t);
     return Container(

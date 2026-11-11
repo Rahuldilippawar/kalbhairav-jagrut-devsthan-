@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
@@ -7,8 +8,6 @@ import '../features/darshan/darshan_screen.dart';
 import '../features/darshan/live_darshan_screen.dart';
 import '../features/devotion/greetings_screen.dart';
 import '../features/devotion/calendar_screen.dart';
-import '../features/donation/donation_screen.dart';
-import '../features/donation/receipt_screen.dart';
 import '../features/events/event_detail_screen.dart';
 import '../features/events/events_screen.dart';
 import '../features/gallery/gallery_screen.dart';
@@ -26,20 +25,19 @@ import '../features/profile/my_lists_screens.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/profile/settings_screen.dart';
 import '../features/search/search_screen.dart';
-import '../features/seva/seva_booking_screen.dart';
-import '../features/seva/seva_list_screen.dart';
-import '../features/seva/seva_pass_screen.dart';
 import '../features/splash/onboarding_screen.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/temple/deity_screens.dart';
 import '../features/temple/parampara_screens.dart';
 import '../features/temple/vanshavali_screen.dart';
 import '../features/temple/temple_info_screen.dart';
-import '../services/upi_gateway.dart';
 import 'shell.dart';
 
 /// Devotees never log in: the app signs each device in anonymously (see
 /// `ensureSignedIn`), so there are no login redirects.
+/// Root navigator of the app.
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -58,7 +56,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               builder: (_, s) => EventsScreen(initialCategory: s.uri.queryParameters['category']),
             ),
           ]),
-          StatefulShellBranch(routes: [GoRoute(path: '/seva', builder: (_, _) => const SevaListScreen())]),
           StatefulShellBranch(routes: [GoRoute(path: '/guru', builder: (_, _) => const GuruGyanScreen())]),
           StatefulShellBranch(routes: [GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen())]),
         ],
@@ -99,18 +96,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           initialFestivalDate: DateTime.tryParse(s.uri.queryParameters['date'] ?? ''),
         ),
       ),
-      GoRoute(
-        path: '/donate',
-        builder: (_, s) => DonationScreen(initialCategory: s.uri.queryParameters['category']),
-      ),
-      GoRoute(path: '/receipt/:id', builder: (_, s) => ReceiptScreen(receiptId: s.pathParameters['id']!)),
-      GoRoute(path: '/book/:sevaId', builder: (_, s) => SevaBookingScreen(sevaId: s.pathParameters['sevaId']!)),
-      GoRoute(path: '/pass/:id', builder: (_, s) => SevaPassScreen(bookingId: s.pathParameters['id']!)),
       GoRoute(path: '/profile/edit', builder: (_, _) => const EditProfileScreen()),
       GoRoute(path: '/profile/setup', builder: (_, _) => const EditProfileScreen(setup: true)),
       GoRoute(path: '/profile/family', builder: (_, _) => const FamilyScreen()),
-      GoRoute(path: '/profile/seva', builder: (_, _) => const MySevaScreen()),
-      GoRoute(path: '/profile/donations', builder: (_, _) => const MyDonationsScreen()),
       GoRoute(path: '/profile/events', builder: (_, _) => const MyEventsScreen()),
       GoRoute(path: '/profile/banners', builder: (_, _) => const MyBannersScreen()),
       GoRoute(path: '/profile/settings', builder: (_, _) => const SettingsScreen()),

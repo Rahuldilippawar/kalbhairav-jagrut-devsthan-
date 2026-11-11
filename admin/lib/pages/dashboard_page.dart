@@ -13,33 +13,14 @@ final dashboardProvider = FutureProvider<DashboardStats>((ref) async {
   final store = ref.watch(dataStoreProvider);
   final role = ref.watch(currentAdminProvider)!.role!;
   final now = ref.watch(clockProvider)();
-  final today = dateOnly(now);
   final cards = <(String, String, IconData, Color)>[];
 
-  if (role.can(AdminModule.donations)) {
-    final todays = await store.list(Col.donations, Query(where: [Where('createdAt', WhereOp.gte, today)]));
-    final total = todays.where((d) => d.data['status'] == 'SUCCESS').fold<int>(0, (s, d) => s + asInt(d.data['amountPaise']));
-    cards.add(("Today's Donation", formatPaise(total), Icons.volunteer_activism, KjdColors.success));
-  }
-  if (role.can(AdminModule.bookings) || role.can(AdminModule.checkIn)) {
-    final sevaToday = await store.count(Col.sevaBookings, Query(where: [Where.eq('dateKey', dateKey(today))]));
-    cards.add(("Today's Seva", '$sevaToday', Icons.local_fire_department, KjdColors.saffron));
-    final booked = await store.list(Col.sevaBookings, Query(where: [Where('createdAt', WhereOp.gte, today)]));
-    cards.add(("Today's Bookings", '${booked.length}', Icons.event_seat, KjdColors.kumkum));
-  }
   if (role.can(AdminModule.devotees)) {
     cards.add(('Total Devotees', '${await store.count(Col.users)}', Icons.people, Colors.indigo));
   }
   if (role.can(AdminModule.events)) {
     final events = await EventRepository(store).watchUpcoming(now, limit: 100).first;
     cards.add(('Upcoming Events', '${events.length}', Icons.event, Colors.deepPurple));
-  }
-  if (role.can(AdminModule.seva)) {
-    cards.add(('Active Sevas', '${await store.count(Col.sevas, const Query(where: [Where.eq('active', true)]))}', Icons.spa, Colors.teal));
-  }
-  if (role.can(AdminModule.payments)) {
-    cards.add(('UPI to verify', '${await store.count(Col.payments, const Query(where: [Where.eq('status', 'PENDING_VERIFICATION')]))}', Icons.qr_code_2, Colors.deepOrange));
-    cards.add(('Pending Payments', '${await store.count(Col.payments, const Query(where: [Where.eq('status', 'CREATED')]))}', Icons.hourglass_top, Colors.orange));
   }
   if (role.can(AdminModule.content)) {
     cards.add(('Published Announcements', '${await store.count(Col.announcements, const Query(where: [Where.eq('status', 'published')]))}', Icons.campaign, Colors.blueGrey));

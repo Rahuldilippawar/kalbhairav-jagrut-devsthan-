@@ -5,89 +5,6 @@ import 'package:kjd_core/kjd_core.dart';
 
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
-import '../seva/seva_pass_screen.dart';
-
-class MySevaScreen extends ConsumerWidget {
-  const MySevaScreen({super.key});
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l = context.l10n;
-    final bookings = ref.watch(myBookingsProvider);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.mySeva)),
-      body: AsyncView(bookings, data: (list) {
-        if (list.isEmpty) return EmptyState(message: l.nothingHereYet, icon: Icons.qr_code_2);
-        return ListView(padding: const EdgeInsets.all(16), children: [
-          for (final b in list)
-            Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: const Icon(Icons.qr_code_2, size: 36, color: KjdColors.kumkum),
-                title: Text('${b.sevaName} • ${b.timeSlot}', style: const TextStyle(fontWeight: FontWeight.w700)),
-                subtitle: Text('${formatDate(b.date, locale: context.lang)}\n${b.bookingNo}'),
-                isThreeLine: true,
-                trailing: Pill(b.status.code, color: bookingStatusColor(b.status)),
-                onTap: () => context.push('/pass/${b.id}'),
-              ),
-            ),
-        ]);
-      }),
-    );
-  }
-}
-
-class MyDonationsScreen extends ConsumerWidget {
-  const MyDonationsScreen({super.key});
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l = context.l10n;
-    final receipts = ref.watch(myReceiptsProvider);
-    // Approved UPI payments already appear as receipts.
-    final upi = (ref.watch(myUpiPaymentsProvider).value ?? const <PaymentRecord>[])
-        .where((p) => p.status != PaymentStatus.success)
-        .toList();
-    return Scaffold(
-      appBar: AppBar(title: Text(l.myReceipts)),
-      body: AsyncView(receipts, data: (list) {
-        if (list.isEmpty && upi.isEmpty) {
-          return ListView(children: [
-            EmptyState(message: l.nothingHereYet, icon: Icons.receipt_long),
-            Center(child: FilledButton(onPressed: () => context.push('/donate'), child: Text(l.donateNow))),
-          ]);
-        }
-        final total = list
-            .where((r) => r.status == PaymentStatus.success && r.purpose == PaymentPurpose.donation)
-            .fold<int>(0, (s, r) => s + r.amountPaise);
-        return ListView(padding: const EdgeInsets.all(16), children: [
-          Card(
-            color: KjdColors.goldLight,
-            child: ListTile(
-              title: Text(l.myDonations),
-              trailing: Text(formatPaise(total), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: KjdColors.kumkum)),
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (upi.isNotEmpty) ...[
-            SectionHeader(l.upiPayments),
-            for (final p in upi) _UpiPaymentTile(p),
-            const SizedBox(height: 8),
-          ],
-          for (final r in list)
-            Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: Text(r.purpose == PaymentPurpose.seva ? '🪔' : '💰', style: const TextStyle(fontSize: 26)),
-                title: Text(r.description, maxLines: 2, overflow: TextOverflow.ellipsis),
-                subtitle: Text('${r.receiptNo} • ${formatDate(r.createdAt, locale: context.lang)}'),
-                trailing: Text(formatPaise(r.amountPaise), style: const TextStyle(fontWeight: FontWeight.w800)),
-                onTap: () => context.push('/receipt/${r.id}'),
-              ),
-            ),
-        ]);
-      }),
-    );
-  }
-}
 
 class MyEventsScreen extends ConsumerWidget {
   const MyEventsScreen({super.key});
@@ -148,35 +65,6 @@ class MyBannersScreen extends ConsumerWidget {
             ),
         ]);
       }),
-    );
-  }
-}
-
-class _UpiPaymentTile extends StatelessWidget {
-  const _UpiPaymentTile(this.p);
-  final PaymentRecord p;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l10n;
-    final rejected = p.status == PaymentStatus.rejected;
-    final color = rejected ? KjdColors.kumkum : KjdColors.saffron;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Icon(rejected ? Icons.error_outline : Icons.hourglass_top, color: color, size: 30),
-        title: Text(p.description ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
-        subtitle: Text([
-          'UTR ${p.utr ?? '-'} • ${formatDate(p.submittedAt ?? p.createdAt, locale: context.lang)}',
-          if (rejected && p.rejectReason != null) p.rejectReason!,
-        ].join('\n')),
-        isThreeLine: rejected,
-        trailing: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text(formatPaise(p.amountPaise), style: const TextStyle(fontWeight: FontWeight.w800)),
-          Text(rejected ? l.upiRejected : l.upiPending,
-              style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
-        ]),
-      ),
     );
   }
 }

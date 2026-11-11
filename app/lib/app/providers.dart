@@ -12,7 +12,6 @@ import '../services/reading_context.dart';
 final demoModeProvider = Provider<bool>((_) => true);
 final dataStoreProvider = Provider<DataStore>((_) => throw UnimplementedError());
 final authServiceProvider = Provider<AuthService>((_) => throw UnimplementedError());
-final checkoutServiceProvider = Provider<CheckoutService>((_) => throw UnimplementedError());
 final photoUploaderProvider = Provider<PhotoUploader>((_) => DisabledPhotoUploader());
 final chatMediaUploaderProvider = Provider<ChatMediaUploader>((_) => DisabledChatMediaUploader());
 
@@ -48,8 +47,6 @@ final clockProvider = Provider<DateTime Function()>((_) => DateTime.now);
 
 final contentRepoProvider = Provider((ref) => ContentRepository(ref.watch(dataStoreProvider)));
 final eventRepoProvider = Provider((ref) => EventRepository(ref.watch(dataStoreProvider)));
-final sevaRepoProvider = Provider((ref) => SevaRepository(ref.watch(dataStoreProvider)));
-final donationRepoProvider = Provider((ref) => DonationRepository(ref.watch(dataStoreProvider)));
 final userRepoProvider = Provider((ref) => UserRepository(ref.watch(dataStoreProvider)));
 
 final authStateProvider = StreamProvider<AuthUser?>((ref) => ref.watch(authServiceProvider).authStateChanges());
@@ -227,32 +224,6 @@ final myRemindersProvider = StreamProvider((ref) {
   return ref.watch(eventRepoProvider).watchUserReminders(uid);
 });
 
-// ---- Seva & donations ----
-final sevasProvider = StreamProvider((ref) => ref.watch(sevaRepoProvider).watchSevas());
-final myBookingsProvider = StreamProvider((ref) {
-  final uid = ref.watch(uidProvider);
-  if (uid == null) return Stream.value(<SevaBooking>[]);
-  return ref.watch(sevaRepoProvider).watchUserBookings(uid);
-});
-final bookingProvider = StreamProvider.family<SevaBooking?, String>(
-    (ref, id) => ref.watch(sevaRepoProvider).watchBooking(id));
-final myDonationsProvider = StreamProvider((ref) {
-  final uid = ref.watch(uidProvider);
-  if (uid == null) return Stream.value(<Donation>[]);
-  return ref.watch(donationRepoProvider).watchUserDonations(uid);
-});
-final myReceiptsProvider = StreamProvider((ref) {
-  final uid = ref.watch(uidProvider);
-  if (uid == null) return Stream.value(<Receipt>[]);
-  return ref.watch(donationRepoProvider).watchUserReceipts(uid);
-});
-final myUpiPaymentsProvider = StreamProvider((ref) {
-  final uid = ref.watch(uidProvider);
-  if (uid == null) return Stream.value(<PaymentRecord>[]);
-  return ref.watch(donationRepoProvider).watchUserUpiPayments(uid);
-});
-final receiptProvider = StreamProvider.family<Receipt?, String>(
-    (ref, id) => ref.watch(donationRepoProvider).watchReceipt(id));
 final familyProvider = StreamProvider((ref) {
   final uid = ref.watch(uidProvider);
   if (uid == null) return Stream.value(<FamilyMember>[]);

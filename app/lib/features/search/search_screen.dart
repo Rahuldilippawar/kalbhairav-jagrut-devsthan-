@@ -15,7 +15,7 @@ class _Hit {
   final void Function(BuildContext) onTap;
 }
 
-/// Searches events, temple information, gallery, videos, seva and
+/// Searches events, temple information, gallery, videos and
 /// announcements. The content set is small, so this runs client-side over
 /// the already-synced collections (Firestore has no full-text search).
 class SearchScreen extends ConsumerStatefulWidget {
@@ -33,7 +33,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     if (_q.trim().length < 2) return const [];
     final l = context.l10n;
     final events = ref.watch(allEventsProvider).value ?? const <TempleEvent>[];
-    final sevas = ref.watch(sevasProvider).value ?? const <Seva>[];
     final notices = ref.watch(announcementsProvider).value ?? const <Announcement>[];
     final gallery = ref.watch(galleryProvider(null)).value ?? const <GalleryItem>[];
     final videos = ref.watch(videosProvider).value ?? const <VideoItem>[];
@@ -42,9 +41,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       for (final e in events)
         if (_match(e.title) || _match(e.description) || _match(e.location) || _match('${e.year}'))
           _Hit('🎉', e.title, formatDate(e.startDate), (c) => c.push('/event/${e.id}')),
-      for (final s in sevas)
-        if (_match(s.name) || _match(s.description))
-          _Hit('🪔', s.name, formatPaise(s.pricePaise), (c) => c.push('/book/${s.id}')),
       for (final a in notices)
         if (_match(a.title) || _match(a.body)) _Hit('📢', a.title, a.body, (c) => c.push('/notifications')),
       for (final v in videos)

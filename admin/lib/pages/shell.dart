@@ -7,19 +7,16 @@ import '../schema.dart';
 import '../widgets/crud.dart';
 import '../widgets/library_loader.dart';
 import 'audit_page.dart';
-import 'bookings_page.dart';
 import 'dashboard_page.dart';
 import 'deities_page.dart';
 import 'devotees_page.dart';
 import 'events_page.dart';
 import 'festival_page.dart';
-import 'finance_pages.dart';
 import 'guru_gyan_page.dart';
 import 'media_pages.dart';
 import 'notifications_page.dart';
 import 'reports_page.dart';
 import 'tithi_page.dart';
-import 'upi_page.dart';
 import 'users_page.dart';
 import 'vanshavali_page.dart';
 
@@ -35,9 +32,6 @@ class NavItem {
 
 final List<NavItem> navItems = [
   NavItem('dashboard', 'Dashboard', Icons.dashboard_outlined, AdminModule.dashboard, () => const DashboardPage()),
-  NavItem('checkin', 'QR Check-in', Icons.qr_code_scanner, AdminModule.checkIn, () => const CheckInPage(), group: 'Seva'),
-  NavItem('bookings', 'Seva Bookings', Icons.event_seat_outlined, AdminModule.bookings, () => const BookingsPage(), group: 'Seva'),
-  NavItem('sevas', 'Seva Catalogue', Icons.local_fire_department_outlined, AdminModule.seva, () => CollectionListPage(spec: Specs.sevas), group: 'Seva'),
   NavItem('events', 'Events & Archive', Icons.event_outlined, AdminModule.events, () => const EventsPage(), group: 'Utsav'),
   NavItem('calendar', 'Calendar Programmes', Icons.edit_calendar, AdminModule.events,
       () => CollectionListPage(
@@ -45,10 +39,7 @@ final List<NavItem> navItems = [
           subtitle: 'कार्यक्रमाचे नाव, तारीख, ठिकाण आणि हवा असल्यास फोटो टाका – त्या दिवसाचे पंचांग ॲप आपोआप दाखवते.'),
       group: 'Utsav'),
   NavItem('categories', 'Event Categories', Icons.category_outlined, AdminModule.events, () => CollectionListPage(spec: Specs.categories), group: 'Utsav'),
-  NavItem('donations', 'Donations', Icons.volunteer_activism_outlined, AdminModule.donations, () => const DonationsPage(), group: 'Finance'),
-  NavItem('upi', 'UPI Verification', Icons.qr_code_2, AdminModule.payments, () => const UpiVerificationPage(), group: 'Finance'),
-  NavItem('payments', 'Payments', Icons.payments_outlined, AdminModule.payments, () => const PaymentsPage(), group: 'Finance'),
-  NavItem('reports', 'Reports', Icons.bar_chart, AdminModule.reports, () => const ReportsPage(), group: 'Finance'),
+  NavItem('reports', 'Reports', Icons.bar_chart, AdminModule.reports, () => const ReportsPage(), group: 'Content'),
   NavItem('greetings', 'Daily Subhechha', Icons.wb_sunny_outlined, AdminModule.content, () => CollectionListPage(spec: Specs.greetings), group: 'Content'),
   NavItem('quotes', 'Quotes', Icons.format_quote, AdminModule.content, () => CollectionListPage(spec: Specs.quotes, header: LibraryLoader(collection: Col.dailyQuotes, items: suvicharLibraryDocs, label: 'Suvichar library')), group: 'Content'),
   NavItem('mantras', 'Mantras', Icons.self_improvement, AdminModule.content, () => CollectionListPage(spec: Specs.mantras, header: LibraryLoader(collection: Col.mantras, items: mantraLibraryDocs, label: 'Mantra library')), group: 'Content'),

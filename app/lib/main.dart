@@ -13,7 +13,6 @@ import 'services/chat_media.dart';
 import 'services/photo_uploader.dart';
 import 'services/push_service.dart';
 import 'services/reading_context.dart';
-import 'services/upi_gateway.dart';
 import 'widgets/route_map.dart';
 
 /// Pass `--dart-define=KJD_DEMO=true` to force demo mode even when Firebase
@@ -49,12 +48,6 @@ Future<List<Override>> _bootstrap() async {
         demoModeProvider.overrideWithValue(false),
         dataStoreProvider.overrideWithValue(store),
         authServiceProvider.overrideWithValue(auth),
-        // UPI (QR / PhonePe / GPay / Paytm) to the temple's UPI ID from App Settings.
-        checkoutServiceProvider.overrideWithValue(UpiOrFallbackCheckout(
-          settings: () => ContentRepository(store).watchSettings().first,
-          upi: UpiCheckoutService(FunctionsUpiGateway(), showUpiPayScreen),
-          fallback: const UnavailableCheckout(),
-        )),
         photoUploaderProvider.overrideWithValue(FirebasePhotoUploader()),
         chatMediaUploaderProvider.overrideWithValue(FirebaseChatMediaUploader()),
         readingContextProvider.overrideWithValue(DeviceReadingContext()),
@@ -75,7 +68,6 @@ List<Override> demoOverrides({
   DateTime Function()? clock,
   AuthUser? user,
   bool mapTiles = true,
-  UpiPayUi upiPayUi = showUpiPayScreen,
 }) {
   final now = clock ?? DateTime.now;
   final seed = buildDemoSeed(now());
@@ -87,29 +79,11 @@ List<Override> demoOverrides({
   }
   final store = MemoryDataStore(seed)..clock = now;
   final auth = DemoAuthService(initial: user);
-  final content = ContentRepository(store);
   return [
     demoModeProvider.overrideWithValue(true),
     clockProvider.overrideWithValue(now),
     if (!mapTiles) mapTileUrlProvider.overrideWithValue(null),
     dataStoreProvider.overrideWithValue(store),
     authServiceProvider.overrideWithValue(auth),
-    checkoutServiceProvider.overrideWithValue(demoCheckout(store, auth, content, now, upiPayUi)),
   ];
-}
-
-/// Instant demo checkout, or the UPI flow when demo settings carry a UPI ID.
-CheckoutService demoCheckout(MemoryDataStore store, DemoAuthService auth, ContentRepository content,
-    DateTime Function() now, UpiPayUi upiPayUi) {
-  final demo = DemoCheckoutService(
-    store,
-    userId: () => auth.currentUser!.uid,
-    settings: () => content.watchSettings().first,
-    clock: now,
-  );
-  return UpiOrFallbackCheckout(
-    settings: demo.settings,
-    upi: UpiCheckoutService(DemoUpiGateway(demo), upiPayUi),
-    fallback: demo,
-  );
 }

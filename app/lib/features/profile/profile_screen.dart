@@ -28,8 +28,6 @@ class ProfileScreen extends ConsumerWidget {
     }
 
     final items = [
-      (Icons.qr_code_2, l.mySeva, '/profile/seva'),
-      (Icons.receipt_long, '${l.myDonations} / ${l.myReceipts}', '/profile/donations'),
       (Icons.event_available, l.myEvents, '/profile/events'),
       (Icons.image_outlined, l.myBanners, '/profile/banners'),
       (Icons.family_restroom, l.family, '/profile/family'),

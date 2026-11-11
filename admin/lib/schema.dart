@@ -99,11 +99,6 @@ abstract final class Specs {
       FieldSpec('mapUrl', 'Google Maps link', type: FieldType.url),
       FieldSpec('coverImageUrl', 'Cover image', type: FieldType.image),
       FieldSpec('closureNotice', 'Temporary closure notice', type: FieldType.multiline, help: 'Leave empty when the temple is open'),
-      FieldSpec('trustName', 'Receipt: registered trust name'),
-      FieldSpec('trustRegNo', 'Receipt: trust registration no.', help: 'e.g. Public Trust Reg. No. under the Maharashtra Public Trusts Act'),
-      FieldSpec('trustPan', 'Receipt: trust PAN'),
-      FieldSpec('eightyGNo', 'Receipt: 80G approval no.', help: 'When set, donation receipts show the 80G line'),
-      FieldSpec('receiptNote', 'Receipt: footer note', type: FieldType.multiline),
     ],
   );
 
@@ -114,17 +109,6 @@ abstract final class Specs {
     module: AdminModule.settings,
     columns: const [],
     fields: const [
-      FieldSpec('upiId', 'Temple UPI ID (PhonePe Business)',
-          help: 'PhonePe Business app → Profile / Settings → UPI ID (looks like name@ybl or Q…@ybl). Devotees pay to it by '
-              'PhonePe, GPay, Paytm or any UPI app; the office verifies the UTR under Finance → UPI Verification.'),
-      FieldSpec('upiPayeeName', 'UPI payee name', help: 'In English, as in PhonePe Business, e.g. Shri Kalbhairav Jagrut Devsthan'),
-      FieldSpec('upiQrImageUrl', 'PhonePe Business QR (photo)', type: FieldType.image,
-          help: 'Optional: a photo/screenshot of the temple\'s PhonePe Business QR. Shown as a second QR devotees can scan.'),
-      FieldSpec('donationCategories', 'Donation categories', type: FieldType.tags),
-      FieldSpec('donationPresetsRupees', 'Donation presets (₹)', type: FieldType.intList),
-      FieldSpec('minDonationRupees', 'Minimum donation (₹)', type: FieldType.integer),
-      FieldSpec('maxDonationRupees', 'Maximum online donation (₹)', type: FieldType.integer),
-      FieldSpec('bookingWindowDays', 'Seva booking window (days)', type: FieldType.integer),
       FieldSpec('androidBuild', 'Android app: latest build', type: FieldType.integer,
           help: 'Set automatically by "Build Android APK". Apps older than this offer the update.'),
       FieldSpec('androidApkUrl', 'Android app: APK download link', type: FieldType.url,
@@ -313,25 +297,6 @@ abstract final class Specs {
       const FieldSpec('album', 'Album (e.g. Day 1)'),
       const FieldSpec('caption', 'Caption'),
       const FieldSpec('order', 'Order', type: FieldType.integer, defaultValue: 0),
-    ],
-  );
-
-  static final sevas = CollectionSpec(
-    collection: Col.sevas,
-    title: 'Seva',
-    module: AdminModule.seva,
-    orderBy: 'order',
-    columns: const ['name', 'pricePaise', 'timeSlots', 'capacityPerSlot', 'active'],
-    fields: const [
-      FieldSpec('name', 'Name', required: true),
-      FieldSpec('description', 'Description', type: FieldType.multiline),
-      FieldSpec('pricePaise', 'Price (₹)', type: FieldType.money, required: true),
-      FieldSpec('timeSlots', 'Time slots (HH:mm)', type: FieldType.tags, help: 'e.g. 06:30, 08:00'),
-      FieldSpec('capacityPerSlot', 'Capacity per slot', type: FieldType.integer, defaultValue: 10),
-      FieldSpec('availableWeekdays', 'Weekdays (1=Mon … 7=Sun)', type: FieldType.intList, defaultValue: [1, 2, 3, 4, 5, 6, 7]),
-      FieldSpec('imageUrl', 'Image', type: FieldType.image),
-      FieldSpec('order', 'Order', type: FieldType.integer, defaultValue: 0),
-      FieldSpec('active', 'Active', type: FieldType.boolean, defaultValue: true),
     ],
   );
 
