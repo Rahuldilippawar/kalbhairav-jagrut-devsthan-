@@ -1125,3 +1125,58 @@ class FestivalScenePainter extends CustomPainter {
   @override
   bool shouldRepaint(FestivalScenePainter old) => old.art != art || old.unit != unit;
 }
+
+/// Paintings of deities bundled with the app (Raja Ravi Varma and the Ravi
+/// Varma Press, c. 1890–1910; public domain, via Wikimedia Commons).
+const deityAssets = {
+  'lakshmi': 'assets/deity/lakshmi.jpg',
+  'ganesh': 'assets/deity/ganesh.jpg',
+  'shiva': 'assets/deity/shiva.jpg',
+  'krishna': 'assets/deity/krishna.jpg',
+  'datta': 'assets/deity/datta.jpg',
+  'saraswati': 'assets/deity/saraswati.jpg',
+  'rama': 'assets/deity/rama.jpg',
+};
+
+const _deityById = {
+  'lakshmipujan': 'lakshmi',
+  'dhanteras': 'lakshmi',
+  'kojagiri': 'lakshmi',
+  'akshayatritiya': 'lakshmi',
+  'ganeshchaturthi': 'ganesh',
+  'anantchaturdashi': 'ganesh',
+  'ganeshjayanti': 'ganesh',
+  'sankashti': 'ganesh',
+  'vinayaki': 'ganesh',
+  'mahashivratri': 'shiva',
+  'shivratri': 'shiva',
+  'pradosh': 'shiva',
+  'tripurari': 'shiva',
+  'hartalika': 'shiva',
+  'gokulashtami': 'krishna',
+  'dahihandi': 'krishna',
+  'vasubaras': 'krishna',
+  'dattajayanti': 'datta',
+  'gurupurnima': 'datta',
+  'swamisamarth': 'datta',
+  'vasantpanchami': 'saraswati',
+  'ramnavami': 'rama',
+  'dasara': 'rama',
+};
+
+/// Asset of the deity painting for a festival / vrat id, if there is one.
+String? festivalDeity(String? festivalId) {
+  if (festivalId == null) return null;
+  final id = festivalId.startsWith('fest-') ? festivalId.substring(5) : festivalId;
+  return deityAssets[_deityById[id] ?? _deityById[id.split('-').first]];
+}
+
+/// Where the deity sits in each painting, so cropping keeps them in view.
+Alignment deityFocus(String asset) => switch (asset.split('/').last) {
+      'ganesh.jpg' => const Alignment(0, .25),
+      'shiva.jpg' => const Alignment(0, .1),
+      'krishna.jpg' => const Alignment(-.2, .1),
+      'saraswati.jpg' => const Alignment(-.2, -.3),
+      'rama.jpg' => const Alignment(0, -.2),
+      _ => Alignment.topCenter,
+    };

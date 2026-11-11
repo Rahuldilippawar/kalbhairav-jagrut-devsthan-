@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -103,6 +104,39 @@ void main() {
     }
     for (final v in ['ekadashi-2026-10-06', 'sankashti-2026-10-29', 'fest-dasara']) {
       expect(festivalArt(v), isNotNull, reason: v);
+    }
+  });
+
+  test('deity festivals use a bundled painting', () {
+    for (final id in ['lakshmipujan', 'ganeshchaturthi', 'mahashivratri', 'gokulashtami', 'dattajayanti', 'vasantpanchami', 'dasara', 'sankashti-2026-10-29']) {
+      final asset = festivalDeity(id);
+      expect(asset, isNotNull, reason: id);
+      expect(File(asset!).existsSync(), isTrue, reason: asset);
+    }
+    expect(festivalDeity('makarsankranti'), isNull);
+  });
+
+  testWidgets('a deity painting fits every layout and format', (tester) async {
+    for (final layout in BannerTemplate.layouts.keys) {
+      for (final format in BannerFormat.values) {
+        await tester.pumpWidget(MaterialApp(
+          home: Center(
+            child: SizedBox(
+              width: 360,
+              child: BannerCanvas(
+                template: BannerTemplate(id: 't', name: 't', category: BannerCategory.festival, layout: layout),
+                headline: '🪔 शुभ दीपावली – लक्ष्मीपूजन',
+                message: long,
+                format: format,
+                art: festivalArt('lakshmipujan'),
+                deity: festivalDeity('lakshmipujan'),
+              ),
+            ),
+          ),
+        ));
+        await tester.pump();
+        expect(tester.takeException(), isNull, reason: '$layout $format');
+      }
     }
   });
 }

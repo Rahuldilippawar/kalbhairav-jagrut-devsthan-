@@ -105,6 +105,8 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
     _festival = fd;
     _category = fd.festival.category;
     _layout = _headFont = _bodyFont = null;
+    // A deity festival opens with the large painting at the top.
+    if (festivalDeity(fd.festival.id) != null) _layout = 'photoHero';
     _applyTemplate(fd.festival.toTemplate());
   }
 
@@ -255,6 +257,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
     final showPicture = _showFestivalPicture && festivalId != null;
     final festivalPhoto = showPicture ? images[festivalId] ?? images[festivalId.split('-').first] : null;
     final art = showPicture ? festivalArt(festivalId) : null;
+    final deity = showPicture ? festivalDeity(festivalId) : null;
     final date = _includeDate ? formatDate(_festival?.date ?? ref.read(clockProvider)()) : null;
     final personal = _category == BannerCategory.birthday || _category == BannerCategory.anniversary;
 
@@ -283,6 +286,7 @@ class _BannerStudioScreenState extends ConsumerState<BannerStudioScreen> {
                   textScale: _textScale,
                   art: art,
                   photoUrl: festivalPhoto,
+                  deity: deity,
                 ),
               ),
             ),

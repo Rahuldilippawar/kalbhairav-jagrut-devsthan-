@@ -317,7 +317,7 @@ class _Layout {
         : b.photoUrl != null
             ? NetImage(b.photoUrl)
             : b.deity != null
-            ? Image.asset(b.deity!, fit: BoxFit.cover, alignment: Alignment.topCenter)
+            ? Image.asset(b.deity!, fit: BoxFit.cover, alignment: deityFocus(b.deity!))
             : Stack(
                 fit: StackFit.expand,
                 children: [
@@ -579,7 +579,7 @@ class _Layout {
       ),
       child: ClipRRect(
         borderRadius: radius,
-        child: Image.asset(asset, fit: BoxFit.cover, alignment: Alignment.topCenter, gaplessPlayback: true),
+        child: Image.asset(asset, fit: BoxFit.cover, alignment: deityFocus(asset), gaplessPlayback: true),
       ),
     );
   }
