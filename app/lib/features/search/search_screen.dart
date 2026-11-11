@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kjd_core/kjd_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app/providers.dart';
 import '../../widgets/common.dart';
@@ -24,8 +25,40 @@ class SearchScreen extends ConsumerStatefulWidget {
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
+const _recentKey = 'recent_searches_v1';
+
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   String _q = '';
+  final _field = TextEditingController();
+  List<String> _recent = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((p) {
+      if (mounted) setState(() => _recent = p.getStringList(_recentKey) ?? const []);
+    }).catchError((_) {});
+  }
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  void _setQuery(String q) {
+    _field.text = q;
+    _field.selection = TextSelection.collapsed(offset: q.length);
+    setState(() => _q = q);
+  }
+
+  /// Remembers a search the devotee acted on (most recent first, 8 kept).
+  void _remember() {
+    final q = _q.trim();
+    if (q.length < 2) return;
+    _recent = [q, ..._recent.where((r) => r != q)].take(8).toList();
+    SharedPreferences.getInstance().then((p) => p.setStringList(_recentKey, _recent)).catchError((_) => false);
+  }
 
   bool _match(String? s) => s != null && s.toLowerCase().contains(_q.toLowerCase());
 
@@ -37,7 +70,25 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final gallery = ref.watch(galleryProvider(null)).value ?? const <GalleryItem>[];
     final videos = ref.watch(videosProvider).value ?? const <VideoItem>[];
     final info = ref.watch(templeInfoProvider).value;
+    final deities = ref.watch(deitiesProvider).value ?? const <Deity>[];
+    final programmes = ref.watch(calendarEventsProvider).value ?? const <CalendarEvent>[];
+    final today = dateOnly(ref.watch(clockProvider)());
+    final festivals = [
+      for (var y = today.year; y <= today.year + 1; y++) ...ref.watch(festivalYearProvider(y)),
+    ].where((f) => !f.date.isBefore(today) && f.festival.kind != FestivalKind.vrat);
+    final seen = <String>{};
     return [
+      for (final d in deities)
+        if (_match(d.name) || _match(d.subtitle) || _match(d.about))
+          _Hit('🛕', d.name, d.subtitle ?? l.templeDeities, (c) => c.push('/deity/${d.id}')),
+      for (final f in festivals)
+        if ((_match(f.festival.name)) && seen.add(f.festival.id))
+          _Hit('🪔', f.festival.name, formatDate(f.date, locale: context.lang),
+              (c) => c.push(Uri(path: '/banner', queryParameters: {'festival': f.festival.id, 'date': dateKey(f.date)}).toString())),
+      for (final p in programmes)
+        if (_match(p.title) || _match(p.location))
+          _Hit('📅', p.title, '${formatDate(p.date, locale: context.lang)}${p.location.isEmpty ? '' : ' • ${p.location}'}',
+              (c) => c.push('/calendar')),
       for (final e in events)
         if (_match(e.title) || _match(e.description) || _match(e.location) || _match('${e.year}'))
           _Hit('🎉', e.title, formatDate(e.startDate), (c) => c.push('/event/${e.id}')),
@@ -65,6 +116,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
+          controller: _field,
           autofocus: true,
           style: const TextStyle(color: Colors.white),
           cursorColor: Colors.white,
@@ -79,7 +131,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         ),
       ),
       body: _q.trim().length < 2
-          ? EmptyState(message: l.searchHint, icon: Icons.search)
+          ? _Suggestions(
+              recent: _recent,
+              onPick: _setQuery,
+              onClear: () {
+                setState(() => _recent = const []);
+                SharedPreferences.getInstance().then((p) => p.remove(_recentKey)).catchError((_) => false);
+              },
+            )
           : hits.isEmpty
               ? EmptyState(message: l.noResults, icon: Icons.search_off)
               : ListView.separated(
@@ -88,13 +147,66 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   itemBuilder: (context, i) {
                     final h = hits[i];
                     return ListTile(
-                      leading: Text(h.icon, style: const TextStyle(fontSize: 24)),
+                      leading: Container(
+                        width: 44,
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(color: KjdColors.goldLight, borderRadius: BorderRadius.circular(12)),
+                        child: Text(h.icon, style: const TextStyle(fontSize: 22)),
+                      ),
                       title: Text(h.title, style: const TextStyle(fontWeight: FontWeight.w700)),
                       subtitle: Text(h.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
-                      onTap: () => h.onTap(context),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        _remember();
+                        h.onTap(context);
+                      },
                     );
                   },
                 ),
     );
+  }
+}
+
+/// Before typing: recent searches and ready suggestions.
+class _Suggestions extends StatelessWidget {
+  const _Suggestions({required this.recent, required this.onPick, required this.onClear});
+  final List<String> recent;
+  final ValueChanged<String> onPick;
+  final VoidCallback onClear;
+
+  static const _ideas = ['काळभैरव', 'नवरात्र', 'दिवाळी', 'आरती', 'दिंडी', 'गणपती', 'महाशिवरात्री', 'इतिहास'];
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      if (recent.isNotEmpty) ...[
+        Row(children: [
+          Expanded(child: Text('🕘 ${l.recentSearches}', style: const TextStyle(fontWeight: FontWeight.w800))),
+          TextButton(onPressed: onClear, child: Text(l.clearAll)),
+        ]),
+        for (final r in recent)
+          ListTile(
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.history, color: KjdColors.inkMuted),
+            title: Text(r),
+            trailing: const Icon(Icons.north_west, size: 18, color: KjdColors.inkMuted),
+            onTap: () => onPick(r),
+          ),
+        const SizedBox(height: 12),
+      ],
+      Text('✨ ${l.trySearching}', style: const TextStyle(fontWeight: FontWeight.w800)),
+      const SizedBox(height: 10),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        for (final i in _ideas)
+          ActionChip(
+            avatar: const Icon(Icons.search, size: 16),
+            label: Text(i),
+            onPressed: () => onPick(i),
+          ),
+      ]),
+    ]);
   }
 }

@@ -448,5 +448,21 @@
   "completeProfileTitle": "તમારી માહિતી ભરો",
   "completeProfileHint": "એપનો ઉપયોગ શરૂ કરવા કૃપા કરીને તમારું નામ, મોબાઇલ નંબર અને ગામ ભરો. આ માહિતી ફક્ત મંદિર માટે છે.",
   "continueText": "આગળ વધો",
-  "festivalPicture": "તહેવારનું ચિત્ર"
+  "festivalPicture": "તહેવારનું ચિત્ર",
+  "closesIn": "{time}માં બંધ થશે",
+  "opensIn": "{time}માં ખુલશે",
+  "startsIn": "{time}માં",
+  "todaySchedule": "આજનું સમયપત્રક",
+  "nowLabel": "હમણાં",
+  "nextLabel": "આગળ",
+  "nextEventTitle": "આગામી ઉત્સવ",
+  "daysLeft": "{n} દિવસ બાકી",
+  "happeningToday": "આજે ચાલુ છે",
+  "tomorrowLabel": "આવતીકાલે",
+  "recentSearches": "તાજેતરની શોધ",
+  "trySearching": "આ શોધો",
+  "clearAll": "બધું હટાવો",
+  "earlier": "અગાઉના",
+  "yesterday": "ગઈકાલે",
+  "myActivity": "મારી ભાગીદારી"
 }

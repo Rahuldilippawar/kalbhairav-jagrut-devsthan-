@@ -2795,6 +2795,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Festival picture'**
   String get festivalPicture;
+
+  /// No description provided for @closesIn.
+  ///
+  /// In en, this message translates to:
+  /// **'closes in {time}'**
+  String closesIn(String time);
+
+  /// No description provided for @opensIn.
+  ///
+  /// In en, this message translates to:
+  /// **'opens in {time}'**
+  String opensIn(String time);
+
+  /// No description provided for @startsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'in {time}'**
+  String startsIn(String time);
+
+  /// No description provided for @todaySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s schedule'**
+  String get todaySchedule;
+
+  /// No description provided for @nowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get nowLabel;
+
+  /// No description provided for @nextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextLabel;
+
+  /// No description provided for @nextEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next festival'**
+  String get nextEventTitle;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} days to go'**
+  String daysLeft(int n);
+
+  /// No description provided for @happeningToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Happening now'**
+  String get happeningToday;
+
+  /// No description provided for @tomorrowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrowLabel;
+
+  /// No description provided for @recentSearches.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent searches'**
+  String get recentSearches;
+
+  /// No description provided for @trySearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Try searching'**
+  String get trySearching;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get clearAll;
+
+  /// No description provided for @earlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get earlier;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @myActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'My activity'**
+  String get myActivity;
 }
 
 class _AppLocalizationsDelegate

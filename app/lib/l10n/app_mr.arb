@@ -448,5 +448,21 @@
   "completeProfileTitle": "आपली माहिती भरा",
   "completeProfileHint": "ॲप वापरण्यास सुरुवात करण्यासाठी कृपया आपले नाव, मोबाईल नंबर व गाव भरा. ही माहिती फक्त देवस्थानासाठी वापरली जाते.",
   "continueText": "पुढे चला",
-  "festivalPicture": "सणाचे चित्र / फोटो"
+  "festivalPicture": "सणाचे चित्र / फोटो",
+  "closesIn": "{time} मध्ये बंद होईल",
+  "opensIn": "{time} मध्ये उघडेल",
+  "startsIn": "{time} मध्ये",
+  "todaySchedule": "आजचे वेळापत्रक",
+  "nowLabel": "आत्ता",
+  "nextLabel": "पुढे",
+  "nextEventTitle": "पुढील उत्सव",
+  "daysLeft": "{n} दिवस बाकी",
+  "happeningToday": "आज सुरू आहे",
+  "tomorrowLabel": "उद्या",
+  "recentSearches": "अलीकडील शोध",
+  "trySearching": "हे शोधून पाहा",
+  "clearAll": "सर्व काढा",
+  "earlier": "आधीचे",
+  "yesterday": "काल",
+  "myActivity": "माझा सहभाग"
 }

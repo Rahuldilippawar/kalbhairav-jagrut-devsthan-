@@ -74,11 +74,15 @@ class _EventsScreenState extends ConsumerState<EventsScreen> {
                   ),
               ]);
             }
-            return ListView.separated(
+            // Upcoming: the nearest event leads as a countdown card.
+            final hero = _year == null ? items.first : null;
+            final rest = hero == null ? items : items.skip(1).toList();
+            return ListView(
               padding: const EdgeInsets.all(16),
-              itemCount: items.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 14),
-              itemBuilder: (_, i) => EventCard(event: items[i], tall: true),
+              children: [
+                if (hero != null) ...[_NextEventHero(event: hero), const SizedBox(height: 14)],
+                for (final e in rest) ...[EventCard(event: e, tall: true), const SizedBox(height: 14)],
+              ],
             );
           }),
         ),
@@ -133,7 +137,9 @@ class EventCard extends ConsumerWidget {
               top: 8,
               left: 8,
               child: Pill(
-                eventStatusLabel(context, e, now),
+                e.isUpcoming(now) && _daysTo(e, now) > 0
+                    ? context.l10n.daysLeft(_daysTo(e, now))
+                    : eventStatusLabel(context, e, now),
                 color: e.isOngoing(now) ? KjdColors.success : (e.isUpcoming(now) ? KjdColors.saffron : KjdColors.inkMuted),
                 filled: true,
               ),
@@ -162,6 +168,97 @@ class EventCard extends ConsumerWidget {
             ]),
           ),
         ]),
+      ),
+    );
+  }
+}
+
+/// Days from today to the start of [e] (0 = today or already running).
+int _daysTo(TempleEvent e, DateTime now) {
+  final d = dateOnly(e.startDate).difference(dateOnly(now)).inDays;
+  return d < 0 ? 0 : d;
+}
+
+/// The nearest upcoming event with a big "N days to go" countdown.
+class _NextEventHero extends ConsumerWidget {
+  const _NextEventHero({required this.event});
+  final TempleEvent event;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final now = ref.watch(clockProvider)();
+    final cats = ref.watch(categoriesProvider).value ?? const [];
+    final e = event;
+    final days = _daysTo(e, now);
+    final running = e.isOngoing(now) || days == 0;
+    return Material(
+      borderRadius: BorderRadius.circular(22),
+      clipBehavior: Clip.antiAlias,
+      elevation: 4,
+      shadowColor: KjdColors.kumkum.withValues(alpha: .4),
+      child: InkWell(
+        onTap: () => context.push('/event/${e.id}'),
+        child: SizedBox(
+          height: 210,
+          child: Stack(fit: StackFit.expand, children: [
+            NetImage(e.bannerUrl, fallbackIcon: categoryIcon(cats, e.categoryId)),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x22000000), Color(0xDD3E0000)],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 12,
+              left: 12,
+              child: Pill('⭐ ${l.nextEventTitle}', color: KjdColors.gold, filled: true),
+            ),
+            Positioned(
+              top: 10,
+              right: 12,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8)],
+                ),
+                child: running
+                    ? Text(l.happeningToday, style: const TextStyle(color: KjdColors.success, fontWeight: FontWeight.w900))
+                    : Column(mainAxisSize: MainAxisSize.min, children: [
+                        Text('$days', style: const TextStyle(fontSize: 28, height: 1, fontWeight: FontWeight.w900, color: KjdColors.kumkum)),
+                        Text(l.daysLeft(days).replaceFirst('$days', '').trim(),
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: KjdColors.kumkumDark)),
+                      ]),
+              ),
+            ),
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 14,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(e.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w900, height: 1.2)),
+                const SizedBox(height: 4),
+                Text(
+                  [
+                    formatDate(e.startDate, locale: context.lang),
+                    if (e.location != null && e.location!.isNotEmpty) '📍 ${e.location}',
+                  ].join('  •  '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: KjdColors.goldLight, fontWeight: FontWeight.w600),
+                ),
+              ]),
+            ),
+          ]),
+        ),
       ),
     );
   }

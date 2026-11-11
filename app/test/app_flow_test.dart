@@ -178,6 +178,33 @@ void main() {
     expect(c.read(profileProvider).value?.village, 'रुंधाटी');
   });
 
+  testWidgets('smart darshan countdown, next-event countdown and search suggestions', (tester) async {
+    final c = await _start(tester, to: '/darshan');
+    // 09:30: morning darshan (06:00–12:30) is open and closes in 3 hours.
+    expect(find.text('⏱ 3 तास मध्ये बंद होईल'), findsOneWidget);
+    expect(find.textContaining('2 तास 30 मि. मध्ये'), findsOneWidget); // madhyahna aarti 12:00
+    expect(find.text('आजचे वेळापत्रक'), findsOneWidget);
+    expect(find.text('आत्ता'), findsOneWidget);
+
+    c.read(routerProvider).go('/events');
+    await tester.pumpAndSettle();
+    expect(find.text('⭐ पुढील उत्सव'), findsOneWidget);
+
+    c.read(routerProvider).go('/search');
+    await tester.pumpAndSettle();
+    expect(find.text('✨ हे शोधून पाहा'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ActionChip, 'नवरात्र'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('नवरात्र'), findsWidgets);
+    await tester.tap(find.byType(ListTile).first);
+    await tester.pumpAndSettle();
+    c.read(routerProvider).go('/home');
+    await tester.pumpAndSettle();
+    c.read(routerProvider).go('/search');
+    await tester.pumpAndSettle();
+    expect(find.text('🕘 अलीकडील शोध'), findsOneWidget);
+  });
+
   testWidgets('events archive filters by year', (tester) async {
     await _start(tester, to: '/events');
     expect(find.text('नवरात्र उत्सव 2026'), findsOneWidget);

@@ -448,5 +448,21 @@
   "completeProfileTitle": "अपनी जानकारी भरें",
   "completeProfileHint": "ऐप का उपयोग शुरू करने के लिए कृपया अपना नाम, मोबाइल नंबर और गाँव भरें। यह जानकारी केवल मंदिर के लिए है।",
   "continueText": "आगे बढ़ें",
-  "festivalPicture": "त्योहार का चित्र / फोटो"
+  "festivalPicture": "त्योहार का चित्र / फोटो",
+  "closesIn": "{time} में बंद होगा",
+  "opensIn": "{time} में खुलेगा",
+  "startsIn": "{time} में",
+  "todaySchedule": "आज का समय",
+  "nowLabel": "अभी",
+  "nextLabel": "अगला",
+  "nextEventTitle": "अगला उत्सव",
+  "daysLeft": "{n} दिन बाकी",
+  "happeningToday": "आज चल रहा है",
+  "tomorrowLabel": "कल",
+  "recentSearches": "हाल की खोज",
+  "trySearching": "यह खोजें",
+  "clearAll": "सब हटाएँ",
+  "earlier": "पहले के",
+  "yesterday": "कल",
+  "myActivity": "मेरी भागीदारी"
 }

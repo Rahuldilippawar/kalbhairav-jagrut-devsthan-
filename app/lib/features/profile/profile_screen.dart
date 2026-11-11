@@ -82,6 +82,36 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
         const SizedBox(height: 12),
+        // Activity at a glance.
+        Row(children: [
+          for (final (icon, count, label, path) in [
+            ('🎉', ref.watch(myRemindersProvider).value?.length ?? 0, l.myEvents, '/profile/events'),
+            ('🎨', ref.watch(myBannersProvider).value?.length ?? 0, l.myBanners, '/profile/banners'),
+            ('👨‍👩‍👧', ref.watch(familyProvider).value?.length ?? 0, l.family, '/profile/family'),
+          ])
+            Expanded(
+              child: Card(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(18),
+                  onTap: () => context.push(path),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+                    child: Column(children: [
+                      Text(icon, style: const TextStyle(fontSize: 22)),
+                      const SizedBox(height: 4),
+                      Text('$count', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: KjdColors.kumkum)),
+                      Text(label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12, color: KjdColors.inkMuted)),
+                    ]),
+                  ),
+                ),
+              ),
+            ),
+        ]),
+        const SizedBox(height: 12),
         Card(
           child: Column(children: [
             for (final (icon, label, path) in items)

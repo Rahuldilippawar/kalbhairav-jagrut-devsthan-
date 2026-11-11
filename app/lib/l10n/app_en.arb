@@ -663,5 +663,49 @@
   "completeProfileTitle": "Complete your profile",
   "completeProfileHint": "To start using the app, please enter your name, mobile number and village. This is used only by the temple.",
   "continueText": "Continue",
-  "festivalPicture": "Festival picture"
+  "festivalPicture": "Festival picture",
+  "closesIn": "closes in {time}",
+  "@closesIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "opensIn": "opens in {time}",
+  "@opensIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "startsIn": "in {time}",
+  "@startsIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "todaySchedule": "Today’s schedule",
+  "nowLabel": "Now",
+  "nextLabel": "Next",
+  "nextEventTitle": "Next festival",
+  "daysLeft": "{n} days to go",
+  "@daysLeft": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "happeningToday": "Happening now",
+  "tomorrowLabel": "Tomorrow",
+  "recentSearches": "Recent searches",
+  "trySearching": "Try searching",
+  "clearAll": "Clear all",
+  "earlier": "Earlier",
+  "yesterday": "Yesterday",
+  "myActivity": "My activity"
 }

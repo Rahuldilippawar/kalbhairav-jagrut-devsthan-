@@ -1453,4 +1453,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get festivalPicture => 'Festival picture';
+
+  @override
+  String closesIn(String time) {
+    return 'closes in $time';
+  }
+
+  @override
+  String opensIn(String time) {
+    return 'opens in $time';
+  }
+
+  @override
+  String startsIn(String time) {
+    return 'in $time';
+  }
+
+  @override
+  String get todaySchedule => 'Today’s schedule';
+
+  @override
+  String get nowLabel => 'Now';
+
+  @override
+  String get nextLabel => 'Next';
+
+  @override
+  String get nextEventTitle => 'Next festival';
+
+  @override
+  String daysLeft(int n) {
+    return '$n days to go';
+  }
+
+  @override
+  String get happeningToday => 'Happening now';
+
+  @override
+  String get tomorrowLabel => 'Tomorrow';
+
+  @override
+  String get recentSearches => 'Recent searches';
+
+  @override
+  String get trySearching => 'Try searching';
+
+  @override
+  String get clearAll => 'Clear all';
+
+  @override
+  String get earlier => 'Earlier';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get myActivity => 'My activity';
 }

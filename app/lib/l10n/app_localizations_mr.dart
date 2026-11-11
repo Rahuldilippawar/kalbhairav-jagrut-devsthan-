@@ -1450,4 +1450,60 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get festivalPicture => 'सणाचे चित्र / फोटो';
+
+  @override
+  String closesIn(String time) {
+    return '$time मध्ये बंद होईल';
+  }
+
+  @override
+  String opensIn(String time) {
+    return '$time मध्ये उघडेल';
+  }
+
+  @override
+  String startsIn(String time) {
+    return '$time मध्ये';
+  }
+
+  @override
+  String get todaySchedule => 'आजचे वेळापत्रक';
+
+  @override
+  String get nowLabel => 'आत्ता';
+
+  @override
+  String get nextLabel => 'पुढे';
+
+  @override
+  String get nextEventTitle => 'पुढील उत्सव';
+
+  @override
+  String daysLeft(int n) {
+    return '$n दिवस बाकी';
+  }
+
+  @override
+  String get happeningToday => 'आज सुरू आहे';
+
+  @override
+  String get tomorrowLabel => 'उद्या';
+
+  @override
+  String get recentSearches => 'अलीकडील शोध';
+
+  @override
+  String get trySearching => 'हे शोधून पाहा';
+
+  @override
+  String get clearAll => 'सर्व काढा';
+
+  @override
+  String get earlier => 'आधीचे';
+
+  @override
+  String get yesterday => 'काल';
+
+  @override
+  String get myActivity => 'माझा सहभाग';
 }

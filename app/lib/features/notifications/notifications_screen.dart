@@ -59,18 +59,48 @@ class NotificationsScreen extends ConsumerWidget {
                   ),
                 ),
               if (notifications.isNotEmpty) SectionHeader(l.notifications, icon: '🔔'),
-              for (final n in notifications)
-                Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: Text(_icons[n.type] ?? '🔔', style: const TextStyle(fontSize: 24)),
-                    title: Text(n.title, style: const TextStyle(fontWeight: FontWeight.w700)),
-                    subtitle: Text('${n.body}\n${formatDateTime(n.sentAt, locale: context.lang)}'),
-                    isThreeLine: true,
-                    onTap: n.route != null && n.route!.startsWith('/') ? () => context.push(n.route!) : null,
-                  ),
+              for (final (label, group) in _groupByDay(context, notifications, ref.watch(clockProvider)())) ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
+                  child: Text(label, style: const TextStyle(fontWeight: FontWeight.w800, color: KjdColors.inkMuted)),
                 ),
+                for (final n in group)
+                  Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: Container(
+                        width: 44,
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(color: KjdColors.goldLight, borderRadius: BorderRadius.circular(12)),
+                        child: Text(_icons[n.type] ?? '🔔', style: const TextStyle(fontSize: 22)),
+                      ),
+                      title: Text(n.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                      subtitle: Text('${n.body}\n${formatDateTime(n.sentAt, locale: context.lang)}'),
+                      isThreeLine: true,
+                      trailing: n.route != null && n.route!.startsWith('/') ? const Icon(Icons.chevron_right) : null,
+                      onTap: n.route != null && n.route!.startsWith('/') ? () => context.push(n.route!) : null,
+                    ),
+                  ),
+              ],
             ]),
     );
   }
+}
+
+/// Notifications split into Today / Yesterday / Earlier.
+List<(String, List<AppNotification>)> _groupByDay(BuildContext context, List<AppNotification> list, DateTime now) {
+  final l = context.l10n;
+  final today = dateOnly(now);
+  final groups = <String, List<AppNotification>>{};
+  for (final n in list) {
+    final d = n.sentAt == null ? null : dateOnly(n.sentAt!);
+    final label = d == today
+        ? l.today
+        : d == today.subtract(const Duration(days: 1))
+            ? l.yesterday
+            : l.earlier;
+    groups.putIfAbsent(label, () => []).add(n);
+  }
+  return [for (final e in groups.entries) (e.key, e.value)];
 }

@@ -1445,4 +1445,60 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get festivalPicture => 'તહેવારનું ચિત્ર';
+
+  @override
+  String closesIn(String time) {
+    return '$timeમાં બંધ થશે';
+  }
+
+  @override
+  String opensIn(String time) {
+    return '$timeમાં ખુલશે';
+  }
+
+  @override
+  String startsIn(String time) {
+    return '$timeમાં';
+  }
+
+  @override
+  String get todaySchedule => 'આજનું સમયપત્રક';
+
+  @override
+  String get nowLabel => 'હમણાં';
+
+  @override
+  String get nextLabel => 'આગળ';
+
+  @override
+  String get nextEventTitle => 'આગામી ઉત્સવ';
+
+  @override
+  String daysLeft(int n) {
+    return '$n દિવસ બાકી';
+  }
+
+  @override
+  String get happeningToday => 'આજે ચાલુ છે';
+
+  @override
+  String get tomorrowLabel => 'આવતીકાલે';
+
+  @override
+  String get recentSearches => 'તાજેતરની શોધ';
+
+  @override
+  String get trySearching => 'આ શોધો';
+
+  @override
+  String get clearAll => 'બધું હટાવો';
+
+  @override
+  String get earlier => 'અગાઉના';
+
+  @override
+  String get yesterday => 'ગઈકાલે';
+
+  @override
+  String get myActivity => 'મારી ભાગીદારી';
 }

@@ -219,3 +219,18 @@ String eventStatusLabel(BuildContext context, TempleEvent e, DateTime now) {
 
 String categoryIcon(List<EventCategory> cats, String id) =>
     cats.where((c) => c.id == id).map((c) => c.icon).firstOrNull ?? '🎉';
+
+/// Short "2 तास 15 मि." style duration in the app language.
+String shortDuration(BuildContext context, Duration d) {
+  final h = d.inHours, m = d.inMinutes % 60;
+  final (hu, mu) = switch (context.lang) {
+    'mr' => ('तास', 'मि.'),
+    'hi' => ('घंटे', 'मि.'),
+    'gu' => ('કલાક', 'મિ.'),
+    _ => ('h', 'm'),
+  };
+  final sep = context.lang == 'en' ? '' : ' ';
+  if (h == 0) return '$m$sep$mu';
+  if (m == 0) return '$h$sep$hu';
+  return '$h$sep$hu $m$sep$mu';
+}
